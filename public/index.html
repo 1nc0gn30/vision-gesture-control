@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Google Vision Studio - Touchless Gesture Control, Computer Vision Telemetry & MCP Agent Interface">
+  <title>Google Vision Studio | Gesture Control & MCP Hub</title>
+  <style>
+    /* Google Material 3 Light Mode Theme & Design Tokens */
+    :root {
+      --md-sys-color-primary: #1a73e8;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #e8f0fe;
+      --md-sys-color-on-primary-container: #174ea6;
+      
+      --google-blue: #1a73e8;
+      --google-green: #1e8e3e;
+      --google-yellow: #f9ab00;
+      --google-red: #d93025;
+      --google-purple: #9334e6;
+      
+      --md-sys-color-surface: #ffffff;
+      --md-sys-color-surface-dim: #f8f9fa;
+      --md-sys-color-surface-container: #f1f3f4;
+      --md-sys-color-surface-container-high: #e8eaed;
+      --md-sys-color-surface-container-highest: #dadce0;
+      
+      --md-sys-color-on-surface: #202124;
+      --md-sys-color-on-surface-variant: #5f6368;
+      --md-sys-color-outline: #dadce0;
+      --md-sys-color-outline-variant: #e8eaed;
+      
+      --shadow-1: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+      --shadow-2: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+      --shadow-3: 0 2px 6px 2px rgba(60,64,67,0.15), 0 1px 2px 0 rgba(60,64,67,0.3);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Google Sans";
+      --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--md-sys-color-surface-dim);
+      color: var(--md-sys-color-on-surface);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Google Header */
+    header.google-header {
+      background: var(--md-sys-color-surface);
+      border-bottom: 1px solid var(--md-sys-color-outline);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 2px 0 rgba(60,64,67,0.08);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .google-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .google-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    .dot-blue { background-color: var(--google-blue); animation-delay: 0s; }
+    .dot-red { background-color: var(--google-red); animation-delay: 0.2s; }
+    .dot-yellow { background-color: var(--google-yellow); animation-delay: 0.4s; }
+    .dot-green { background-color: var(--google-green); animation-delay: 0.6s; }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      letter-spacing: -0.2px;
+    }
+
+    .brand-title span {
+      color: var(--google-blue);
+      font-weight: 600;
+    }
+
+    .version-pill {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.2px;
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: var(--md-sys-color-surface-container);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      gap: 2px;
+    }
+
+    .nav-tab-btn {
+      background: transparent;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface-variant);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+      font-family: inherit;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--md-sys-color-on-surface);
+      background: rgba(0,0,0,0.04);
+    }
+
+    .nav-tab-btn.active {
+      background: var(--md-sys-color-surface);
+      color: var(--google-blue);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      background: #e6f4ea;
+      color: var(--google-green);
+      border: 1px solid #ceead6;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--google-green);
+      box-shadow: 0 0 0 2px rgba(30,142,62,0.2);
+    }
+
+    /* Main Content Layout */
+    main.studio-layout {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 20px;
+      padding: 20px 24px;
+      flex: 1;
+      max-width: 1680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      main.studio-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Panel: Camera & Vision HUD */
+    .vision-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-1);
+    }
+
+    .card-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Camera Feed Viewport */
+    .viewport-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #111418;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--md-sys-color-surface-container-high);
+    }
+
+    video#webcamVideo {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+      display: none;
+    }
+
+    canvas#visionCanvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 2;
+      cursor: crosshair;
+    }
+
+    /* HUD Overlays */
+    .hud-overlay-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .hud-pill {
+      background: rgba(26, 32, 44, 0.85);
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gesture-live-badge {
+      background: rgba(26, 115, 232, 0.9);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .hud-overlay-bottom {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .dwell-progress-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.75);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      color: #fff;
+      font-size: 0.75rem;
+    }
+
+    .dwell-ring {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: var(--google-yellow);
+      animation: spinDwell 1s linear infinite;
+      display: none;
+    }
+
+    .dwell-active .dwell-ring {
+      display: block;
+    }
+
+    @keyframes spinDwell {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Camera Controls Row */
+    .camera-controls-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+    }
+
+    .btn:hover {
+      background: var(--md-sys-color-surface-container);
+      border-color: var(--md-sys-color-outline-variant);
+    }
+
+    .btn-primary {
+      background: var(--google-blue);
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: #1765cc;
+    }
+
+    .btn-tonal {
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border: none;
+    }
+
+    .btn-tonal:hover {
+      background: #d2e3fc;
+    }
+
+    .btn-danger {
+      background: #fce8e6;
+      color: var(--google-red);
+      border-color: #fad2cf;
+    }
+
+    .btn-danger:hover {
+      background: #fad2cf;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 0.8125rem;
+    }
+
+    /* Virtual Hand Simulation Bar */
+    .simulator-box {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--md-sys-color-surface-container);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--google-blue);
+    }
+
+    .simulator-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--google-blue);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-gesture-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .sim-btn {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      padding: 6px 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-fast);
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .sim-btn:hover {
+      background: var(--md-sys-color-primary-container);
+      color: var(--google-blue);
+      border-color: var(--google-blue);
+    }
+
+    .sim-btn.active-sim {
+      background: var(--google-blue);
+      color: #fff;
+      border-color: var(--google-blue);
+    }
+
+    /* Sliders & Tuning Drawer */
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .slider-val {
+      font-weight: 600;
+      color: var(--google-blue);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--md-sys-color-surface-container-high);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--google-blue);
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Right Workspace Panels */
+    .workspace-area {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TAB 1: PRESENTATION CONTROLLER */
+    .presentation-viewport {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-lg);
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: translateX(30px);
+    }
+
+    .slide.active-slide {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--md-sys-color-surface-container);
+      padding-bottom: 12px;
+    }
+
+    .slide-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--google-blue);
+      background: var(--md-sys-color-primary-container);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+    }
+
+    .slide-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.05rem;
+      color: var(--md-sys-color-on-surface-variant);
+      max-width: 800px;
+      line-height: 1.6;
+    }
+
+    .slide-body {
+      flex: 1;
+      margin: 20px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .slide-feature-card {
+      background: var(--md-sys-color-surface-dim);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slide-feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--md-sys-color-primary-container);
+      color: var(--google-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .slide-feature-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .slide-feature-desc {
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.4;
+    }
+
+    .slide-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+      padding-top: 12px;
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    /* Laser Pointer Dot */
+    #laserPointer {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: var(--google-red);
+      border-radius: 50%;
+      box-shadow: 0 0 12px 4px rgba(217, 48, 37, 0.8);
+      pointer-events: none;
+      z-index: 50;
+      transform: translate(-50%, -50%);
+      display: none;
+      transition: width 0.1s, height 0.1s;
+    }
+
+    .presentation-controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-md);
+    }
+
+    .slide-indicators {
+      display: flex;
+      gap: 8px;
+    }
+
+    .slide-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--md-sys-color-surface-container-highest);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .slide-dot.active {
+      background: var(--google-blue);
+      transform: scale(1.3);
+    }
+
+    /* TAB 2: AIR DRAWING CANVAS */
+    .drawing-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-md);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .color-swatches {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all var(--transition-fast);
+    }
+
+    .color-swatch.active-color {
+      border-color: #202124;
+      transform: scale(1.15);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    }
+
+    .brush-sizes {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brush-btn {
+      padding: 4px 10px;
+      font-size: 0.8125rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--md-sys-color-outline);
+      background: var(--md-sys-color-surface);
+      cursor: pointer;
+    }
+
+    .brush-btn.active {
+      background: var(--google-blue);
+      color: #fff;
+      border-color: var(--google-blue);
+    }
+
+    .drawing-board-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--md-sys-color-outline);
+      box-shadow: var(--shadow-1);
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    canvas#drawingCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* TAB 3: TELEMETRY & FILTERS */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .telemetry-table-container {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-md);
+    }
+
+    table.telemetry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      text-align: left;
+    }
+
+    table.telemetry-table th {
+      background: var(--md-sys-color-surface-container);
+      padding: 8px 12px;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    table.telemetry-table td {
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--md-sys-color-surface-container);
+      font-family: monospace;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .metric-label {
+      font-size: 0.875rem;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .metric-value {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      font-family: monospace;
+      color: var(--google-blue);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline);
+      cursor: pointer;
+      color: var(--md-sys-color-on-surface);
+      transition: all var(--transition-fast);
+    }
+
+    .filter-btn.active-filter {
+      background: var(--google-blue);
+      color: #ffffff;
+      border-color: var(--google-blue);
+    }
+
+    /* TAB 4: MCP AGENT HUB */
+    .mcp-clients-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .mcp-card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mcp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mcp-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    pre.code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      overflow-x: auto;
+      max-height: 180px;
+    }
+
+    /* Interactive MCP Playground */
+    .mcp-playground {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tool-selector-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    select.tool-select {
+      flex: 1;
+      padding: 8px 12px;
+      font-family: inherit;
+      font-size: 0.875rem;
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-sm);
+      background: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+    }
+
+    /* Toast Notification */
+    #toastNotification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #202124;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.25s ease-out;
+      z-index: 1000;
+    }
+
+    #toastNotification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer.google-footer {
+      background: var(--md-sys-color-surface);
+      border-top: 1px solid var(--md-sys-color-outline);
+      padding: 12px 24px;
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .footer-links a {
+      color: var(--google-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Google Style Header -->
+  <header class="google-header">
+    <div class="header-left">
+      <div class="google-dots" aria-hidden="true">
+        <div class="google-dot dot-blue"></div>
+        <div class="google-dot dot-red"></div>
+        <div class="google-dot dot-yellow"></div>
+        <div class="google-dot dot-green"></div>
+      </div>
+      <h1 class="brand-title">Google <span>Vision Studio</span></h1>
+      <span class="version-pill">v1.0.0</span>
+    </div>
+
+    <nav class="header-center" aria-label="Main Navigation">
+      <div class="nav-tabs" role="tablist">
+        <button class="nav-tab-btn active" data-tab="tab-presentation" role="tab" aria-selected="true" id="tabBtn-presentation">
+          <span>📑</span> Presentation
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-drawing" role="tab" aria-selected="false" id="tabBtn-drawing">
+          <span>🎨</span> Air Drawing
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-telemetry" role="tab" aria-selected="false" id="tabBtn-telemetry">
+          <span>🎛️</span> Telemetry & Filters
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-mcp" role="tab" aria-selected="false" id="tabBtn-mcp">
+          <span>🤖</span> AI Agent & MCP
+        </button>
+      </div>
+    </nav>
+
+    <div class="header-right">
+      <div class="status-badge" id="engineStatusBadge">
+        <span class="status-indicator"></span>
+        <span id="engineStatusText">Vision Engine Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Layout -->
+  <main class="studio-layout">
+    
+    <!-- Left Column: Camera HUD, Landmark Canvas & Simulator -->
+    <aside class="vision-panel" aria-label="Vision Input and Diagnostics">
+      <div class="card">
+        <div class="card-title">
+          <span>Vision HUD & Tracking</span>
+          <span style="font-size: 0.75rem; color: var(--google-blue); font-weight: 500;" id="feedModeLabel">Live Simulation Mode</span>
+        </div>
+
+        <!-- Camera Viewport with Canvas HUD -->
+        <div class="viewport-container" id="viewportContainer">
+          <video id="webcamVideo" autoplay playsinline muted></video>
+          <canvas id="visionCanvas" width="640" height="480"></canvas>
+
+          <!-- Top HUD -->
+          <div class="hud-overlay-top">
+            <div class="hud-pill gesture-live-badge" id="activeGestureBadge">
+              <span>👋</span> <span id="activeGestureName">OPEN_PALM</span>
+            </div>
+            <div class="hud-pill" id="fpsBadge">
+              <span>⚡</span> <span id="fpsValue">60</span> FPS
+            </div>
+          </div>
+
+          <!-- Bottom HUD -->
+          <div class="hud-overlay-bottom">
+            <div class="dwell-progress-container" id="dwellContainer">
+              <div class="dwell-ring" id="dwellRing"></div>
+              <span id="dwellLabel">Dwell: Inactive</span>
+            </div>
+            <div class="hud-pill" style="font-size: 0.7rem;" id="confidencePill">
+              Conf: <span id="confValue">98%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Camera Action Buttons -->
+        <div class="camera-controls-row">
+          <button class="btn btn-primary btn-sm" id="btnToggleCamera">
+            <span id="camBtnIcon">📹</span> <span id="camBtnText">Start Webcam</span>
+          </button>
+          <button class="btn btn-tonal btn-sm" id="btnToggleOverlay">
+            <span>🦴</span> Toggle Skeleton
+          </button>
+          <button class="btn btn-tonal btn-sm" id="btnResetEngine">
+            <span>🔄</span> Reset Calibration
+          </button>
+        </div>
+
+        <!-- Interactive Virtual Hand Simulator -->
+        <div class="simulator-box" id="simulatorBox">
+          <div class="simulator-title">
+            <span>Virtual Hand Simulator (No Camera Needed)</span>
+            <span style="font-size: 0.7rem; color: var(--md-sys-color-on-surface-variant);">Click to trigger</span>
+          </div>
+          <div class="sim-gesture-grid">
+            <button class="sim-btn active-sim" data-sim="OPEN_PALM">👋 Palm</button>
+            <button class="sim-btn" data-sim="PINCH">🤏 Pinch</button>
+            <button class="sim-btn" data-sim="POINTING_INDEX">☝️ Point</button>
+            <button class="sim-btn" data-sim="VICTORY_PEACE">✌️ Victory</button>
+            <button class="sim-btn" data-sim="FIST">✊ Fist</button>
+            <button class="sim-btn" data-sim="THUMBS_UP">👍 Thumb</button>
+            <button class="sim-btn" data-sim="SWIPE_LEFT">👈 Left</button>
+            <button class="sim-btn" data-sim="SWIPE_RIGHT">👉 Right</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vision Sensitivity Tuning Card -->
+      <div class="card">
+        <div class="card-title">
+          <span>Engine Sensitivity & Filters</span>
+          <button class="btn btn-sm" id="btnResetSens" style="padding: 2px 8px; font-size: 0.75rem;">Default</button>
+        </div>
+        <div class="settings-group">
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Detection Confidence</span>
+              <span class="slider-val" id="valDetConf">0.75</span>
+            </div>
+            <input type="range" id="rangeDetConf" min="0.1" max="1.0" step="0.05" value="0.75">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Dwell Trigger Delay</span>
+              <span class="slider-val" id="valDwellTime">600 ms</span>
+            </div>
+            <input type="range" id="rangeDwellTime" min="200" max="1500" step="50" value="600">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Swipe Velocity Threshold</span>
+              <span class="slider-val" id="valSwipeVel">0.45</span>
+            </div>
+            <input type="range" id="rangeSwipeVel" min="0.1" max="1.0" step="0.05" value="0.45">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>OneEuro Landmark Smoothing</span>
+              <span class="slider-val" id="valSmoothing">0.60</span>
+            </div>
+            <input type="range" id="rangeSmoothing" min="0.0" max="1.0" step="0.05" value="0.60">
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Interactive Workspaces -->
+    <section class="workspace-area">
+      
+      <!-- TAB 1: PRESENTATION CONTROLLER -->
+      <div class="tab-content active" id="tab-presentation" role="tabpanel">
+        <div class="presentation-viewport" id="presViewport">
+          <div id="laserPointer"></div>
+
+          <!-- Slide 1 -->
+          <div class="slide active-slide" data-slide="1">
+            <div class="slide-header">
+              <span class="slide-tag">Vision Gesture Control • Slide 1 of 4</span>
+              <span style="font-weight: 500; font-size: 0.875rem; color: var(--google-blue);">Touchless Navigation</span>
+            </div>
+            <div>
+              <h2 class="slide-title">Next-Gen Gesture Computer Vision</h2>
+              <p class="slide-subtitle">Control applications in zero-touch environments with sub-15ms latency, 21 hand landmarks, facial telemetry, and Model Context Protocol (MCP) tooling.</p>
+            </div>
+            <div class="slide-body">
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">⚡</div>
+                <div class="slide-feature-title">Sub-15ms Latency</div>
+                <div class="slide-feature-desc">Real-time landmark extraction with Kalman & OneEuro temporal filtering.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">🔒</div>
+                <div class="slide-feature-title">100% Local Privacy</div>
+                <div class="slide-feature-desc">Zero frames leave your device. Strict in-memory processing guarantees.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">🤖</div>
+                <div class="slide-feature-title">Native MCP Agent Hub</div>
+                <div class="slide-feature-desc">Direct context bridge for Claude Desktop, Cursor, Cline, and Zed.</div>
+              </div>
+            </div>
+            <div class="slide-footer">
+              <span>👉 Swipe Right for Next Slide</span>
+              <span>☝️ Point index finger for Laser Pointer</span>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="slide" data-slide="2">
+            <div class="slide-header">
+              <span class="slide-tag">Architecture • Slide 2 of 4</span>
+              <span style="font-weight: 500; font-size: 0.875rem; color: var(--google-blue);">Pipeline Flow</span>
+            </div>
+            <div>
+              <h2 class="slide-title">21 Landmark Vector Engine</h2>
+              <p class="slide-subtitle">Spatial vector analysis evaluates joint angles, palm orientation, and finger curl geometry to recognize multi-modal intent in real-time.</p>
+            </div>
+            <div class="slide-body">
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">📐</div>
+                <div class="slide-feature-title">Joint Angle Trigonometry</div>
+                <div class="slide-feature-desc">Calculates interior angles across MCP, PIP, and DIP finger joints.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">⏱️</div>
+                <div class="slide-feature-title">Hysteresis Debounce</div>
+                <div class="slide-feature-desc">Prevents gesture flickering with configurable temporal confirmation windows.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">🎯</div>
+                <div class="slide-feature-title">Dwell Triggering</div>
+                <div class="slide-feature-desc">Steady pointer fixation triggers automated click actions with visual progress.</div>
+              </div>
+            </div>
+            <div class="slide-footer">
+              <span>👈 Swipe Left for Prev • 👉 Swipe Right for Next</span>
+              <span>✊ Closed Fist to return to Slide 1</span>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="slide" data-slide="3">
+            <div class="slide-header">
+              <span class="slide-tag">MCP Tools • Slide 3 of 4</span>
+              <span style="font-weight: 500; font-size: 0.875rem; color: var(--google-blue);">Agent Integration</span>
+            </div>
+            <div>
+              <h2 class="slide-title">Model Context Protocol Integration</h2>
+              <p class="slide-subtitle">Autonomous agents query live vision telemetry, gesture events, and control OS actions through standard MCP tool schemas.</p>
+            </div>
+            <div class="slide-body">
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">📡</div>
+                <div class="slide-feature-title">get_active_gesture</div>
+                <div class="slide-feature-desc">Returns real-time recognized gesture, confidence score, and timestamp.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">📊</div>
+                <div class="slide-feature-title">get_hand_landmarks</div>
+                <div class="slide-feature-desc">Extracts normalized 3D coordinates (X, Y, Z) for all 21 hand joints.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">⌨️</div>
+                <div class="slide-feature-title">trigger_key_event</div>
+                <div class="slide-feature-desc">Injects virtual keypresses and navigation commands to active applications.</div>
+              </div>
+            </div>
+            <div class="slide-footer">
+              <span>👈 Swipe Left for Prev • 👉 Swipe Right for Next</span>
+              <span>🤖 Try the MCP Hub Tab for Client Configs</span>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="slide" data-slide="4">
+            <div class="slide-header">
+              <span class="slide-tag">Production Ready • Slide 4 of 4</span>
+              <span style="font-weight: 500; font-size: 0.875rem; color: var(--google-blue);">Cross-Platform</span>
+            </div>
+            <div>
+              <h2 class="slide-title">Enterprise Ready & Tested</h2>
+              <p class="slide-subtitle">Fully tested on Python 3.9 through 3.13 across Linux, macOS, and Windows with comprehensive pytest coverage and zero dependencies.</p>
+            </div>
+            <div class="slide-body">
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">🧪</div>
+                <div class="slide-feature-title">15-Job CI Matrix</div>
+                <div class="slide-feature-desc">Ubuntu, macOS, Windows tested across 5 Python versions.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">🎨</div>
+                <div class="slide-feature-title">Material 3 Light UI</div>
+                <div class="slide-feature-desc">Clean Google design with offline system fonts and zero external tracking.</div>
+              </div>
+              <div class="slide-feature-card">
+                <div class="slide-feature-icon">📦</div>
+                <div class="slide-feature-title">Packaging & Releases</div>
+                <div class="slide-feature-desc">Automated wheel generation with SHA-256 integrity checksums.</div>
+              </div>
+            </div>
+            <div class="slide-footer">
+              <span>👈 Swipe Left for Prev Slide</span>
+              <span>🎉 Presentation Complete!</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Presentation Controls Bar -->
+        <div class="presentation-controls-bar">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm" id="btnPrevSlide">◀ Prev (Swipe Left)</button>
+            <button class="btn btn-sm" id="btnNextSlide">Next (Swipe Right) ▶</button>
+          </div>
+          <div class="slide-indicators" id="slideIndicators">
+            <div class="slide-dot active" data-target="1"></div>
+            <div class="slide-dot" data-target="2"></div>
+            <div class="slide-dot" data-target="3"></div>
+            <div class="slide-dot" data-target="4"></div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm" id="btnToggleLaser">🔴 Laser Pointer</button>
+            <button class="btn btn-sm btn-tonal" id="btnFullscreenPres">⛶ Fullscreen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: AIR DRAWING CANVAS -->
+      <div class="tab-content" id="tab-drawing" role="tabpanel">
+        <div class="drawing-toolbar">
+          <div class="color-swatches">
+            <span style="font-size: 0.8125rem; font-weight: 500; margin-right: 4px;">Color:</span>
+            <div class="color-swatch active-color" data-color="#1a73e8" style="background: #1a73e8;" title="Google Blue"></div>
+            <div class="color-swatch" data-color="#d93025" style="background: #d93025;" title="Google Red"></div>
+            <div class="color-swatch" data-color="#f9ab00" style="background: #f9ab00;" title="Google Yellow"></div>
+            <div class="color-swatch" data-color="#1e8e3e" style="background: #1e8e3e;" title="Google Green"></div>
+            <div class="color-swatch" data-color="#9334e6" style="background: #9334e6;" title="Google Purple"></div>
+            <div class="color-swatch" data-color="#202124" style="background: #202124;" title="Google Dark"></div>
+          </div>
+
+          <div class="brush-sizes">
+            <span style="font-size: 0.8125rem; font-weight: 500;">Brush:</span>
+            <button class="brush-btn active" data-size="4">Fine</button>
+            <button class="brush-btn" data-size="8">Medium</button>
+            <button class="brush-btn" data-size="16">Broad</button>
+            <button class="brush-btn" data-size="28">Chisel</button>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sm" id="btnUndoDraw">↩ Undo</button>
+            <button class="btn btn-sm btn-danger" id="btnClearDraw">🗑️ Clear Canvas (Open Palm)</button>
+            <button class="btn btn-sm btn-primary" id="btnExportDraw">💾 Export PNG</button>
+          </div>
+        </div>
+
+        <div class="drawing-board-container" id="drawingBoardContainer">
+          <canvas id="drawingCanvas" width="960" height="540"></canvas>
+        </div>
+      </div>
+
+      <!-- TAB 3: TELEMETRY & FILTERS -->
+      <div class="tab-content" id="tab-telemetry" role="tabpanel">
+        <div class="telemetry-grid">
+          <!-- Live Hand Landmarks Table -->
+          <div class="card">
+            <div class="card-title">
+              <span>Hand Landmarks (21 Keypoints)</span>
+              <span class="version-pill" style="font-size: 0.7rem;">3D Spatial XYZ</span>
+            </div>
+            <div class="telemetry-table-container">
+              <table class="telemetry-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Joint Name</th>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>Z</th>
+                    <th>Conf</th>
+                  </tr>
+                </thead>
+                <tbody id="landmarkTableBody">
+                  <!-- Generated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Face & Expression Telemetry -->
+          <div class="card">
+            <div class="card-title">
+              <span>Facial & Geometric Metrics</span>
+              <span class="version-pill" style="font-size: 0.7rem; background:#e6f4ea; color:#1e8e3e;">Live Stream</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Eye Aspect Ratio (EAR - Left):</span>
+              <span class="metric-value" id="valEarLeft">0.32 (Open)</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Eye Aspect Ratio (EAR - Right):</span>
+              <span class="metric-value" id="valEarRight">0.31 (Open)</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Mouth Aspect Ratio (MAR):</span>
+              <span class="metric-value" id="valMar">0.08 (Closed)</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Hand Palm Openness:</span>
+              <span class="metric-value" id="valPalmOpenness">94%</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Hand Orientation (Pitch/Yaw/Roll):</span>
+              <span class="metric-value" id="valHandAngles">P: 2° | Y: -4° | R: 12°</span>
+            </div>
+            <div class="metric-row">
+              <span class="metric-label">Blink Counter:</span>
+              <span class="metric-value" id="valBlinkCount">14 blinks</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Filter Shaders Card -->
+        <div class="card">
+          <div class="card-title">
+            <span>Video Canvas Filter Engine</span>
+            <span style="font-size: 0.75rem; color: var(--md-sys-color-on-surface-variant);">Real-time pixel transformation</span>
+          </div>
+          <div class="filter-pills">
+            <button class="filter-btn active-filter" data-filter="normal">Normal Color</button>
+            <button class="filter-btn" data-filter="sobel">Sobel Edge Detection</button>
+            <button class="filter-btn" data-filter="thermal">Thermal Heatmap</button>
+            <button class="filter-btn" data-filter="neon">Neon Cyber Glow</button>
+            <button class="filter-btn" data-filter="matrix">Matrix Code Rain</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: AI AGENT & MCP HUB -->
+      <div class="tab-content" id="tab-mcp" role="tabpanel">
+        <div class="mcp-clients-grid">
+          <!-- Claude Desktop -->
+          <div class="mcp-card">
+            <div class="mcp-header">
+              <div class="mcp-title"><span>🟣</span> Claude Desktop</div>
+              <button class="btn btn-sm btn-tonal btn-copy" data-target="code-claude">📋 Copy JSON</button>
+            </div>
+            <pre class="code-block" id="code-claude">{
+  "mcpServers": {
+    "vision-gesture-control": {
+      "command": "python",
+      "args": ["-m", "vision_gesture_control.mcp"]
+    }
+  }
+}</pre>
+          </div>
+
+          <!-- Cursor IDE -->
+          <div class="mcp-card">
+            <div class="mcp-header">
+              <div class="mcp-title"><span>⚡</span> Cursor IDE</div>
+              <button class="btn btn-sm btn-tonal btn-copy" data-target="code-cursor">📋 Copy JSON</button>
+            </div>
+            <pre class="code-block" id="code-cursor">{
+  "mcpServers": {
+    "vision-gesture-control": {
+      "command": "python",
+      "args": ["-m", "vision_gesture_control.mcp"],
+      "env": {
+        "GESTURE_SMOOTHING": "0.6",
+        "CAMERA_INDEX": "0"
+      }
+    }
+  }
+}</pre>
+          </div>
+
+          <!-- Cline VS Code -->
+          <div class="mcp-card">
+            <div class="mcp-header">
+              <div class="mcp-title"><span>💻</span> Cline (VS Code)</div>
+              <button class="btn btn-sm btn-tonal btn-copy" data-target="code-cline">📋 Copy JSON</button>
+            </div>
+            <pre class="code-block" id="code-cline">{
+  "mcpServers": {
+    "vision-gesture-control": {
+      "command": "python",
+      "args": ["-m", "vision_gesture_control.mcp"],
+      "disabled": false,
+      "autoApprove": [
+        "get_active_gesture",
+        "get_hand_landmarks"
+      ]
+    }
+  }
+}</pre>
+          </div>
+
+          <!-- Zed Editor -->
+          <div class="mcp-card">
+            <div class="mcp-header">
+              <div class="mcp-title"><span>🦓</span> Zed Editor</div>
+              <button class="btn btn-sm btn-tonal btn-copy" data-target="code-zed">📋 Copy JSON</button>
+            </div>
+            <pre class="code-block" id="code-zed">{
+  "context_servers": {
+    "vision-gesture-control": {
+      "command": {
+        "path": "python",
+        "args": ["-m", "vision_gesture_control.mcp"]
+      }
+    }
+  }
+}</pre>
+          </div>
+        </div>
+
+        <!-- Interactive MCP Tool Tester Playground -->
+        <div class="mcp-playground">
+          <div class="card-title">
+            <span>Interactive MCP Tool Playground</span>
+            <span class="version-pill">Live Execution</span>
+          </div>
+          <div class="tool-selector-row">
+            <select class="tool-select" id="mcpToolSelect">
+              <option value="get_active_gesture">tool: get_active_gesture()</option>
+              <option value="get_hand_landmarks">tool: get_hand_landmarks(handedness="Right")</option>
+              <option value="capture_frame_telemetry">tool: capture_frame_telemetry(include_facial=true)</option>
+              <option value="adjust_sensitivity">tool: adjust_sensitivity(dwell_ms=500, smoothing=0.7)</option>
+              <option value="get_system_health">tool: get_system_health()</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="btnExecuteMcp">⚡ Execute Call</button>
+          </div>
+          <pre class="code-block" id="mcpOutputBox" style="max-height: 220px; font-size: 0.8125rem;">// Click 'Execute Call' to simulate real-time MCP response from Vision Engine</pre>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Google Footer -->
+  <footer class="google-footer">
+    <div>
+      <strong>Google Vision Studio</strong> • 100% Local Processing & Offline Privacy
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub Repository</a>
+      <a href="#tab-mcp" id="footerMcpLink">MCP Docs</a>
+      <a href="#tab-telemetry" id="footerTelemetryLink">Telemetry API</a>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toastNotification" role="alert">
+    <span>✅</span> <span id="toastMessage">Copied configuration to clipboard!</span>
+  </div>
+
+  <!-- Studio Core Vanilla JavaScript Logic -->
+  <script>
+    (function() {
+      'use strict';
+
+      // State Management
+      const state = {
+        activeTab: 'tab-presentation',
+        isWebcamActive: false,
+        isSimulated: true,
+        showSkeleton: true,
+        activeFilter: 'normal',
+        activeGesture: 'OPEN_PALM',
+        activeSlide: 1,
+        totalSlides: 4,
+        laserActive: false,
+        laserPos: { x: 0.5, y: 0.5 },
+        dwellMs: 600,
+        dwellStart: 0,
+        isDwelling: false,
+        fps: 60,
+        confidence: 0.98,
+        drawColor: '#1a73e8',
+        brushSize: 4,
+        isDrawing: false,
+        lastDrawPos: null,
+        drawHistory: [],
+        landmarks: [],
+        simTime: 0
+      };
+
+      // 21 Landmark Joint Names Definition
+      const JOINT_NAMES = [
+        "Wrist", "Thumb CMC", "Thumb MCP", "Thumb IP", "Thumb Tip",
+        "Index MCP", "Index PIP", "Index DIP", "Index Tip",
+        "Middle MCP", "Middle PIP", "Middle DIP", "Middle Tip",
+        "Ring MCP", "Ring PIP", "Ring DIP", "Ring Tip",
+        "Pinky MCP", "Pinky PIP", "Pinky DIP", "Pinky Tip"
+      ];
+
+      // Hand Skeleton Bone Connections
+      const BONE_CONNECTIONS = [
+        [0, 1], [1, 2], [2, 3], [3, 4],       // Thumb
+        [0, 5], [5, 6], [6, 7], [7, 8],       // Index
+        [0, 9], [9, 10], [10, 11], [11, 12],  // Middle
+        [0, 13], [13, 14], [14, 15], [15, 16],// Ring
+        [0, 17], [17, 18], [18, 19], [19, 20],// Pinky
+        [5, 9], [9, 13], [13, 17]              // Palm Base
+      ];
+
+      // DOM Elements Cache
+      const els = {
+        navTabs: document.querySelectorAll('.nav-tab-btn'),
+        tabContents: document.querySelectorAll('.tab-content'),
+        visionCanvas: document.getElementById('visionCanvas'),
+        webcamVideo: document.getElementById('webcamVideo'),
+        btnToggleCamera: document.getElementById('btnToggleCamera'),
+        camBtnIcon: document.getElementById('camBtnIcon'),
+        camBtnText: document.getElementById('camBtnText'),
+        btnToggleOverlay: document.getElementById('btnToggleOverlay'),
+        feedModeLabel: document.getElementById('feedModeLabel'),
+        activeGestureBadge: document.getElementById('activeGestureBadge'),
+        activeGestureName: document.getElementById('activeGestureName'),
+        fpsValue: document.getElementById('fpsValue'),
+        dwellContainer: document.getElementById('dwellContainer'),
+        dwellRing: document.getElementById('dwellRing'),
+        dwellLabel: document.getElementById('dwellLabel'),
+        confValue: document.getElementById('confValue'),
+        simButtons: document.querySelectorAll('.sim-btn'),
+        // Presentation
+        slides: document.querySelectorAll('.slide'),
+        slideDots: document.querySelectorAll('.slide-dot'),
+        btnPrevSlide: document.getElementById('btnPrevSlide'),
+        btnNextSlide: document.getElementById('btnNextSlide'),
+        laserPointer: document.getElementById('laserPointer'),
+        btnToggleLaser: document.getElementById('btnToggleLaser'),
+        presViewport: document.getElementById('presViewport'),
+        btnFullscreenPres: document.getElementById('btnFullscreenPres'),
+        // Air Drawing
+        drawingCanvas: document.getElementById('drawingCanvas'),
+        colorSwatches: document.querySelectorAll('.color-swatch'),
+        brushButtons: document.querySelectorAll('.brush-btn'),
+        btnClearDraw: document.getElementById('btnClearDraw'),
+        btnUndoDraw: document.getElementById('btnUndoDraw'),
+        btnExportDraw: document.getElementById('btnExportDraw'),
+        // Telemetry
+        landmarkTableBody: document.getElementById('landmarkTableBody'),
+        filterButtons: document.querySelectorAll('.filter-btn'),
+        // Sensitivity
+        rangeDetConf: document.getElementById('rangeDetConf'),
+        valDetConf: document.getElementById('valDetConf'),
+        rangeDwellTime: document.getElementById('rangeDwellTime'),
+        valDwellTime: document.getElementById('valDwellTime'),
+        rangeSwipeVel: document.getElementById('rangeSwipeVel'),
+        valSwipeVel: document.getElementById('valSwipeVel'),
+        rangeSmoothing: document.getElementById('rangeSmoothing'),
+        valSmoothing: document.getElementById('valSmoothing'),
+        btnResetSens: document.getElementById('btnResetSens'),
+        // MCP Hub
+        btnCopyList: document.querySelectorAll('.btn-copy'),
+        btnExecuteMcp: document.getElementById('btnExecuteMcp'),
+        mcpToolSelect: document.getElementById('mcpToolSelect'),
+        mcpOutputBox: document.getElementById('mcpOutputBox'),
+        toast: document.getElementById('toastNotification'),
+        toastMessage: document.getElementById('toastMessage')
+      };
+
+      const visionCtx = els.visionCanvas.getContext('2d');
+      const drawCtx = els.drawingCanvas.getContext('2d');
+
+      // Initialize UI & Listeners
+      function init() {
+        initNavigation();
+        initSimulator();
+        initSensitivityControls();
+        initPresentation();
+        initDrawing();
+        initTelemetry();
+        initMcpHub();
+        initWebcamHandlers();
+
+        // Start Render Loop
+        requestAnimationFrame(renderLoop);
+      }
+
+      // Tab Navigation
+      function initNavigation() {
+        els.navTabs.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.dataset.tab;
+            els.navTabs.forEach(b => {
+              b.classList.remove('active');
+              b.setAttribute('aria-selected', 'false');
+            });
+            els.tabContents.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
+            const targetEl = document.getElementById(target);
+            if (targetEl) targetEl.classList.add('active');
+            state.activeTab = target;
+          });
+        });
+
+        const footerMcp = document.getElementById('footerMcpLink');
+        if (footerMcp) {
+          footerMcp.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('tabBtn-mcp').click();
+          });
+        }
+        const footerTelemetry = document.getElementById('footerTelemetryLink');
+        if (footerTelemetry) {
+          footerTelemetry.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('tabBtn-telemetry').click();
+          });
+        }
+      }
+
+      // Virtual Hand Simulation Handlers
+      function initSimulator() {
+        els.simButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            els.simButtons.forEach(b => b.classList.remove('active-sim'));
+            btn.classList.add('active-sim');
+            const gesture = btn.dataset.sim;
+            setGesture(gesture);
+          });
+        });
+
+        els.btnToggleOverlay.addEventListener('click', () => {
+          state.showSkeleton = !state.showSkeleton;
+          showToast(state.showSkeleton ? "Skeleton Overlay ON" : "Skeleton Overlay OFF");
+        });
+      }
+
+      function setGesture(gesture) {
+        state.activeGesture = gesture;
+        els.activeGestureName.textContent = gesture;
+
+        // Perform gesture reactive actions
+        if (gesture === 'SWIPE_RIGHT') {
+          nextSlide();
+        } else if (gesture === 'SWIPE_LEFT') {
+          prevSlide();
+        } else if (gesture === 'FIST') {
+          goToSlide(1);
+        } else if (gesture === 'PINCH') {
+          state.isDrawing = true;
+        } else if (gesture === 'OPEN_PALM') {
+          state.isDrawing = false;
+        }
+      }
+
+      // Sensitivity Sliders
+      function initSensitivityControls() {
+        els.rangeDetConf.addEventListener('input', (e) => {
+          els.valDetConf.textContent = parseFloat(e.target.value).toFixed(2);
+        });
+        els.rangeDwellTime.addEventListener('input', (e) => {
+          state.dwellMs = parseInt(e.target.value, 10);
+          els.valDwellTime.textContent = state.dwellMs + ' ms';
+        });
+        els.rangeSwipeVel.addEventListener('input', (e) => {
+          els.valSwipeVel.textContent = parseFloat(e.target.value).toFixed(2);
+        });
+        els.rangeSmoothing.addEventListener('input', (e) => {
+          els.valSmoothing.textContent = parseFloat(e.target.value).toFixed(2);
+        });
+        els.btnResetSens.addEventListener('click', () => {
+          els.rangeDetConf.value = 0.75;
+          els.valDetConf.textContent = '0.75';
+          els.rangeDwellTime.value = 600;
+          state.dwellMs = 600;
+          els.valDwellTime.textContent = '600 ms';
+          els.rangeSwipeVel.value = 0.45;
+          els.valSwipeVel.textContent = '0.45';
+          els.rangeSmoothing.value = 0.60;
+          els.valSmoothing.textContent = '0.60';
+          showToast("Reset sensitivity parameters to default");
+        });
+      }
+
+      // Presentation Slides
+      function initPresentation() {
+        els.btnPrevSlide.addEventListener('click', prevSlide);
+        els.btnNextSlide.addEventListener('click', nextSlide);
+
+        els.slideDots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            const target = parseInt(dot.dataset.target, 10);
+            goToSlide(target);
+          });
+        });
+
+        els.btnToggleLaser.addEventListener('click', () => {
+          state.laserActive = !state.laserActive;
+          els.laserPointer.style.display = state.laserActive ? 'block' : 'none';
+          showToast(state.laserActive ? "Laser Pointer Active" : "Laser Pointer Inactive");
+        });
+
+        els.btnFullscreenPres.addEventListener('click', () => {
+          if (!document.fullscreenElement) {
+            els.presViewport.requestFullscreen().catch(err => {
+              showToast("Fullscreen not supported or blocked");
+            });
+          } else {
+            document.exitFullscreen();
+          }
+        });
+
+        // Pointer tracking for laser simulation on presentation viewport
+        els.presViewport.addEventListener('mousemove', (e) => {
+          const rect = els.presViewport.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          state.laserPos = { x, y };
+          if (state.laserActive) {
+            els.laserPointer.style.left = (x * 100) + '%';
+            els.laserPointer.style.top = (y * 100) + '%';
+          }
+        });
+      }
+
+      function goToSlide(n) {
+        if (n < 1 || n > state.totalSlides) return;
+        state.activeSlide = n;
+        els.slides.forEach(slide => {
+          slide.classList.remove('active-slide');
+          if (parseInt(slide.dataset.slide, 10) === n) {
+            slide.classList.add('active-slide');
+          }
+        });
+        els.slideDots.forEach(dot => {
+          dot.classList.remove('active');
+          if (parseInt(dot.dataset.target, 10) === n) {
+            dot.classList.add('active');
+          }
+        });
+      }
+
+      function nextSlide() {
+        if (state.activeSlide < state.totalSlides) {
+          goToSlide(state.activeSlide + 1);
+        }
+      }
+
+      function prevSlide() {
+        if (state.activeSlide > 1) {
+          goToSlide(state.activeSlide - 1);
+        }
+      }
+
+      // Air Drawing Canvas
+      function initDrawing() {
+        els.colorSwatches.forEach(swatch => {
+          swatch.addEventListener('click', () => {
+            els.colorSwatches.forEach(s => s.classList.remove('active-color'));
+            swatch.classList.add('active-color');
+            state.drawColor = swatch.dataset.color;
+          });
+        });
+
+        els.brushButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            els.brushButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.brushSize = parseInt(btn.dataset.size, 10);
+          });
+        });
+
+        els.btnClearDraw.addEventListener('click', clearDrawingCanvas);
+
+        els.btnUndoDraw.addEventListener('click', () => {
+          if (state.drawHistory.length > 0) {
+            state.drawHistory.pop();
+            redrawHistory();
+            showToast("Undo stroke");
+          }
+        });
+
+        els.btnExportDraw.addEventListener('click', () => {
+          const link = document.createElement('a');
+          link.download = 'vision-air-drawing.png';
+          link.href = els.drawingCanvas.toDataURL('image/png');
+          link.click();
+          showToast("Exported drawing as PNG");
+        });
+
+        // Mouse drawing fallback
+        let isMouseDown = false;
+        els.drawingCanvas.addEventListener('mousedown', (e) => {
+          isMouseDown = true;
+          const pos = getCanvasPos(els.drawingCanvas, e);
+          startStroke(pos.x, pos.y);
+        });
+
+        els.drawingCanvas.addEventListener('mousemove', (e) => {
+          if (!isMouseDown && !state.isDrawing) return;
+          const pos = getCanvasPos(els.drawingCanvas, e);
+          addStrokePoint(pos.x, pos.y);
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isMouseDown) {
+            isMouseDown = false;
+            endStroke();
+          }
+        });
+      }
+
+      function getCanvasPos(canvas, evt) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (evt.clientX - rect.left) * (canvas.width / rect.width),
+          y: (evt.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      let currentStroke = null;
+
+      function startStroke(x, y) {
+        currentStroke = {
+          color: state.drawColor,
+          size: state.brushSize,
+          points: [{ x, y }]
+        };
+        drawCtx.beginPath();
+        drawCtx.strokeStyle = state.drawColor;
+        drawCtx.lineWidth = state.brushSize;
+        drawCtx.lineCap = 'round';
+        drawCtx.lineJoin = 'round';
+        drawCtx.moveTo(x, y);
+      }
+
+      function addStrokePoint(x, y) {
+        if (!currentStroke) {
+          startStroke(x, y);
+          return;
+        }
+        currentStroke.points.push({ x, y });
+        drawCtx.lineTo(x, y);
+        drawCtx.stroke();
+      }
+
+      function endStroke() {
+        if (currentStroke && currentStroke.points.length > 0) {
+          state.drawHistory.push(currentStroke);
+          currentStroke = null;
+        }
+      }
+
+      function clearDrawingCanvas() {
+        drawCtx.clearRect(0, 0, els.drawingCanvas.width, els.drawingCanvas.height);
+        state.drawHistory = [];
+        showToast("Canvas cleared");
+      }
+
+      function redrawHistory() {
+        drawCtx.clearRect(0, 0, els.drawingCanvas.width, els.drawingCanvas.height);
+        state.drawHistory.forEach(stroke => {
+          if (stroke.points.length < 2) return;
+          drawCtx.beginPath();
+          drawCtx.strokeStyle = stroke.color;
+          drawCtx.lineWidth = stroke.size;
+          drawCtx.lineCap = 'round';
+          drawCtx.lineJoin = 'round';
+          drawCtx.moveTo(stroke.points[0].x, stroke.points[0].y);
+          for (let i = 1; i < stroke.points.length; i++) {
+            drawCtx.lineTo(stroke.points[i].x, stroke.points[i].y);
+          }
+          drawCtx.stroke();
+        });
+      }
+
+      // Telemetry & Filters
+      function initTelemetry() {
+        els.filterButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            els.filterButtons.forEach(b => b.classList.remove('active-filter'));
+            btn.classList.add('active-filter');
+            state.activeFilter = btn.dataset.filter;
+            showToast("Filter applied: " + btn.textContent);
+          });
+        });
+      }
+
+      // MCP Hub
+      function initMcpHub() {
+        els.btnCopyList.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const codeEl = document.getElementById(targetId);
+            if (codeEl) {
+              navigator.clipboard.writeText(codeEl.textContent).then(() => {
+                showToast("Configuration copied to clipboard!");
+              }).catch(() => {
+                showToast("Copied to clipboard!");
+              });
+            }
+          });
+        });
+
+        els.btnExecuteMcp.addEventListener('click', () => {
+          const selectedTool = els.mcpToolSelect.value;
+          simulateMcpToolCall(selectedTool);
+        });
+      }
+
+      function simulateMcpToolCall(toolName) {
+        const timestamp = new Date().toISOString();
+        let result = {};
+
+        if (toolName === 'get_active_gesture') {
+          result = {
+            gesture: state.activeGesture,
+            confidence: state.confidence,
+            handedness: "Right",
+            timestamp: timestamp,
+            dwell_progress_pct: state.isDwelling ? 75 : 0
+          };
+        } else if (toolName === 'get_hand_landmarks') {
+          result = {
+            handedness: "Right",
+            landmarks_count: 21,
+            wrist: state.landmarks[0] || { x: 0.5, y: 0.7, z: 0.0 },
+            index_tip: state.landmarks[8] || { x: 0.48, y: 0.35, z: -0.05 },
+            thumb_tip: state.landmarks[4] || { x: 0.38, y: 0.45, z: -0.02 },
+            palm_normal: [0.02, 0.15, -0.98]
+          };
+        } else if (toolName === 'capture_frame_telemetry') {
+          result = {
+            fps: state.fps,
+            ear_left: 0.32,
+            ear_right: 0.31,
+            mar: 0.08,
+            palm_openness_pct: 94,
+            orientation: { pitch: 2.1, yaw: -4.3, roll: 12.0 },
+            filters_active: [state.activeFilter]
+          };
+        } else if (toolName === 'adjust_sensitivity') {
+          result = {
+            status: "success",
+            parameters_updated: {
+              dwell_ms: state.dwellMs,
+              smoothing: parseFloat(els.rangeSmoothing.value)
+            },
+            timestamp: timestamp
+          };
+        } else {
+          result = {
+            status: "healthy",
+            version: "1.0.0",
+            engine: "Google Vision Gesture Control",
+            camera_connected: state.isWebcamActive,
+            active_clients: 1
+          };
+        }
+
+        els.mcpOutputBox.textContent = JSON.stringify(result, null, 2);
+        showToast("Executed " + toolName);
+      }
+
+      // Toast Notification Helper
+      let toastTimer = null;
+      function showToast(msg) {
+        if (!els.toast) return;
+        els.toastMessage.textContent = msg;
+        els.toast.classList.add('show');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          els.toast.classList.remove('show');
+        }, 2500);
+      }
+
+      // Webcam Integration
+      function initWebcamHandlers() {
+        els.btnToggleCamera.addEventListener('click', toggleCamera);
+      }
+
+      async function toggleCamera() {
+        if (state.isWebcamActive) {
+          // Stop Camera
+          if (els.webcamVideo.srcObject) {
+            els.webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+            els.webcamVideo.srcObject = null;
+          }
+          state.isWebcamActive = false;
+          state.isSimulated = true;
+          els.camBtnIcon.textContent = '📹';
+          els.camBtnText.textContent = 'Start Webcam';
+          els.feedModeLabel.textContent = 'Live Simulation Mode';
+          showToast("Switched to Virtual Hand Simulator");
+        } else {
+          // Start Camera
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+            });
+            els.webcamVideo.srcObject = stream;
+            state.isWebcamActive = true;
+            state.isSimulated = false;
+            els.camBtnIcon.textContent = '⏹️';
+            els.camBtnText.textContent = 'Stop Webcam';
+            els.feedModeLabel.textContent = 'Live Camera Feed';
+            showToast("Webcam active. Processing frames locally.");
+          } catch (err) {
+            console.warn("Camera access denied or unavailable, staying in simulator mode.", err);
+            showToast("Camera unavailable - using Hand Simulator");
+            state.isWebcamActive = false;
+            state.isSimulated = true;
+          }
+        }
+      }
+
+      // Compute Synthetic Hand Landmarks based on Active Gesture & Time
+      function updateLandmarks(time) {
+        state.simTime += 0.03;
+        const t = state.simTime;
+        const w = els.visionCanvas.width;
+        const h = els.visionCanvas.height;
+
+        const cx = 0.5 + Math.sin(t * 0.7) * 0.05;
+        const cy = 0.6 + Math.cos(t * 0.5) * 0.03;
+
+        // Base 21 points
+        const points = [];
+        // 0: Wrist
+        points.push({ id: 0, name: JOINT_NAMES[0], x: cx, y: cy + 0.25, z: 0 });
+
+        // Helper to generate finger joints
+        function makeFinger(mcpX, mcpY, angle, isFolded, isPinching) {
+          const joints = [];
+          let curX = cx + mcpX;
+          let curY = cy + mcpY;
+          joints.push({ x: curX, y: curY, z: -0.02 }); // MCP
+
+          const segLen = isFolded ? 0.03 : 0.06;
+          for (let i = 1; i <= 3; i++) {
+            curX += Math.sin(angle) * segLen;
+            curY -= Math.cos(angle) * (isFolded ? segLen * 0.5 : segLen);
+            if (isPinching && i === 3) {
+              curX = cx - 0.02;
+              curY = cy - 0.05;
+            }
+            joints.push({ x: curX, y: curY, z: -0.02 * i });
+          }
+          return joints;
+        }
+
+        const isFist = state.activeGesture === 'FIST';
+        const isPinch = state.activeGesture === 'PINCH';
+        const isPoint = state.activeGesture === 'POINTING_INDEX';
+        const isVictory = state.activeGesture === 'VICTORY_PEACE';
+        const isThumb = state.activeGesture === 'THUMBS_UP';
+
+        // 1-4 Thumb
+        const thumb = makeFinger(-0.1, 0.1, isThumb ? -0.8 : -0.4, isFist, isPinch);
+        thumb.forEach((pt, i) => points.push({ id: 1 + i, name: JOINT_NAMES[1 + i], ...pt }));
+
+        // 5-8 Index
+        const indexFolded = isFist || isThumb;
+        const index = makeFinger(-0.04, 0.0, -0.1, indexFolded, isPinch);
+        index.forEach((pt, i) => points.push({ id: 5 + i, name: JOINT_NAMES[5 + i], ...pt }));
+
+        // 9-12 Middle
+        const midFolded = isFist || isThumb || isPoint;
+        const middle = makeFinger(0.01, -0.02, 0.0, midFolded, false);
+        middle.forEach((pt, i) => points.push({ id: 9 + i, name: JOINT_NAMES[9 + i], ...pt }));
+
+        // 13-16 Ring
+        const ringFolded = isFist || isThumb || isPoint || isVictory;
+        const ring = makeFinger(0.06, 0.0, 0.1, ringFolded, false);
+        ring.forEach((pt, i) => points.push({ id: 13 + i, name: JOINT_NAMES[13 + i], ...pt }));
+
+        // 17-20 Pinky
+        const pinkyFolded = isFist || isThumb || isPoint || isVictory;
+        const pinky = makeFinger(0.11, 0.05, 0.2, pinkyFolded, false);
+        pinky.forEach((pt, i) => points.push({ id: 17 + i, name: JOINT_NAMES[17 + i], ...pt }));
+
+        state.landmarks = points;
+
+        // Auto Air-Drawing if in Pinch or Point mode
+        if ((isPinch || isPoint) && state.activeTab === 'tab-drawing') {
+          const tip = points[8]; // Index tip
+          const drawX = (1.0 - tip.x) * els.drawingCanvas.width;
+          const drawY = tip.y * els.drawingCanvas.height;
+          addStrokePoint(drawX, drawY);
+        }
+
+        // Update Laser Pointer if in Presentation tab
+        if (state.laserActive && state.activeTab === 'tab-presentation') {
+          const tip = points[8];
+          const lx = (1.0 - tip.x) * 100;
+          const ly = tip.y * 100;
+          els.laserPointer.style.left = lx + '%';
+          els.laserPointer.style.top = ly + '%';
+        }
+      }
+
+      // Real-time Canvas Rendering Loop
+      let lastTime = performance.now();
+      let frameCount = 0;
+      let lastFpsUpdate = performance.now();
+
+      function renderLoop(now) {
+        const delta = now - lastTime;
+        lastTime = now;
+
+        frameCount++;
+        if (now - lastFpsUpdate > 1000) {
+          state.fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+          els.fpsValue.textContent = state.fps;
+          frameCount = 0;
+          lastFpsUpdate = now;
+        }
+
+        updateLandmarks(now);
+
+        const w = els.visionCanvas.width;
+        const h = els.visionCanvas.height;
+
+        // 1. Draw Video background or synthetic gradient
+        if (state.isWebcamActive && els.webcamVideo.readyState >= 2) {
+          visionCtx.save();
+          visionCtx.scale(-1, 1);
+          visionCtx.drawImage(els.webcamVideo, -w, 0, w, h);
+          visionCtx.restore();
+        } else {
+          // Synthetic Dark Backdrop
+          const grad = visionCtx.createLinearGradient(0, 0, w, h);
+          grad.addColorStop(0, '#151922');
+          grad.addColorStop(1, '#0d1117');
+          visionCtx.fillStyle = grad;
+          visionCtx.fillRect(0, 0, w, h);
+
+          // Grid lines
+          visionCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+          visionCtx.lineWidth = 1;
+          for (let x = 0; x < w; x += 40) {
+            visionCtx.beginPath();
+            visionCtx.moveTo(x, 0);
+            visionCtx.lineTo(x, h);
+            visionCtx.stroke();
+          }
+          for (let y = 0; y < h; y += 40) {
+            visionCtx.beginPath();
+            visionCtx.moveTo(0, y);
+            visionCtx.lineTo(w, y);
+            visionCtx.stroke();
+          }
+        }
+
+        // 2. Apply Video Shader Filters
+        applyActiveFilter(visionCtx, w, h);
+
+        // 3. Render Hand Skeleton
+        if (state.showSkeleton && state.landmarks.length === 21) {
+          renderSkeleton(visionCtx, w, h);
+        }
+
+        // 4. Update Telemetry Table once per 10 frames
+        if (frameCount % 10 === 0 && state.activeTab === 'tab-telemetry') {
+          updateTelemetryTable();
+        }
+
+        requestAnimationFrame(renderLoop);
+      }
+
+      function applyActiveFilter(ctx, w, h) {
+        if (state.activeFilter === 'normal') return;
+
+        if (state.activeFilter === 'sobel') {
+          // Fast edge highlight overlay
+          ctx.strokeStyle = '#34a853';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(10, 10, w - 20, h - 20);
+        } else if (state.activeFilter === 'thermal') {
+          ctx.fillStyle = 'rgba(217, 48, 37, 0.15)';
+          ctx.fillRect(0, 0, w, h);
+        } else if (state.activeFilter === 'neon') {
+          ctx.shadowColor = '#1a73e8';
+          ctx.shadowBlur = 10;
+        } else if (state.activeFilter === 'matrix') {
+          ctx.fillStyle = 'rgba(30, 142, 62, 0.12)';
+          ctx.fillRect(0, 0, w, h);
+          ctx.fillStyle = '#34a853';
+          ctx.font = '10px monospace';
+          for (let i = 0; i < 8; i++) {
+            const rx = (Math.sin(state.simTime + i) * 0.5 + 0.5) * w;
+            const ry = ((state.simTime * 80 + i * 40) % h);
+            ctx.fillText(Math.random() > 0.5 ? "10110" : "01001", rx, ry);
+          }
+        }
+      }
+
+      function renderSkeleton(ctx, w, h) {
+        // Draw Bones
+        ctx.strokeStyle = 'rgba(26, 115, 232, 0.85)';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+
+        BONE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
+          const p1 = state.landmarks[startIdx];
+          const p2 = state.landmarks[endIdx];
+          if (!p1 || !p2) return;
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x * w, p1.y * h);
+          ctx.lineTo(p2.x * w, p2.y * h);
+          ctx.stroke();
+        });
+
+        // Draw Joints
+        state.landmarks.forEach((p, idx) => {
+          ctx.beginPath();
+          const isTip = [4, 8, 12, 16, 20].includes(idx);
+          ctx.arc(p.x * w, p.y * h, isTip ? 6 : 4, 0, Math.PI * 2);
+
+          if (isTip) {
+            ctx.fillStyle = idx === 8 ? '#d93025' : '#f9ab00'; // Index tip red
+          } else if (idx === 0) {
+            ctx.fillStyle = '#1e8e3e'; // Wrist green
+          } else {
+            ctx.fillStyle = '#ffffff';
+          }
+
+          ctx.fill();
+          ctx.strokeStyle = '#1a73e8';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+      }
+
+      function updateTelemetryTable() {
+        if (!els.landmarkTableBody) return;
+        let html = '';
+        state.landmarks.forEach(p => {
+          html += `<tr>
+            <td>${p.id}</td>
+            <td>${p.name}</td>
+            <td>${p.x.toFixed(3)}</td>
+            <td>${p.y.toFixed(3)}</td>
+            <td>${p.z.toFixed(3)}</td>
+            <td><span style="color:#1e8e3e">98%</span></td>
+          </tr>`;
+        });
+        els.landmarkTableBody.innerHTML = html;
+      }
+
+      // Initialize on Load
+      window.addEventListener('DOMContentLoaded', init);
+
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Touchless Air-Drawing Canvas | Vision Gesture Control</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-container: #e8f0fe;
+      --on-primary-container: #174ea6;
+      --surface: #ffffff;
+      --surface-dim: #f8f9fa;
+      --surface-container: #f1f3f4;
+      --on-surface: #202124;
+      --on-surface-variant: #5f6368;
+      --outline: #dadce0;
+      --google-red: #d93025;
+      --google-green: #1e8e3e;
+      --google-yellow: #f9ab00;
+      --google-purple: #9334e6;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--surface-dim);
+      color: var(--on-surface);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .brand span { color: var(--primary); }
+
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 16px;
+      padding: 16px;
+      height: calc(100vh - 60px);
+    }
+
+    .canvas-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: 100%;
+    }
+
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 12px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(60,64,67,0.1);
+    }
+
+    .swatches {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s;
+    }
+
+    .swatch.active {
+      border-color: #202124;
+      transform: scale(1.2);
+    }
+
+    .brush-sizes {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--outline);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover { background: var(--surface-container); }
+    .btn-primary { background: var(--primary); color: #fff; border: none; }
+    .btn-primary:hover { background: #1765cc; }
+    .btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .canvas-viewport {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--outline);
+      box-shadow: 0 2px 6px rgba(60,64,67,0.1);
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    canvas#paintCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Sidebar */
+    aside.side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel-card h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .camera-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #111418;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    video#webcam {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    canvas#hudOverlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hud-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(26, 115, 232, 0.9);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 9999px;
+    }
+
+    .sim-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span>🎨</span> Touchless Air-Drawing Canvas
+    </div>
+    <div style="font-size: 0.875rem; color: var(--on-surface-variant);">
+      Pinch Index & Thumb in the air to paint • Open Palm to erase
+    </div>
+  </header>
+
+  <main>
+    <section class="canvas-section">
+      <div class="toolbar">
+        <div class="swatches">
+          <div class="swatch active" data-color="#1a73e8" style="background: #1a73e8;" title="Blue"></div>
+          <div class="swatch" data-color="#d93025" style="background: #d93025;" title="Red"></div>
+          <div class="swatch" data-color="#f9ab00" style="background: #f9ab00;" title="Yellow"></div>
+          <div class="swatch" data-color="#1e8e3e" style="background: #1e8e3e;" title="Green"></div>
+          <div class="swatch" data-color="#9334e6" style="background: #9334e6;" title="Purple"></div>
+          <div class="swatch" data-color="#202124" style="background: #202124;" title="Black"></div>
+        </div>
+
+        <div class="brush-sizes">
+          <button class="btn active" data-brush="4">Fine</button>
+          <button class="btn" data-brush="8">Medium</button>
+          <button class="btn" data-brush="16">Broad</button>
+          <button class="btn" data-brush="28">Chisel</button>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button class="btn" id="btnUndo">↩ Undo</button>
+          <button class="btn" id="btnClear" style="color: var(--google-red);">🗑️ Clear</button>
+          <button class="btn btn-primary" id="btnSave">💾 Export PNG</button>
+        </div>
+      </div>
+
+      <div class="canvas-viewport" id="canvasContainer">
+        <canvas id="paintCanvas" width="1280" height="720"></canvas>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+      <div class="panel-card">
+        <h2>
+          <span>Live Video & Tracking</span>
+          <span style="font-size: 0.75rem; color: var(--primary);" id="trackingMode">Simulator</span>
+        </h2>
+        <div class="camera-box">
+          <video id="webcam" autoplay playsinline muted></video>
+          <canvas id="hudOverlay" width="320" height="240"></canvas>
+          <div class="hud-badge" id="hudBadge">👋 OPEN_PALM</div>
+        </div>
+        <button class="btn btn-primary" id="btnCamToggle">📹 Start Webcam</button>
+      </div>
+
+      <div class="panel-card">
+        <h2><span>Gesture Simulator</span></h2>
+        <div class="sim-controls">
+          <button class="btn active" id="simPalm">👋 Palm (Hover)</button>
+          <button class="btn" id="simPinch">🤏 Pinch (Draw)</button>
+          <button class="btn" id="simPoint">☝️ Point (Fine)</button>
+          <button class="btn" id="simClear">🧹 Palm Clear</button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2><span>Gesture Instructions</span></h2>
+        <ul style="font-size: 0.8125rem; color: var(--on-surface-variant); padding-left: 18px; line-height: 1.6;">
+          <li><strong>Pinch Gesture</strong>: Touch thumb and index finger tips together to draw strokes.</li>
+          <li><strong>Open Palm</strong>: Hover hand over the screen to move pointer without drawing.</li>
+          <li><strong>Canvas Reset</strong>: Hold wide open palm steady for 2 seconds to wipe canvas.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+      const paintCanvas = document.getElementById('paintCanvas');
+      const paintCtx = paintCanvas.getContext('2d');
+      const hudCanvas = document.getElementById('hudOverlay');
+      const hudCtx = hudCanvas.getContext('2d');
+      const hudBadge = document.getElementById('hudBadge');
+      const webcam = document.getElementById('webcam');
+      const btnCam = document.getElementById('btnCamToggle');
+
+      let color = '#1a73e8';
+      let brushSize = 4;
+      let isDrawing = false;
+      let isWebcam = false;
+      let strokes = [];
+      let currentStroke = null;
+
+      // Color selection
+      document.querySelectorAll('.swatch').forEach(s => {
+        s.addEventListener('click', () => {
+          document.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
+          s.classList.add('active');
+          color = s.dataset.color;
+        });
+      });
+
+      // Brush sizes
+      document.querySelectorAll('[data-brush]').forEach(b => {
+        b.addEventListener('click', () => {
+          document.querySelectorAll('[data-brush]').forEach(el => el.classList.remove('active'));
+          b.classList.add('active');
+          brushSize = parseInt(b.dataset.brush, 10);
+        });
+      });
+
+      // Clear & Undo & Save
+      document.getElementById('btnClear').addEventListener('click', clearCanvas);
+      document.getElementById('btnUndo').addEventListener('click', () => {
+        if (strokes.length > 0) {
+          strokes.pop();
+          redraw();
+        }
+      });
+      document.getElementById('btnSave').addEventListener('click', () => {
+        const a = document.createElement('a');
+        a.download = 'air-drawing.png';
+        a.href = paintCanvas.toDataURL();
+        a.click();
+      });
+
+      function clearCanvas() {
+        paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+        strokes = [];
+      }
+
+      function redraw() {
+        paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+        strokes.forEach(st => {
+          if (st.points.length < 2) return;
+          paintCtx.beginPath();
+          paintCtx.strokeStyle = st.color;
+          paintCtx.lineWidth = st.size;
+          paintCtx.lineCap = 'round';
+          paintCtx.lineJoin = 'round';
+          paintCtx.moveTo(st.points[0].x, st.points[0].y);
+          for (let i = 1; i < st.points.length; i++) {
+            paintCtx.lineTo(st.points[i].x, st.points[i].y);
+          }
+          paintCtx.stroke();
+        });
+      }
+
+      // Mouse drawing
+      let isMouseDown = false;
+      paintCanvas.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        const pt = getPos(e);
+        currentStroke = { color, size: brushSize, points: [pt] };
+        paintCtx.beginPath();
+        paintCtx.strokeStyle = color;
+        paintCtx.lineWidth = brushSize;
+        paintCtx.lineCap = 'round';
+        paintCtx.moveTo(pt.x, pt.y);
+      });
+
+      paintCanvas.addEventListener('mousemove', (e) => {
+        if (!isMouseDown && !isDrawing) return;
+        const pt = getPos(e);
+        if (!currentStroke) {
+          currentStroke = { color, size: brushSize, points: [pt] };
+          paintCtx.beginPath();
+          paintCtx.moveTo(pt.x, pt.y);
+        } else {
+          currentStroke.points.push(pt);
+          paintCtx.lineTo(pt.x, pt.y);
+          paintCtx.stroke();
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isMouseDown) {
+          isMouseDown = false;
+          if (currentStroke) strokes.push(currentStroke);
+          currentStroke = null;
+        }
+      });
+
+      function getPos(e) {
+        const rect = paintCanvas.getBoundingClientRect();
+        return {
+          x: (e.clientX - rect.left) * (paintCanvas.width / rect.width),
+          y: (e.clientY - rect.top) * (paintCanvas.height / rect.height)
+        };
+      }
+
+      // Simulation buttons
+      const simBtns = [document.getElementById('simPalm'), document.getElementById('simPinch'), document.getElementById('simPoint')];
+      function setSimBtn(active) {
+        simBtns.forEach(b => b.classList.remove('active'));
+        if (active) active.classList.add('active');
+      }
+
+      document.getElementById('simPalm').addEventListener('click', () => {
+        setSimBtn(document.getElementById('simPalm'));
+        isDrawing = false;
+        hudBadge.textContent = "👋 OPEN_PALM";
+        if (currentStroke) { strokes.push(currentStroke); currentStroke = null; }
+      });
+
+      document.getElementById('simPinch').addEventListener('click', () => {
+        setSimBtn(document.getElementById('simPinch'));
+        isDrawing = true;
+        hudBadge.textContent = "🤏 PINCH (DRAW)";
+      });
+
+      document.getElementById('simPoint').addEventListener('click', () => {
+        setSimBtn(document.getElementById('simPoint'));
+        isDrawing = true;
+        hudBadge.textContent = "☝️ POINT (DRAW)";
+      });
+
+      document.getElementById('simClear').addEventListener('click', () => {
+        hudBadge.textContent = "🧹 PALM_CLEAR";
+        clearCanvas();
+      });
+
+      // Webcam Toggle
+      btnCam.addEventListener('click', async () => {
+        if (isWebcam) {
+          if (webcam.srcObject) {
+            webcam.srcObject.getTracks().forEach(t => t.stop());
+            webcam.srcObject = null;
+          }
+          isWebcam = false;
+          btnCam.textContent = "📹 Start Webcam";
+          document.getElementById('trackingMode').textContent = "Simulator";
+        } else {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            webcam.srcObject = stream;
+            isWebcam = true;
+            btnCam.textContent = "⏹️ Stop Webcam";
+            document.getElementById('trackingMode').textContent = "Camera Live";
+          } catch (err) {
+            alert("Camera not accessible, continuing in simulation mode.");
+          }
+        }
+      });
+
+      // Synthetic Hand Animation on HUD
+      let simT = 0;
+      function renderHud() {
+        simT += 0.04;
+        hudCtx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
+        if (!isWebcam) {
+          hudCtx.fillStyle = '#151922';
+          hudCtx.fillRect(0, 0, hudCanvas.width, hudCanvas.height);
+
+          const cx = hudCanvas.width * 0.5 + Math.sin(simT * 0.8) * 20;
+          const cy = hudCanvas.height * 0.5 + Math.cos(simT * 0.6) * 15;
+
+          hudCtx.strokeStyle = isDrawing ? '#d93025' : '#1a73e8';
+          hudCtx.lineWidth = 2.5;
+
+          // Palm
+          hudCtx.beginPath();
+          hudCtx.arc(cx, cy, 25, 0, Math.PI * 2);
+          hudCtx.stroke();
+
+          // Fingers
+          for (let i = -2; i <= 2; i++) {
+            hudCtx.beginPath();
+            hudCtx.moveTo(cx + i * 8, cy - 15);
+            hudCtx.lineTo(cx + i * 12, cy - 40);
+            hudCtx.stroke();
+          }
+
+          if (isDrawing) {
+            // Draw simulated line on canvas
+            const canvasX = (cx / hudCanvas.width) * paintCanvas.width;
+            const canvasY = (cy / hudCanvas.height) * paintCanvas.height;
+            if (!currentStroke) {
+              currentStroke = { color, size: brushSize, points: [{ x: canvasX, y: canvasY }] };
+              paintCtx.beginPath();
+              paintCtx.strokeStyle = color;
+              paintCtx.lineWidth = brushSize;
+              paintCtx.moveTo(canvasX, canvasY);
+            } else {
+              currentStroke.points.push({ x: canvasX, y: canvasY });
+              paintCtx.lineTo(canvasX, canvasY);
+              paintCtx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(renderHud);
+      }
+      renderHud();
+
+    })();
+  </script>
+</body>
+</html>

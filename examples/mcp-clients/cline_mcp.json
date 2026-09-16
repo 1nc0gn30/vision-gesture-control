@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "vision-gesture-control": {
+      "command": "python",
+      "args": [
+        "-m",
+        "vision_gesture_control.mcp"
+      ],
+      "env": {
+        "GESTURE_DETECTION_CONFIDENCE": "0.75",
+        "GESTURE_SMOOTHING_FACTOR": "0.6",
+        "CAMERA_INDEX": "0"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "get_active_gesture",
+        "get_hand_landmarks",
+        "capture_frame_telemetry"
+      ]
+    }
+  }
+}

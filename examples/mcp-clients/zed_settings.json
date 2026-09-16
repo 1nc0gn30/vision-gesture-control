@@ -1,0 +1,18 @@
+{
+  "context_servers": {
+    "vision-gesture-control": {
+      "command": {
+        "path": "python",
+        "args": [
+          "-m",
+          "vision_gesture_control.mcp"
+        ],
+        "env": {
+          "GESTURE_DETECTION_CONFIDENCE": "0.75",
+          "GESTURE_SMOOTHING_FACTOR": "0.6",
+          "CAMERA_INDEX": "0"
+        }
+      }
+    }
+  }
+}

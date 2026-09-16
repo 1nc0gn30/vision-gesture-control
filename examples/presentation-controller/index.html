@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Touchless Presentation Controller | Vision Gesture Control</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-container: #e8f0fe;
+      --on-primary-container: #174ea6;
+      --surface: #ffffff;
+      --surface-dim: #f8f9fa;
+      --surface-container: #f1f3f4;
+      --on-surface: #202124;
+      --on-surface-variant: #5f6368;
+      --outline: #dadce0;
+      --google-red: #d93025;
+      --google-green: #1e8e3e;
+      --google-yellow: #f9ab00;
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-stack);
+      background: var(--surface-dim);
+      color: var(--on-surface);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--outline);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .brand span { color: var(--primary); }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    .timer-badge {
+      font-family: monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-container);
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      padding: 20px;
+      height: calc(100vh - 65px);
+    }
+
+    .deck-container {
+      position: relative;
+      background: #000000;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      transform: scale(0.98);
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .slide-badge {
+      align-self: flex-start;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      padding: 4px 12px;
+      border-radius: 9999px;
+    }
+
+    .slide h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 16px 0 8px 0;
+      color: var(--on-surface);
+    }
+
+    .slide p.subtitle {
+      font-size: 1.2rem;
+      color: var(--on-surface-variant);
+      margin-bottom: 24px;
+    }
+
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      flex: 1;
+      align-content: center;
+    }
+
+    .card {
+      background: var(--surface-dim);
+      border: 1px solid var(--outline);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--primary-container);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .card h3 { font-size: 1.05rem; }
+    .card p { font-size: 0.9rem; color: var(--on-surface-variant); line-height: 1.4; }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--outline);
+      padding-top: 16px;
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Laser Pointer */
+    #laserDot {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: var(--google-red);
+      border-radius: 50%;
+      box-shadow: 0 0 14px 4px rgba(217, 48, 37, 0.9);
+      pointer-events: none;
+      z-index: 100;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    /* Sidebar HUD */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .side-card {
+      background: var(--surface);
+      border: 1px solid var(--outline);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-card h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .camera-feed-box {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #1e1e1e;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    video#cameraVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    canvas#hudCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .gesture-pill {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 9999px;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--outline);
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+
+    .btn:hover { background: var(--surface-container); }
+    .btn-primary { background: var(--primary); color: #fff; border: none; }
+    .btn-primary:hover { background: #1765cc; }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .notes-box {
+      font-size: 0.85rem;
+      color: var(--on-surface-variant);
+      line-height: 1.5;
+      background: var(--surface-dim);
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span>📑</span> Touchless Presentation Controller
+    </div>
+    <div class="header-center">
+      <span>Session Timer:</span>
+      <span class="timer-badge" id="sessionTimer">00:00</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn" id="btnLaserToggle">🔴 Laser Pointer</button>
+      <button class="btn btn-primary" id="btnFullscreen">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Slides Viewport -->
+    <div class="deck-container" id="deckContainer">
+      <div id="laserDot"></div>
+
+      <!-- Slide 1 -->
+      <div class="slide active" data-slide="1">
+        <div class="slide-badge">Slide 1 / 4</div>
+        <div>
+          <h1>Touchless Computer Vision Control</h1>
+          <p class="subtitle">Next-generation human-computer interaction powered by 21 hand landmarks and local-first privacy.</p>
+        </div>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icon">👋</div>
+            <h3>Hand Navigation</h3>
+            <p>Swipe hand right to advance slides. Swipe left to navigate backward.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔴</div>
+            <h3>Laser Tracking</h3>
+            <p>Point index finger forward to project high-precision laser dot on screen.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">✊</div>
+            <h3>Deck Reset</h3>
+            <p>Clench fist to return instantly to title slide from anywhere.</p>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Vision Gesture Control v1.0.0</span>
+          <span>Use gestures, buttons, or Arrow keys</span>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide" data-slide="2">
+        <div class="slide-badge">Slide 2 / 4</div>
+        <div>
+          <h1>Sub-15ms Latency Architecture</h1>
+          <p class="subtitle">High throughput landmark extraction and predictive temporal filtering.</p>
+        </div>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icon">⚡</div>
+            <h3>OneEuro Filter</h3>
+            <p>Adaptive low-pass smoothing minimizes jitter while maintaining immediate responsiveness.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔒</div>
+            <h3>Zero Cloud</h3>
+            <p>100% in-memory computation. Camera frames never touch persistent disk or cloud servers.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">📐</div>
+            <h3>Vector Geometry</h3>
+            <p>Trigonometric analysis across 21 joint coordinates with continuous spatial heuristics.</p>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Vision Gesture Control v1.0.0</span>
+          <span>Slide 2 of 4</span>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide" data-slide="3">
+        <div class="slide-badge">Slide 3 / 4</div>
+        <div>
+          <h1>Model Context Protocol (MCP)</h1>
+          <p class="subtitle">Universal bridge connecting Vision Gesture Control to Claude, Cursor, Cline, and Zed.</p>
+        </div>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icon">🤖</div>
+            <h3>Agent Tools</h3>
+            <p>Provides standardized tools for gesture polling, key events, and telemetry streaming.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">📡</div>
+            <h3>Stdio / SSE</h3>
+            <p>High-speed inter-process communication ready for seamless zero-latency agent loops.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">✨</div>
+            <h3>Automated Workflows</h3>
+            <p>Enable AI copilots to react to user hand movements and posture in real-time.</p>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Vision Gesture Control v1.0.0</span>
+          <span>Slide 3 of 4</span>
+        </div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide" data-slide="4">
+        <div class="slide-badge">Slide 4 / 4</div>
+        <div>
+          <h1>Production Ready & Extensible</h1>
+          <p class="subtitle">Tested across Linux, macOS, and Windows with comprehensive test coverage.</p>
+        </div>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icon">🧪</div>
+            <h3>15 Matrix Jobs</h3>
+            <p>Continuous integration matrix covering Python 3.9 through 3.13.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🎨</div>
+            <h3>Material 3 UI</h3>
+            <p>Clean Google design system with offline system typography.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🚀</div>
+            <h3>Open Ecosystem</h3>
+            <p>Extensible Python plugin architecture for custom gesture recognizers.</p>
+          </div>
+        </div>
+        <div class="slide-footer">
+          <span>Vision Gesture Control v1.0.0</span>
+          <span>Thank you! Questions?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Diagnostics & Controls -->
+    <aside class="sidebar">
+      <div class="side-card">
+        <h2>
+          <span>Live Vision Feed</span>
+          <span style="font-size:0.75rem; color:var(--primary);" id="visionStatus">Simulator</span>
+        </h2>
+        <div class="camera-feed-box">
+          <video id="cameraVideo" autoplay playsinline muted></video>
+          <canvas id="hudCanvas" width="320" height="240"></canvas>
+          <div class="gesture-pill" id="hudGesturePill">👋 OPEN_PALM</div>
+        </div>
+        <button class="btn btn-primary" id="btnToggleCam">📹 Start Webcam</button>
+      </div>
+
+      <div class="side-card">
+        <h2><span>Gesture Simulator</span></h2>
+        <div class="sim-grid">
+          <button class="btn" id="simPrev">👈 Swipe Left</button>
+          <button class="btn" id="simNext">👉 Swipe Right</button>
+          <button class="btn" id="simPoint">☝️ Point Laser</button>
+          <button class="btn" id="simFist">✊ Fist Reset</button>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h2><span>Speaker Notes</span></h2>
+        <div class="notes-box" id="speakerNotes">
+          Slide 1: Introduce the Touchless Presentation Controller. Demonstrate gesture swiping to the audience.
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+      let currentSlide = 1;
+      const totalSlides = 4;
+      let laserActive = false;
+      let isWebcam = false;
+
+      const slides = document.querySelectorAll('.slide');
+      const laserDot = document.getElementById('laserDot');
+      const deck = document.getElementById('deckContainer');
+      const notes = document.getElementById('speakerNotes');
+      const timerEl = document.getElementById('sessionTimer');
+      const hudPill = document.getElementById('hudGesturePill');
+      const hudCanvas = document.getElementById('hudCanvas');
+      const hudCtx = hudCanvas.getContext('2d');
+      const video = document.getElementById('cameraVideo');
+
+      const notesMap = {
+        1: "Slide 1: Introduce the Touchless Presentation Controller. Demonstrate gesture swiping to the audience.",
+        2: "Slide 2: Emphasize sub-15ms latency, local-first privacy, and mathematical OneEuro filter smoothing.",
+        3: "Slide 3: Explain the Model Context Protocol (MCP) server architecture and multi-client integration.",
+        4: "Slide 4: Summarize cross-platform CI matrix testing and wrap up for Q&A."
+      };
+
+      // Timer
+      let seconds = 0;
+      setInterval(() => {
+        seconds++;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        timerEl.textContent = `${m}:${s}`;
+      }, 1000);
+
+      function showSlide(n) {
+        if (n < 1 || n > totalSlides) return;
+        currentSlide = n;
+        slides.forEach(s => {
+          s.classList.remove('active');
+          if (parseInt(s.dataset.slide, 10) === n) {
+            s.classList.add('active');
+          }
+        });
+        notes.textContent = notesMap[n] || "";
+      }
+
+      function next() { if (currentSlide < totalSlides) showSlide(currentSlide + 1); }
+      function prev() { if (currentSlide > 1) showSlide(currentSlide - 1); }
+
+      document.getElementById('simNext').addEventListener('click', () => {
+        hudPill.textContent = "👉 SWIPE_RIGHT";
+        next();
+      });
+
+      document.getElementById('simPrev').addEventListener('click', () => {
+        hudPill.textContent = "👈 SWIPE_LEFT";
+        prev();
+      });
+
+      document.getElementById('simPoint').addEventListener('click', () => {
+        laserActive = !laserActive;
+        laserDot.style.display = laserActive ? 'block' : 'none';
+        hudPill.textContent = laserActive ? "☝️ POINTING" : "👋 OPEN_PALM";
+      });
+
+      document.getElementById('simFist').addEventListener('click', () => {
+        hudPill.textContent = "✊ FIST";
+        showSlide(1);
+      });
+
+      document.getElementById('btnLaserToggle').addEventListener('click', () => {
+        laserActive = !laserActive;
+        laserDot.style.display = laserActive ? 'block' : 'none';
+      });
+
+      document.getElementById('btnFullscreen').addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          deck.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen();
+        }
+      });
+
+      deck.addEventListener('mousemove', (e) => {
+        if (!laserActive) return;
+        const rect = deck.getBoundingClientRect();
+        laserDot.style.left = (e.clientX - rect.left) + 'px';
+        laserDot.style.top = (e.clientY - rect.top) + 'px';
+      });
+
+      // Keyboard Controls
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') next();
+        if (e.key === 'ArrowLeft') prev();
+        if (e.key === 'l' || e.key === 'L') {
+          laserActive = !laserActive;
+          laserDot.style.display = laserActive ? 'block' : 'none';
+        }
+        if (e.key === 'f' || e.key === 'F') {
+          if (!document.fullscreenElement) deck.requestFullscreen().catch(() => {});
+          else document.exitFullscreen();
+        }
+      });
+
+      // Camera toggle
+      const btnCam = document.getElementById('btnToggleCam');
+      btnCam.addEventListener('click', async () => {
+        if (isWebcam) {
+          if (video.srcObject) {
+            video.srcObject.getTracks().forEach(t => t.stop());
+            video.srcObject = null;
+          }
+          isWebcam = false;
+          btnCam.textContent = "📹 Start Webcam";
+          document.getElementById('visionStatus').textContent = "Simulator";
+        } else {
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            isWebcam = true;
+            btnCam.textContent = "⏹️ Stop Webcam";
+            document.getElementById('visionStatus').textContent = "Camera Live";
+          } catch (err) {
+            alert("Camera unavailable. Using simulation mode.");
+          }
+        }
+      });
+
+      // HUD Canvas Render Loop
+      let t = 0;
+      function renderHud() {
+        t += 0.05;
+        hudCtx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
+        if (!isWebcam) {
+          hudCtx.fillStyle = '#1e2430';
+          hudCtx.fillRect(0, 0, hudCanvas.width, hudCanvas.height);
+
+          // Render simulated hand
+          const cx = hudCanvas.width * 0.5 + Math.sin(t) * 15;
+          const cy = hudCanvas.height * 0.55 + Math.cos(t) * 8;
+
+          hudCtx.strokeStyle = '#1a73e8';
+          hudCtx.lineWidth = 2;
+          hudCtx.beginPath();
+          hudCtx.arc(cx, cy, 30, 0, Math.PI * 2);
+          hudCtx.stroke();
+
+          // Fingers
+          for (let i = -2; i <= 2; i++) {
+            hudCtx.beginPath();
+            hudCtx.moveTo(cx + i * 10, cy - 20);
+            hudCtx.lineTo(cx + i * 14, cy - 50);
+            hudCtx.stroke();
+          }
+        }
+        requestAnimationFrame(renderHud);
+      }
+      renderHud();
+
+    })();
+  </script>
+</body>
+</html>
