@@ -503,75 +503,79 @@
       }
     }
 
-    // 3. Render Drawn Filter Portals (strictly on #playgroundCanvas)
-    if (state.drawnPortals && state.drawnPortals.length > 0) {
-      state.drawnPortals.forEach(portal => {
-        if (!portal.points || portal.points.length < 3) return;
-        ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(portal.points[0].x, portal.points[0].y);
-        for (let i = 1; i < portal.points.length; i++) {
-          ctx.lineTo(portal.points[i].x, portal.points[i].y);
-        }
-        ctx.closePath();
-        ctx.clip();
-        if (typeof renderShaderFilter === 'function') {
-          renderShaderFilter(ctx, portal.filter || state.activeFilter, 0, 0, w, h, now);
-        }
-        ctx.restore();
+    // 3. Mode-Specific Passes (strictly isolated so each mode only renders its own content)
+    if (state.activePgMode === 'drawn_portal') {
+      // 3a. Render Drawn Filter Portals
+      if (state.drawnPortals && state.drawnPortals.length > 0) {
+        state.drawnPortals.forEach(portal => {
+          if (!portal.points || portal.points.length < 3) return;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(portal.points[0].x, portal.points[0].y);
+          for (let i = 1; i < portal.points.length; i++) {
+            ctx.lineTo(portal.points[i].x, portal.points[i].y);
+          }
+          ctx.closePath();
+          ctx.clip();
+          if (typeof renderShaderFilter === 'function') {
+            renderShaderFilter(ctx, portal.filter || state.activeFilter, 0, 0, w, h, now);
+          }
+          ctx.restore();
 
+          ctx.save();
+          ctx.strokeStyle = portal.color || '#00f0ff';
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = portal.color || '#00f0ff';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.moveTo(portal.points[0].x, portal.points[0].y);
+          for (let i = 1; i < portal.points.length; i++) {
+            ctx.lineTo(portal.points[i].x, portal.points[i].y);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          ctx.restore();
+        });
+      }
+
+      // Render active drawing stroke
+      if (state.currentStrokePoints && state.currentStrokePoints.length > 1) {
         ctx.save();
-        ctx.strokeStyle = portal.color || '#00f0ff';
-        ctx.lineWidth = 2.5;
-        ctx.shadowColor = portal.color || '#00f0ff';
-        ctx.shadowBlur = 10;
+        ctx.strokeStyle = '#34a853';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 3]);
         ctx.beginPath();
-        ctx.moveTo(portal.points[0].x, portal.points[0].y);
-        for (let i = 1; i < portal.points.length; i++) {
-          ctx.lineTo(portal.points[i].x, portal.points[i].y);
+        ctx.moveTo(state.currentStrokePoints[0].x, state.currentStrokePoints[0].y);
+        for (let i = 1; i < state.currentStrokePoints.length; i++) {
+          ctx.lineTo(state.currentStrokePoints[i].x, state.currentStrokePoints[i].y);
         }
-        ctx.closePath();
         ctx.stroke();
         ctx.restore();
-      });
-    }
-
-    // Render active drawing stroke
-    if (state.currentStrokePoints && state.currentStrokePoints.length > 1) {
-      ctx.save();
-      ctx.strokeStyle = '#34a853';
-      ctx.lineWidth = 3;
-      ctx.setLineDash([6, 3]);
-      ctx.beginPath();
-      ctx.moveTo(state.currentStrokePoints[0].x, state.currentStrokePoints[0].y);
-      for (let i = 1; i < state.currentStrokePoints.length; i++) {
-        ctx.lineTo(state.currentStrokePoints[i].x, state.currentStrokePoints[i].y);
       }
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    // 4. Render Dual-Hand Filter Lens (mode dual_lens or persistent sticky lens)
-    if (state.activePgMode === 'dual_lens' || (lensState.active && state.dualHandRoi && state.dualHandRoi.active)) {
+    } else if (state.activePgMode === 'dual_lens') {
+      // 3b. Render Dual-Hand Filter Lens (strictly only in dual_lens mode!)
       renderLens(ctx, w, h, now);
-    }
-
-    // 5. Mode-Specific Overlays (Theremin, Physics, Air Drums, Gesture Wheel)
-    if (state.activePgMode === 'theremin' && typeof window.renderThereminVisualizer === 'function') {
-      window.renderThereminVisualizer(ctx, w, h, now);
-    } else if (state.activePgMode === 'physics' && typeof window.renderPhysicsObjects === 'function') {
+      if (lensState.active && Math.random() < 0.4 && typeof window.spawnFingertipSpark === 'function') {
+        window.spawnFingertipSpark(lensState.x + Math.random() * lensState.w, lensState.y, '#00f0ff');
+        window.spawnFingertipSpark(lensState.x + Math.random() * lensState.w, lensState.y + lensState.h, '#fbbc04');
+      }
+    } else if (state.activePgMode === 'theremin') {
+      // 3c. Render Spatial Audio Beat & Loop Studio
+      if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.renderStage === 'function') {
+        window.VisionApp.tools.spatialAudio.renderStage(ctx, w, h, now);
+      } else if (typeof window.renderThereminVisualizer === 'function') {
+        window.renderThereminVisualizer(ctx, w, h, now);
+      }
+    } else if (state.activePgMode === 'physics') {
+      // 3d. Render 3D Physics objects
       if (typeof window.updatePhysicsSandbox === 'function') window.updatePhysicsSandbox(0.016, w, h);
-      window.renderPhysicsObjects(ctx, w, h);
-    } else if (state.activePgMode === 'air_drums' && typeof window.updateAndRenderAirDrums === 'function') {
-      window.updateAndRenderAirDrums(ctx, w, h, now);
-    } else if (state.activePgMode === 'gesture_wheel' && typeof window.renderGestureWheelOverlay === 'function') {
-      window.renderGestureWheelOverlay(ctx, w, h, now);
-    }
-
-    // 6. Kinetic Particle Sparks
-    if (lensState.active && Math.random() < 0.4 && typeof window.spawnFingertipSpark === 'function') {
-      window.spawnFingertipSpark(lensState.x + Math.random() * lensState.w, lensState.y, '#00f0ff');
-      window.spawnFingertipSpark(lensState.x + Math.random() * lensState.w, lensState.y + lensState.h, '#fbbc04');
+      if (typeof window.renderPhysicsObjects === 'function') window.renderPhysicsObjects(ctx, w, h);
+    } else if (state.activePgMode === 'air_drums') {
+      // 3e. Render Air Drums
+      if (typeof window.updateAndRenderAirDrums === 'function') window.updateAndRenderAirDrums(ctx, w, h, now);
+    } else if (state.activePgMode === 'gesture_wheel') {
+      // 3f. Render Gesture Wheel
+      if (typeof window.renderGestureWheelOverlay === 'function') window.renderGestureWheelOverlay(ctx, w, h, now);
     }
     if (typeof window.updateAndRenderParticles === 'function') {
       window.updateAndRenderParticles(ctx, w, h, now);

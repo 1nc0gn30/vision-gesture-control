@@ -513,4 +513,113 @@ class TestPlaygroundLensToolExtension:
         assert "PLAYGROUND_LENS_SUCCESS" in res.stdout
 
 
+class TestSpatialAudioToolExtension:
+    """Test suite for public/js/tool-spatial-audio.js Spatial Audio & Hip-Hop Loop Studio."""
+
+    @pytest.fixture
+    def script_content(self) -> str:
+        script_path = REPO_ROOT / "public" / "js" / "tool-spatial-audio.js"
+        assert script_path.exists(), f"File {script_path} does not exist"
+        content = script_path.read_text(encoding="utf-8")
+        assert len(content) > 1000, "public/js/tool-spatial-audio.js is unexpectedly small"
+        return content
+
+    def test_script_syntax_with_node(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-spatial-audio.js"
+        cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        assert res.returncode == 0, f"Node syntax error in tool-spatial-audio.js: {res.stderr}"
+
+    def test_preset_counts_41_total(self, script_content: str):
+        # 8 Beat Loops + 12 Synths & Basses + 12 Vocal Chops + 9 Solfeggio Tones = 41 total presets
+        assert "8 Continuous Hip-Hop" in script_content or "8 continuous" in script_content.lower()
+        assert "12 Hip-Hop Synth" in script_content or "12 synths" in script_content.lower()
+        assert "12 Expressive Vocal" in script_content or "12 vocal" in script_content.lower()
+        assert "9 Sacred Solfeggio" in script_content or "9 solfeggio" in script_content.lower()
+
+    def test_loop_genres_and_patterns(self, script_content: str):
+        loops = [
+            "loop_boombap",
+            "loop_trap808",
+            "loop_lofi",
+            "loop_phonk",
+            "loop_gfunk",
+            "loop_drill",
+            "loop_neosoul",
+            "loop_darksynth"
+        ]
+        for loop_id in loops:
+            assert loop_id in script_content, f"Missing loop preset {loop_id}"
+
+    def test_gesture_triggers_and_spatial_controls(self, script_content: str):
+        assert "VICTORY_PEACE" in script_content
+        assert "ROCK_ON" in script_content
+        assert "THUMBS_UP" in script_content
+        assert "THUMBS_DOWN" in script_content
+        assert "SHAKA" in script_content
+        assert "PINCH" in script_content
+        assert "FIST" in script_content
+        assert "setHandModulation" in script_content
+        assert "processHands" in script_content
+        assert "handleCanvasClick" in script_content
+
+    def test_node_execution_interface(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-spatial-audio.js"
+        node_code = f"""
+        const tool = require('{script_path}');
+        if (tool.name !== 'spatialAudio') process.exit(1);
+
+        // Verify exact preset counts
+        const loopCount = tool.LOOPS.length;
+        const synthCount = tool.SYNTHS.length;
+        const vocalCount = tool.VOCALS.length;
+        const toneCount = tool.SOLFEGGIO_TONES.length;
+        const total = loopCount + synthCount + vocalCount + toneCount;
+
+        if (loopCount !== 8) process.exit(2);
+        if (synthCount !== 12) process.exit(3);
+        if (vocalCount !== 12) process.exit(4);
+        if (toneCount !== 9) process.exit(5);
+        if (total !== 41) process.exit(6);
+
+        // Verify loop toggle functionality
+        const loopId = tool.LOOPS[0].id;
+        const wasActive = tool.toggleLoop(loopId);
+        if (!wasActive) process.exit(7);
+        if (!tool.state.activeLoops.has(loopId)) process.exit(8);
+        const wasDeactivated = tool.toggleLoop(loopId);
+        if (wasDeactivated) process.exit(9);
+        if (tool.state.activeLoops.has(loopId)) process.exit(10);
+
+        // Verify stopAll clears active loops
+        tool.toggleLoop(loopId);
+        tool.stopAll();
+        if (tool.state.activeLoops.size !== 0) process.exit(11);
+
+        // Verify click handler bounds
+        const clickHandled = tool.handleCanvasClick(50, 40, 800, 520);
+        if (typeof clickHandled !== 'boolean') process.exit(12);
+        tool.stopAll();
+
+        console.log('SPATIAL_AUDIO_SUCCESS');
+        process.exit(0);
+        """
+        res = subprocess.run(["node", "-e", node_code], capture_output=True, text=True, timeout=5)
+        assert res.returncode == 0, f"Node execution test failed: {res.stderr}"
+        assert "SPATIAL_AUDIO_SUCCESS" in res.stdout
+
+    def test_index_html_integration_and_isolation(self):
+        index_path = REPO_ROOT / "public" / "index.html"
+        assert index_path.exists()
+        content = index_path.read_text(encoding="utf-8")
+        assert 'src="js/tool-spatial-audio.js"' in content
+        assert 'data-pgmode="theremin">🎵 Spatial Audio & Loops' in content
+        assert "VisionApp.tools.spatialAudio.stopAll()" in content
+        assert "VisionApp.tools.spatialAudio.processHands" in content
+        assert "VisionApp.tools.spatialAudio.handleCanvasClick" in content
+
+
+
 

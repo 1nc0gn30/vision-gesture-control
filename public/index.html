@@ -2039,7 +2039,7 @@
           <div class="playground-modes-bar">
             <button class="pg-mode-btn active" data-pgmode="dual_lens">🔲 Dual-Hand Filter Lens</button>
             <button class="pg-mode-btn" data-pgmode="drawn_portal">🌀 Drawn Filter Portals</button>
-            <button class="pg-mode-btn" data-pgmode="theremin">🎵 Spatial Audio Theremin</button>
+            <button class="pg-mode-btn" data-pgmode="theremin">🎵 Spatial Audio & Loops</button>
             <button class="pg-mode-btn" data-pgmode="air_drums">🥁 Touchless Air Drums</button>
             <button class="pg-mode-btn" data-pgmode="physics">🪐 3D Grab & Throw Physics</button>
             <button class="pg-mode-btn" data-pgmode="gesture_wheel">⚡ Gesture Filter Switcher</button>
@@ -3094,9 +3094,21 @@
             if (targetEl) targetEl.classList.add('active');
             state.activeTab = target;
 
-            // Reset playground-specific pinch lens when navigating away
+            // Strict tool isolation: clean up previous tab states when switching tabs
+            if (target !== 'tab-drawing') {
+              if (els.drawingCursor) els.drawingCursor.style.display = 'none';
+              state.isDrawing = false;
+            }
+            if (target !== 'tab-presentation') {
+              if (els.laserPointer) els.laserPointer.style.display = 'none';
+              resetDwell();
+            }
             if (target !== 'tab-playground') {
               state.dualHandRoi = null;
+              stopThereminSynth();
+              if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.stopAll === 'function') {
+                window.VisionApp.tools.spatialAudio.stopAll();
+              }
             }
             if (target === 'tab-spatial3d') {
               setTimeout(() => {
@@ -3856,7 +3868,7 @@
       const PG_MODE_INSTRUCTIONS = {
         dual_lens: "<strong>Dual-Hand Pinch Lens:</strong> Bring both hands in front of the camera and pinch with both index fingers & thumbs. Move or stretch your hands apart to scale and drag a live optical filter lens over the video feed!",
         drawn_portal: "<strong>Drawn Filter Portals:</strong> Use your pointing index finger or pinch in the air (or mouse drag) to draw a continuous closed loop. When the loop seals, it transforms into an interactive floating shader cutout!",
-        theremin: "<strong>Spatial Audio Theremin:</strong> Left hand Y-axis modulates master output volume & low-pass resonance cutoff. Right hand X-axis smoothly tunes through the 9 sacred Solfeggio healing frequencies (174Hz to 963Hz)!",
+        theremin: "<strong>🎵 Spatial Audio & Loop Studio (41 Presets):</strong> 8 continuous hip-hop/trap/drill beat loops, 12 synths & basses, 12 vocal chops, and 9 Solfeggio tones! Right Hand X/Y controls pitch & filter cutoff; Left Hand controls volume & pan. Gesture triggers: ✌️ Peace = Vocal Chop, 🤘 Rock = 808 Slide, 👍 Thumb = Turntable Scratch, 👌 Pinch = Trap Hat Roll, ✊ Fist = Choke/Mute.",
         air_drums: "<strong>Touchless Air Drums:</strong> Strike your index fingertips downward into the 4 floating spatial pads (Crash, Kick, Snare, Hi-Hat) to synthesize live physical percussion! Pads ripple with dynamic shockwaves.",
         physics: "<strong>3D Grab & Throw Physics:</strong> Floating kinetic geometric artifacts bounce in the zero-gravity sandbox. Pinch near any artifact to grab it, swing your hand, and release to throw with momentum!",
         gesture_wheel: "<strong>Gesture Filter Switcher:</strong> Cycle filters instantly with your hands! ✌️ Peace = Next filter, 🤘 Rock On = Matrix rain, 👍 Thumbs Up = Solar Gold, ✊ Fist = Reset to clean feed."
@@ -4123,6 +4135,10 @@
                   triggerDrumPad(pad, px, py);
                 }
               });
+            } else if (state.activePgMode === 'theremin') {
+              if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.handleCanvasClick === 'function') {
+                window.VisionApp.tools.spatialAudio.handleCanvasClick(px, py, els.playgroundCanvas.width, els.playgroundCanvas.height);
+              }
             } else if (state.activePgMode === 'dual_lens') {
               state.dualHandRoi = {
                 x: px - 60,
@@ -4142,7 +4158,13 @@
             if (state.activePgMode === 'theremin') {
               const normX = px / els.playgroundCanvas.width;
               const normY = py / els.playgroundCanvas.height;
-              updateThereminFromCoordinates(normY, normX);
+              if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.processHands === 'function') {
+                const fakeH0 = Array(21).fill(null).map(() => ({ x: 0.2, y: normY }));
+                const fakeH1 = Array(21).fill(null).map(() => ({ x: normX, y: normY }));
+                window.VisionApp.tools.spatialAudio.processHands(fakeH0, fakeH1, null, null);
+              } else {
+                updateThereminFromCoordinates(normY, normX);
+              }
             }
 
             if (!isPgPointerDown) return;
@@ -4198,6 +4220,12 @@
         if (mode !== 'dual_lens') {
           state.dualHandRoi = null;
         }
+        if (mode !== 'theremin') {
+          stopThereminSynth();
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.stopAll === 'function') {
+            window.VisionApp.tools.spatialAudio.stopAll();
+          }
+        }
         if (mode === 'gesture_wheel') {
           state.gestureFilterSwitching = true;
           if (els.lblGestureFilterState) {
@@ -4211,7 +4239,7 @@
         const modeLabels = {
           dual_lens: 'Dual-Hand Filter Lens',
           drawn_portal: 'Drawn Filter Portals',
-          theremin: 'Spatial Audio Theremin',
+          theremin: 'Spatial Audio & Loops',
           air_drums: 'Touchless Air Drums',
           physics: '3D Grab & Throw Physics',
           gesture_wheel: 'Gesture Filter Switcher'
@@ -4226,6 +4254,9 @@
         }
 
         if (mode === 'theremin') {
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.initAudioGraph === 'function') {
+            window.VisionApp.tools.spatialAudio.initAudioGraph();
+          }
           startThereminSynth();
         } else {
           stopThereminSynth();
@@ -5254,7 +5285,11 @@
           }
 
           if (state.activePgMode === 'theremin') {
-            updateThereminFromCoordinates(h0[8].y, h1[8].x);
+            if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.processHands === 'function') {
+              window.VisionApp.tools.spatialAudio.processHands(h0, h1, g0, g1);
+            } else {
+              updateThereminFromCoordinates(h0[8].y, h1[8].x);
+            }
           }
 
           if (state.activePgMode === 'air_drums') {
@@ -5280,7 +5315,11 @@
           }
 
           if (state.activePgMode === 'theremin') {
-            updateThereminFromCoordinates(h0[8].y, h0[8].x);
+            if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.spatialAudio && typeof window.VisionApp.tools.spatialAudio.processHands === 'function') {
+              window.VisionApp.tools.spatialAudio.processHands(h0, null, g0, null);
+            } else {
+              updateThereminFromCoordinates(h0[8].y, h0[8].x);
+            }
           }
           if (state.activePgMode === 'air_drums') {
             checkAirDrumHits(h0, null);
@@ -6915,6 +6954,7 @@
             }
           }
         } else {
+          if (els.laserPointer) els.laserPointer.style.display = 'none';
           resetDwell();
         }
       }
@@ -7453,6 +7493,7 @@
 
   <!-- Modular Tool Extension Engines -->
   <script src="js/tool-playground-lens.js"></script>
+  <script src="js/tool-spatial-audio.js"></script>
   <script src="js/tool-air-drawing.js"></script>
   <script src="js/tool-presentation-spatial.js"></script>
   <script src="js/tool-gesturefx.js"></script>
