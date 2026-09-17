@@ -35,6 +35,16 @@ except ImportError:
     pass
 
 try:
+    from .trajectory import (
+        TrajectoryPoint,
+        TrajectoryStroke,
+        TrajectoryTracker,
+        calculate_pinch_zoom_delta,
+    )
+except ImportError:
+    pass
+
+try:
     from .filter_pipeline import (
         OneEuroFilter,
         OneEuroFilter3D,
@@ -72,4 +82,8 @@ __all__ = [
     "generate_mcp_client_config",
     "MCP_TOOLS_DEFINITIONS",
     "cli_main",
+    "TrajectoryPoint",
+    "TrajectoryStroke",
+    "TrajectoryTracker",
+    "calculate_pinch_zoom_delta",
 ]
