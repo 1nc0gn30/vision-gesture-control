@@ -1930,8 +1930,11 @@
 
         <!-- Live Shader Filter Selector Strip -->
         <div style="margin-top: 10px; border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 4px;">
-            <span><strong>13 Live Shaders & Portals</strong> (✌️ Peace: Next | ☝️ Point: Prev | ✊ Fist: Reset)</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 4px; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span><strong>13 Live Shaders & Portals</strong></span>
+              <button id="btnToggleGestureFilter" class="btn btn-xs" style="padding: 2px 8px; font-size: 0.65rem; border-radius: 12px; border: 1px solid var(--md-sys-color-outline-variant); background: transparent; cursor: pointer;" title="Toggle hand gesture filter switching (Peace = Next, Rock = Matrix, ThumbsUp = Gold)">🖐️ Gesture Switch: <strong id="lblGestureFilterState">OFF</strong></button>
+            </div>
             <span id="activeFilterLabel" style="font-weight: 600; color: var(--google-blue);">Normal</span>
           </div>
           <div class="filter-strip" id="hudFilterStrip">
@@ -2308,6 +2311,9 @@
 
         <div class="drawing-board-container" id="drawingBoardContainer">
           <canvas id="drawingCanvas" width="960" height="540"></canvas>
+          <div id="drawingCursor" style="display: none; position: absolute; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--google-blue); box-shadow: 0 0 10px var(--google-blue), inset 0 0 6px var(--google-blue); transform: translate(-50%, -50%); pointer-events: none; z-index: 10; transition: border-color 0.15s ease;">
+            <div style="position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%);"></div>
+          </div>
         </div>
       </div>
 
@@ -2867,6 +2873,9 @@
         wristHistory: [],
         dwellTargetEl: null,
         dwellStartTime: 0,
+        // Gesture Filter Switching & Lock
+        gestureFilterSwitching: false,
+        manualFilterLockTime: 0,
         // Dual Hand & Vision Playground Extensions
         dualHandRoi: null,
         drawnPortals: [],
@@ -2939,6 +2948,8 @@
         // Filter Strip
         filterChips: document.querySelectorAll('.filter-chip'),
         activeFilterLabel: document.getElementById('activeFilterLabel'),
+        btnToggleGestureFilter: document.getElementById('btnToggleGestureFilter'),
+        lblGestureFilterState: document.getElementById('lblGestureFilterState'),
         // Playground
         playgroundCanvas: document.getElementById('playgroundCanvas'),
         playgroundStage: document.getElementById('playgroundStage'),
@@ -2997,6 +3008,8 @@
         btnFullscreenPres: document.getElementById('btnFullscreenPres'),
         // Air Drawing
         drawingCanvas: document.getElementById('drawingCanvas'),
+        drawingBoardContainer: document.getElementById('drawingBoardContainer'),
+        drawingCursor: document.getElementById('drawingCursor'),
         colorSwatches: document.querySelectorAll('.color-swatch'),
         brushButtons: document.querySelectorAll('.brush-btn'),
         btnClearDraw: document.getElementById('btnClearDraw'),
@@ -3079,6 +3092,16 @@
             const targetEl = document.getElementById(target);
             if (targetEl) targetEl.classList.add('active');
             state.activeTab = target;
+
+            // Reset playground-specific pinch lens when navigating away
+            if (target !== 'tab-playground') {
+              state.dualHandRoi = null;
+            }
+            if (target === 'tab-spatial3d') {
+              setTimeout(() => {
+                resizeSpatial3D();
+              }, 40);
+            }
           });
         });
 
@@ -3729,18 +3752,35 @@
       }
 
       function initFilterStrip() {
-        if (!els.filterChips) return;
-        els.filterChips.forEach(chip => {
-          chip.addEventListener('click', () => {
-            const filterName = chip.dataset.filter;
-            setActiveFilter(filterName, 'Manual Selection');
+        if (els.filterChips) {
+          els.filterChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+              const filterName = chip.dataset.filter;
+              state.manualFilterLockTime = performance.now();
+              setActiveFilter(filterName, 'Manual Selection');
+            });
           });
-        });
+        }
+
+        if (els.btnToggleGestureFilter) {
+          els.btnToggleGestureFilter.addEventListener('click', () => {
+            state.gestureFilterSwitching = !state.gestureFilterSwitching;
+            if (els.lblGestureFilterState) {
+              els.lblGestureFilterState.textContent = state.gestureFilterSwitching ? 'ON' : 'OFF';
+              els.lblGestureFilterState.style.color = state.gestureFilterSwitching ? 'var(--google-green)' : 'inherit';
+            }
+            els.btnToggleGestureFilter.style.borderColor = state.gestureFilterSwitching ? 'var(--google-blue)' : 'var(--md-sys-color-outline-variant)';
+            showToast(`🖐️ Gesture Filter Switching: ${state.gestureFilterSwitching ? 'ENABLED (Peace/Rock/Thumbs)' : 'DISABLED (Locked to Manual)'}`);
+          });
+        }
       }
 
       function setActiveFilter(filterName, source) {
         if (!FILTER_LIST.includes(filterName)) filterName = 'normal';
         state.activeFilter = filterName;
+        if (source && (source.includes('Manual') || source.includes('Palette') || source.includes('Keyboard') || source.includes('Preset'))) {
+          state.manualFilterLockTime = performance.now();
+        }
 
         // Update UI filter chips
         if (els.filterChips) {
@@ -4150,6 +4190,19 @@
 
       function setPlaygroundMode(mode) {
         state.activePgMode = mode;
+        if (mode !== 'dual_lens') {
+          state.dualHandRoi = null;
+        }
+        if (mode === 'gesture_wheel') {
+          state.gestureFilterSwitching = true;
+          if (els.lblGestureFilterState) {
+            els.lblGestureFilterState.textContent = 'ON';
+            els.lblGestureFilterState.style.color = 'var(--google-green)';
+          }
+          if (els.btnToggleGestureFilter) {
+            els.btnToggleGestureFilter.style.borderColor = 'var(--google-blue)';
+          }
+        }
         const modeLabels = {
           dual_lens: 'Dual-Hand Filter Lens',
           drawn_portal: 'Drawn Filter Portals',
@@ -4787,6 +4840,8 @@
           renderPhysicsObjects(ctx, w, h);
         } else if (state.activePgMode === 'air_drums') {
           updateAndRenderAirDrums(ctx, w, h, now);
+        } else if (state.activePgMode === 'gesture_wheel') {
+          renderGestureWheelOverlay(ctx, w, h, now);
         }
 
         // Render Particle Sparks & Cosmic Motion Trails
@@ -4840,6 +4895,120 @@
         ctx.beginPath();
         ctx.arc(p0.x, p0.y, 16 + state.theremin.vol * 14, 0, Math.PI * 2);
         ctx.stroke();
+
+        ctx.restore();
+      }
+
+      function renderGestureWheelOverlay(ctx, w, h, now) {
+        ctx.save();
+        const cx = w * 0.5;
+        const cy = h * 0.5;
+        const radius = Math.min(w, h) * 0.38;
+        const innerR = radius * 0.42;
+
+        const WHEEL_ITEMS = [
+          { gesture: 'VICTORY_PEACE', label: 'Peace: Cycle Next', icon: '✌️', filter: 'next', color: '#1a73e8' },
+          { gesture: 'ROCK_ON', label: 'Rock: Matrix Rain', icon: '🤘', filter: 'matrix', color: '#34a853' },
+          { gesture: 'THUMBS_UP', label: 'Thumb Up: Solar Gold', icon: '👍', filter: 'solar_gold', color: '#fbbc04' },
+          { gesture: 'THUMBS_DOWN', label: 'Thumb Down: Thermal', icon: '👎', filter: 'thermal', color: '#ea4335' },
+          { gesture: 'SHAKA', label: 'Shaka: Cyber VHS', icon: '🤙', filter: 'cyber_vhs', color: '#a142f4' },
+          { gesture: 'OK_SIGN', label: 'OK: Singularity', icon: '👌', filter: 'vortex_blackhole', color: '#00f0ff' },
+          { gesture: 'FIST', label: 'Fist: Clean Feed', icon: '✊', filter: 'normal', color: '#9aa0a6' }
+        ];
+
+        // Outer reticle ring
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius + 12, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Compass tick marks
+        const tickCount = 28;
+        for (let i = 0; i < tickCount; i++) {
+          const a = (i / tickCount) * Math.PI * 2;
+          const r1 = radius + 8;
+          const r2 = radius + (i % 4 === 0 ? 18 : 12);
+          ctx.strokeStyle = i % 4 === 0 ? 'rgba(0, 240, 255, 0.4)' : 'rgba(255, 255, 255, 0.15)';
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+          ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+          ctx.stroke();
+        }
+
+        const count = WHEEL_ITEMS.length;
+        const step = (Math.PI * 2) / count;
+
+        WHEEL_ITEMS.forEach((item, idx) => {
+          const startAngle = idx * step - Math.PI / 2;
+          const endAngle = startAngle + step;
+          const midAngle = startAngle + step * 0.5;
+
+          const isActive = (state.activeGesture === item.gesture);
+
+          // Sector background
+          ctx.beginPath();
+          ctx.arc(cx, cy, radius, startAngle, endAngle);
+          ctx.arc(cx, cy, innerR, endAngle, startAngle, true);
+          ctx.closePath();
+
+          if (isActive) {
+            ctx.fillStyle = 'rgba(0, 240, 255, 0.22)';
+            ctx.fill();
+            ctx.strokeStyle = item.color;
+            ctx.lineWidth = 3.5;
+            ctx.shadowColor = item.color;
+            ctx.shadowBlur = 16;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+          } else {
+            ctx.fillStyle = (idx % 2 === 0) ? 'rgba(15, 23, 42, 0.65)' : 'rgba(30, 41, 59, 0.55)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+
+          // Icon and Label
+          const iconR = (innerR + radius) * 0.52;
+          const ix = cx + Math.cos(midAngle) * iconR;
+          const iy = cy + Math.sin(midAngle) * iconR;
+
+          ctx.font = isActive ? '22px sans-serif' : '17px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(item.icon, ix, iy - 6);
+
+          ctx.font = isActive ? 'bold 10px monospace' : '9px monospace';
+          ctx.fillStyle = isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.7)';
+          ctx.fillText(item.gesture.replace('_', ' '), ix, iy + 14);
+        });
+
+        // Center Disc: Active Filter status
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, innerR - 4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(10, 15, 26, 0.92)';
+        ctx.fill();
+        ctx.strokeStyle = state.gestureFilterSwitching ? 'var(--google-blue)' : 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = 'var(--google-blue)';
+        ctx.shadowBlur = 10;
+        ctx.stroke();
+
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillStyle = 'var(--google-blue)';
+        ctx.textAlign = 'center';
+        ctx.fillText('FILTER WHEEL', cx, cy - 14);
+
+        ctx.font = 'bold 12px monospace';
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(state.activeFilter.toUpperCase(), cx, cy + 3);
+
+        ctx.font = '9px monospace';
+        ctx.fillStyle = state.gestureFilterSwitching ? '#34a853' : '#ea4335';
+        ctx.fillText(state.gestureFilterSwitching ? '● GESTURES ACTIVE' : '○ GESTURES LOCKED', cx, cy + 18);
+        ctx.restore();
 
         ctx.restore();
       }
@@ -5046,7 +5215,7 @@
           const isH0Pinch = Math.hypot(h0[4].x - h0[8].x, h0[4].y - h0[8].y) < 0.08;
           const isH1Pinch = Math.hypot(h1[4].x - h1[8].x, h1[4].y - h1[8].y) < 0.08;
 
-          if (isH0Pinch && isH1Pinch) {
+          if (isH0Pinch && isH1Pinch && state.activeTab === 'tab-playground' && state.activePgMode === 'dual_lens') {
             const w = els.playgroundCanvas ? els.playgroundCanvas.width : 800;
             const h = els.playgroundCanvas ? els.playgroundCanvas.height : 520;
             const p0x = ((h0[4].x + h0[8].x) * 0.5) * w;
@@ -5066,6 +5235,12 @@
               h: Math.max(40, maxY - minY),
               active: true
             };
+          } else if (state.activeTab !== 'tab-playground' || state.activePgMode !== 'dual_lens') {
+            state.dualHandRoi = null;
+          }
+
+          if (state.activePgMode === 'drawn_portal') {
+            handlePortalDrawingWithHand(h0);
           }
 
           if (state.activePgMode === 'theremin') {
@@ -6128,6 +6303,14 @@
 
       function checkGestureFilterTriggers(g0, g1) {
         const now = performance.now();
+
+        // 1. Gesture switching must be explicitly enabled or in playground gesture wheel mode
+        const isGestureSwitchEnabled = state.gestureFilterSwitching || (state.activeTab === 'tab-playground' && state.activePgMode === 'gesture_wheel');
+        if (!isGestureSwitchEnabled) return;
+
+        // 2. Manual filter selection cooldown (lock for 3.5s after user clicks a filter chip)
+        if (now - state.manualFilterLockTime < 3500) return;
+
         const activeG = (g0 && g0 !== 'UNKNOWN' && g0 !== 'NONE') ? g0 : (g1 && g1 !== 'UNKNOWN' && g1 !== 'NONE' ? g1 : null);
 
         // When hand is neutral or relaxed, release trigger lock quickly
@@ -6139,6 +6322,12 @@
           }
           return;
         }
+
+        // Do not use drawing / pointing / pinching gestures for filter switching
+        if (activeG === 'PINCH' || activeG === 'POINTING_INDEX') {
+          return;
+        }
+
         lastNonGestureTime = now;
 
         // Stability filtering (at least 2 consecutive frames)
@@ -6152,7 +6341,7 @@
 
         // Trigger conditions: Fresh gesture OR sustained hold repeat for cycling
         const isFresh = (activeG !== lastTriggeredGesture);
-        const isHoldRepeat = (!isFresh && (now - lastGestureTriggerTime > 650) && (activeG === 'VICTORY_PEACE' || activeG === 'POINTING_INDEX'));
+        const isHoldRepeat = (!isFresh && (now - lastGestureTriggerTime > 850) && (activeG === 'VICTORY_PEACE'));
 
         if (isFresh || isHoldRepeat) {
           lastTriggeredGesture = activeG;
@@ -6161,9 +6350,6 @@
           if (activeG === 'VICTORY_PEACE') {
             cycleFilter(1);
             showGestureHudBanner("✌️ VICTORY / PEACE", `Next Filter → ${state.activeFilter.toUpperCase()}`, "✌️");
-          } else if (activeG === 'POINTING_INDEX') {
-            cycleFilter(-1);
-            showGestureHudBanner("☝️ POINTING INDEX", `Prev Filter → ${state.activeFilter.toUpperCase()}`, "☝️");
           } else if (activeG === 'ROCK_ON') {
             setActiveFilter('matrix', '🤘 Rock On');
             showGestureHudBanner("🤘 ROCK ON", "Matrix Code Rain", "🤘");
@@ -6176,9 +6362,9 @@
           } else if (activeG === 'SHAKA') {
             setActiveFilter('cyber_vhs', '🤙 Shaka');
             showGestureHudBanner("🤙 SHAKA", "Cyber VHS Glitch", "🤙");
-          } else if (activeG === 'OK_SIGN' || activeG === 'PINCH') {
+          } else if (activeG === 'OK_SIGN') {
             setActiveFilter('vortex_blackhole', '👌 Singularity');
-            showGestureHudBanner("👌 PINCH / OK", "Vortex Singularity Warp", "👌");
+            showGestureHudBanner("👌 OK SIGN", "Vortex Singularity Warp", "👌");
           } else if (activeG === 'FIST') {
             setActiveFilter('normal', '✊ Fist');
             showGestureHudBanner("✊ FIST", "Reset Clean Feed", "✊");
@@ -6204,15 +6390,28 @@
         { name: 'Cosmic Violet', color: 0x9334e6, wire: 0xce93d8 }
       ];
 
+      function resizeSpatial3D() {
+        if (!els.spatial3dHost || !spatialRenderer || !spatialCamera) return;
+        const w = els.spatial3dHost.clientWidth || 800;
+        const h = els.spatial3dHost.clientHeight || 500;
+        spatialCamera.aspect = w / h;
+        spatialCamera.updateProjectionMatrix();
+        spatialRenderer.setSize(w, h);
+      }
+      window.addEventListener('resize', resizeSpatial3D);
+
       function initSpatial3D() {
         if (!els.spatial3dHost || typeof THREE === 'undefined') return;
 
+        const w = els.spatial3dHost.clientWidth || 800;
+        const h = els.spatial3dHost.clientHeight || 500;
+
         spatialScene = new THREE.Scene();
-        spatialCamera = new THREE.PerspectiveCamera(45, els.spatial3dHost.clientWidth / els.spatial3dHost.clientHeight, 0.1, 100);
+        spatialCamera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
         spatialCamera.position.set(0, 0, 4.5);
 
         spatialRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        spatialRenderer.setSize(els.spatial3dHost.clientWidth, els.spatial3dHost.clientHeight);
+        spatialRenderer.setSize(w, h);
         spatialRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         els.spatial3dHost.innerHTML = '';
         els.spatial3dHost.appendChild(spatialRenderer.domElement);
@@ -6620,11 +6819,21 @@
       }
 
       function handleTabInteractions(points, gesture) {
+        if (!points || points.length < 9) return;
         const tip = points[8]; // Index tip
 
         // Air Drawing
         if (state.activeTab === 'tab-drawing') {
+          if (els.drawingCursor) {
+            els.drawingCursor.style.left = (tip.x * 100) + '%';
+            els.drawingCursor.style.top = (tip.y * 100) + '%';
+            els.drawingCursor.style.display = 'block';
+            els.drawingCursor.style.borderColor = (gesture === 'PINCH' || gesture === 'POINTING_INDEX') ? 'var(--google-green)' : 'var(--google-blue)';
+            els.drawingCursor.style.boxShadow = (gesture === 'PINCH' || gesture === 'POINTING_INDEX') ? '0 0 12px var(--google-green)' : '0 0 8px var(--google-blue)';
+          }
+
           if (gesture === 'PINCH' || gesture === 'POINTING_INDEX') {
+            state.isDrawing = true;
             const drawX = tip.x * els.drawingCanvas.width;
             const drawY = tip.y * els.drawingCanvas.height;
             addStrokePoint(drawX, drawY);
@@ -6633,15 +6842,19 @@
             if (state.isDrawing) endStroke();
             state.isDrawing = false;
           }
+        } else {
+          if (els.drawingCursor) els.drawingCursor.style.display = 'none';
         }
 
         // Presentation Laser Pointer & Dwell Click
         if (state.activeTab === 'tab-presentation') {
           const lx = tip.x * 100;
           const ly = tip.y * 100;
-          els.laserPointer.style.left = lx + '%';
-          els.laserPointer.style.top = ly + '%';
-          els.laserPointer.style.display = 'block';
+          if (els.laserPointer) {
+            els.laserPointer.style.left = lx + '%';
+            els.laserPointer.style.top = ly + '%';
+            els.laserPointer.style.display = 'block';
+          }
 
           if (gesture === 'POINTING_INDEX') {
             processDwellHover(tip.x, tip.y);
@@ -6654,8 +6867,15 @@
       }
 
       function processDwellHover(normX, normY) {
-        const screenX = normX * window.innerWidth;
-        const screenY = normY * window.innerHeight;
+        let screenX, screenY;
+        if (els.presViewport) {
+          const rect = els.presViewport.getBoundingClientRect();
+          screenX = rect.left + normX * rect.width;
+          screenY = rect.top + normY * rect.height;
+        } else {
+          screenX = normX * window.innerWidth;
+          screenY = normY * window.innerHeight;
+        }
         const elUnder = document.elementFromPoint(screenX, screenY);
         const clickable = elUnder ? elUnder.closest('button, .slide-dot, .color-swatch, .brush-btn') : null;
 
@@ -6758,29 +6978,80 @@
           return points;
         }
 
-        // Determine simulated gestures per mode
-        let g0 = state.activeGesture;
+        // Determine simulated gestures and trajectories per active tab and mode
+        let g0 = state.activeGesture || 'OPEN_PALM';
         let g1 = 'OPEN_PALM';
+        let cx0 = 0.35 + Math.sin(t * 0.7) * 0.04;
+        let cy0 = 0.52 + Math.cos(t * 0.5) * 0.03;
+        let cx1 = 0.65 - Math.sin(t * 0.7) * 0.04;
+        let cy1 = 0.52 + Math.sin(t * 0.6) * 0.03;
 
-        if (state.activePgMode === 'dual_lens') {
-          g0 = 'PINCH';
-          g1 = 'PINCH';
-        } else if (state.activePgMode === 'theremin') {
-          g0 = 'OPEN_PALM';
-          g1 = 'POINTING_INDEX';
-        } else if (state.activePgMode === 'physics') {
-          g0 = 'PINCH';
+        if (state.activeTab === 'tab-drawing') {
+          g0 = 'POINTING_INDEX';
           g1 = 'OPEN_PALM';
+          cx0 = 0.50 + Math.cos(t * 0.9) * 0.24;
+          cy0 = 0.50 + Math.sin(t * 1.3) * 0.18;
+        } else if (state.activeTab === 'tab-presentation') {
+          g0 = 'POINTING_INDEX';
+          g1 = 'OPEN_PALM';
+          cx0 = 0.54 + Math.sin(t * 0.5) * 0.18;
+          cy0 = 0.52 + Math.cos(t * 0.4) * 0.14;
+        } else if (state.activeTab === 'tab-spatial3d') {
+          g0 = 'OPEN_PALM';
+          g1 = 'OPEN_PALM';
+          cx0 = 0.32 + Math.sin(t * 0.6) * 0.12;
+          cy0 = 0.50 + Math.cos(t * 0.5) * 0.10;
+          cx1 = 0.68 - Math.sin(t * 0.6) * 0.12;
+          cy1 = 0.50 + Math.sin(t * 0.5) * 0.10;
+        } else if (state.activeTab === 'tab-gesturefx') {
+          g0 = (Math.sin(t * 0.8) > 0) ? 'POINTING_INDEX' : 'OPEN_PALM';
+          g1 = 'OPEN_PALM';
+          cx0 = 0.44 + Math.sin(t * 0.9) * 0.18;
+          cy0 = 0.44 + Math.cos(t * 0.7) * 0.14;
+        } else if (state.activeTab === 'tab-playground') {
+          if (state.activePgMode === 'dual_lens') {
+            g0 = 'PINCH';
+            g1 = 'PINCH';
+            cx0 = 0.35 + Math.sin(t * 0.7) * 0.04;
+            cy0 = 0.52 + Math.cos(t * 0.5) * 0.03;
+            cx1 = 0.65 - Math.sin(t * 0.7) * 0.04;
+            cy1 = 0.52 + Math.sin(t * 0.6) * 0.03;
+          } else if (state.activePgMode === 'drawn_portal') {
+            g0 = 'POINTING_INDEX';
+            g1 = 'OPEN_PALM';
+            cx0 = 0.50 + Math.cos(t * 1.4) * 0.16;
+            cy0 = 0.50 + Math.sin(t * 1.4) * 0.16;
+          } else if (state.activePgMode === 'theremin') {
+            g0 = 'OPEN_PALM';
+            g1 = 'POINTING_INDEX';
+            cx0 = 0.28;
+            cy0 = 0.50 + Math.sin(t * 1.1) * 0.24;
+            cx1 = 0.50 + Math.cos(t * 0.8) * 0.28;
+            cy1 = 0.50;
+          } else if (state.activePgMode === 'air_drums') {
+            g0 = Math.sin(t * 3.5) > 0.4 ? 'FIST' : 'OPEN_PALM';
+            g1 = Math.cos(t * 3.5) > 0.4 ? 'FIST' : 'OPEN_PALM';
+            cx0 = 0.32 + Math.sin(t * 1.2) * 0.10;
+            cy0 = 0.50 + Math.abs(Math.sin(t * 3.5)) * 0.20;
+            cx1 = 0.68 + Math.cos(t * 1.2) * 0.10;
+            cy1 = 0.50 + Math.abs(Math.cos(t * 3.5)) * 0.20;
+          } else if (state.activePgMode === 'physics') {
+            g0 = (Math.sin(t * 1.5) > 0) ? 'PINCH' : 'OPEN_PALM';
+            g1 = 'OPEN_PALM';
+            cx0 = 0.46 + Math.sin(t * 1.2) * 0.18;
+            cy0 = 0.46 + Math.cos(t * 1.0) * 0.16;
+          } else if (state.activePgMode === 'gesture_wheel') {
+            const cycle = Math.floor(t * 0.6) % 5;
+            const cycleGestures = ['VICTORY_PEACE', 'ROCK_ON', 'THUMBS_UP', 'SHAKA', 'OK_SIGN'];
+            g0 = cycleGestures[cycle];
+            g1 = 'OPEN_PALM';
+          }
         }
 
-        // Hand 0 (Left)
-        const cx0 = 0.35 + Math.sin(t * 0.7) * 0.04;
-        const cy0 = 0.52 + Math.cos(t * 0.5) * 0.03;
+        // Hand 0 (Left / Primary)
         const hand0 = createHandPoints(cx0, cy0, g0, 0);
 
-        // Hand 1 (Right)
-        const cx1 = 0.65 - Math.sin(t * 0.7) * 0.04;
-        const cy1 = 0.52 + Math.sin(t * 0.6) * 0.03;
+        // Hand 1 (Right / Secondary)
         const hand1 = createHandPoints(cx1, cy1, g1, 1);
 
         state.landmarks = hand0;
@@ -6790,19 +7061,7 @@
         state.handCount = 2;
 
         processMultiHandInteractions();
-
-        if ((g0 === 'PINCH' || g0 === 'POINTING_INDEX') && state.activeTab === 'tab-drawing') {
-          const tip = hand0[8];
-          const drawX = tip.x * els.drawingCanvas.width;
-          const drawY = tip.y * els.drawingCanvas.height;
-          addStrokePoint(drawX, drawY);
-        }
-
-        if (state.laserActive && state.activeTab === 'tab-presentation') {
-          const tip = hand0[8];
-          els.laserPointer.style.left = (tip.x * 100) + '%';
-          els.laserPointer.style.top = (tip.y * 100) + '%';
-        }
+        handleTabInteractions(hand0, g0);
       }
 
       // ── Webcam Hardware Lifecycle ──
@@ -6944,18 +7203,13 @@
           visionCtx.restore();
         });
 
-        // 3. Render Dual-Hand Pinch ROI Lens or Global Shader Filter
-        if (state.dualHandRoi && state.dualHandRoi.active) {
+        // 3. Always apply the active global shader filter to the main camera feed
+        renderShaderFilter(visionCtx, state.activeFilter, 0, 0, w, h, now);
+
+        // 3b. Render Dual-Hand Pinch ROI Lens Frame when active in Playground Dual-Lens mode
+        if (state.activeTab === 'tab-playground' && state.activePgMode === 'dual_lens' && state.dualHandRoi && state.dualHandRoi.active) {
           const { x: rx, y: ry, w: rw, h: rh } = state.dualHandRoi;
-          visionCtx.save();
-          visionCtx.beginPath();
-          visionCtx.rect(rx, ry, rw, rh);
-          visionCtx.clip();
-          renderShaderFilter(visionCtx, state.activeFilter, rx, ry, rw, rh, now);
-          visionCtx.restore();
           renderRoiLensFrame(visionCtx, rx, ry, rw, rh, state.activeFilter);
-        } else {
-          renderShaderFilter(visionCtx, state.activeFilter, 0, 0, w, h, now);
         }
 
         // 4. Render Multi-Hand Skeletons
