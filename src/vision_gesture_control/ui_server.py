@@ -45,7 +45,7 @@ FALLBACK_INDEX_HTML = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Material 3 Vision Studio | Vision Gesture Control</title>
+  <title>Vision Studio | Vision Gesture Control</title>
   <meta name="description" content="Local-first Vision Gesture Control & Dwell Studio powered by MCP">
   <style>
     :root {
@@ -350,7 +350,7 @@ FALLBACK_INDEX_HTML = """<!DOCTYPE html>
   <header>
     <div class="brand">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--md-sys-color-primary)"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
-      <span>Google Material 3 Vision Studio</span>
+      <span>Vision Studio</span>
       <span class="brand-badge">MCP v1.0.0</span>
     </div>
     <div class="nav-actions">
@@ -459,7 +459,7 @@ FALLBACK_INDEX_HTML = """<!DOCTYPE html>
   </main>
 
   <footer>
-    <p>Google Material 3 Vision Studio &bull; Pure Python Stdlib &bull; Zero External Dependencies &bull; MCP Protocol v2024-11-05</p>
+    <p>Vision Studio &bull; Design influenced by Material 3 &bull; Pure Python Stdlib &bull; Zero External Dependencies &bull; MCP Protocol v2024-11-05</p>
   </footer>
 
   <script>
@@ -802,7 +802,7 @@ class VisionUIRequestHandler(SimpleHTTPRequestHandler):
 
                 # 2. Web App Manifest
                 manifest = {
-                    "name": "Google Material 3 Vision Studio",
+                    "name": "Vision Studio",
                     "short_name": "Vision Studio",
                     "description": "Zero-dependency Vision Gesture Control Studio",
                     "start_url": "./index.html",
@@ -830,7 +830,7 @@ class VisionUIRequestHandler(SimpleHTTPRequestHandler):
                 # 5. README.md
                 readme_text = """# Vision Gesture Studio Standalone
 
-This bundle contains the standalone Google Material 3 Vision Studio.
+This bundle contains the standalone Vision Studio (design influenced by Material 3).
 Simply open `index.html` in any modern web browser to run locally with zero server requirements!
 
 ## Features
@@ -935,7 +935,7 @@ def run_ui_server(
     """Runs the HTTP server synchronously until interrupted."""
     server = UIServer(host=host, port=port, public_dir=public_dir)
     server.start()
-    print(f"🌟 Google Material 3 Vision Studio running at {server.get_url()}")
+    print(f"🌟 Vision Studio (Material 3 influenced) running at {server.get_url()}")
     print("Press Ctrl+C to stop.")
     try:
         while True:

@@ -98,11 +98,11 @@ def _parse_zone_string(zone_str: str) -> Dict[str, float]:
 
 
 def cmd_serve(args: argparse.Namespace) -> int:
-    """Starts Google Material 3 Vision Studio."""
+    """Starts Vision Studio."""
     server = UIServer(host=args.host, port=args.port)
     server.start()
     url = server.get_url()
-    print(f"🌟 Google Material 3 Vision Studio running at {url}")
+    print(f"🌟 Vision Studio (Material 3 influenced) running at {url}")
 
     if args.open:
         try:
@@ -296,7 +296,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
 
     # 1. serve
-    p_serve = subparsers.add_parser("serve", help="Starts Google Material 3 Vision Studio")
+    p_serve = subparsers.add_parser("serve", help="Starts Vision Studio Web UI (design influenced by Material 3)")
     p_serve.add_argument("--port", type=int, default=DEFAULT_PORT, help=f"Port to bind (default: {DEFAULT_PORT})")
     p_serve.add_argument("--host", type=str, default=DEFAULT_HOST, help=f"Host to bind (default: {DEFAULT_HOST})")
     p_serve.add_argument("--open", action="store_true", help="Automatically open web browser on start")

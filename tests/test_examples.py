@@ -22,7 +22,7 @@ class TestPublicIndexHtml:
     def test_doctype_and_title(self, html_content: str):
         assert "<!DOCTYPE html>" in html_content or "<!doctype html>" in html_content
         assert "<title>" in html_content
-        assert "Google Vision Studio" in html_content
+        assert "Vision Studio" in html_content
 
     def test_material3_google_palette(self, html_content: str):
         # Verify Google Material 3 color tokens

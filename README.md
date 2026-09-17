@@ -29,7 +29,7 @@ Operating with **sub-15ms pipeline latency** and zero external tracking dependen
 - ⚡ **Sub-15ms Latency Engine**: Real-time landmark extraction with 1€ (OneEuro) and Kalman adaptive smoothing filters.
 - 🖐️ **21-Joint 3D Hand Tracking**: Complete kinematic joint topology with trigonometric joint angle calculations.
 - 🤖 **Native Model Context Protocol (MCP)**: Turn your physical gestures into AI agent tool invocations with zero setup.
-- 🎨 **Google Material 3 Web Studio**: Clean, responsive, offline-first light mode UI with 4 interactive workspaces.
+- 🎨 **Material 3 Vision Studio**: Clean, responsive, offline-first light mode UI (design influenced by Material 3) with 4 interactive workspaces.
 - 📑 **Touchless Presentation Controller**: Hands-free slide deck navigation with index finger laser pointer and dwell actions.
 - 🖌️ **Spatial Air-Drawing Canvas**: Smooth 3D finger painting, color palette selection, and PNG export.
 - 🔒 **100% Local-First Privacy**: Frames are processed purely in-memory and discarded immediately; zero cloud exfiltration.
@@ -88,14 +88,14 @@ cd vision-gesture-control
 pip install -e .
 ```
 
-### 2. Launch Google Vision Studio (Web UI)
+### 2. Launch Vision Studio (Web UI)
 
 Open `public/index.html` in any modern web browser or serve it locally:
 
 ```bash
 python3 -m http.server 8000 --directory public
 ```
-Navigate to `http://localhost:8000` to access the interactive 4-tab Google Vision Studio!
+Navigate to `http://localhost:8000` to access the interactive 4-tab Vision Studio (design influenced by Material 3)!
 
 ---
 
@@ -166,7 +166,7 @@ vision-gesture-control/
 │   ├── mcp-clients/               # Client config JSONs for Claude, Cursor, Cline, Zed
 │   └── README.md                  # Examples directory guide
 ├── public/
-│   └── index.html                 # Google Vision Studio (Material 3 Light UI)
+│   └── index.html                 # Vision Studio (Material 3 Light UI influenced)
 ├── src/
 │   └── vision_gesture_control/    # Core Python package & MCP server
 ├── tests/

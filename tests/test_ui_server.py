@@ -176,7 +176,7 @@ class TestUIServer(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertIn("text/html", headers.get("Content-Type", ""))
         html_str = body.decode("utf-8")
-        self.assertIn("Google Material 3 Vision Studio", html_str)
+        self.assertIn("Vision Studio", html_str)
         self.assertIn("Live Vision Gesture Tracking", html_str)
 
     def test_custom_static_file_serving(self):
