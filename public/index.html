@@ -1051,6 +1051,257 @@
       color: var(--md-sys-color-on-primary-container) !important;
       font-weight: 600;
     }
+
+    /* Filter Selector Strip */
+    .filter-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 0 2px 0;
+    }
+    .filter-chip {
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      color: var(--md-sys-color-on-surface);
+      border-radius: var(--radius-full);
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }
+    .filter-chip:hover {
+      background: var(--md-sys-color-surface-container-high);
+      border-color: var(--google-blue);
+      transform: translateY(-1px);
+    }
+    .filter-chip.active-chip {
+      background: var(--google-blue);
+      color: #ffffff;
+      border-color: var(--google-blue);
+      box-shadow: 0 0 10px rgba(26, 115, 232, 0.4);
+    }
+    .filter-chip .gesture-hint {
+      font-size: 0.65rem;
+      opacity: 0.75;
+      font-family: monospace;
+    }
+
+    /* Vision Playground Styles */
+    .playground-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .playground-modes-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--md-sys-color-surface-container);
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .pg-mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pg-mode-btn:hover {
+      background: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface);
+    }
+    .pg-mode-btn.active {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      box-shadow: var(--shadow-1);
+    }
+
+    .playground-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+    }
+    @media (max-width: 1024px) {
+      .playground-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .playground-stage {
+      position: relative;
+      background: #0d1117;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      min-height: 460px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .playground-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    .stage-hud-overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .stage-hud-pill {
+      background: rgba(17, 19, 24, 0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .theremin-meter-box {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      right: 14px;
+      background: rgba(17, 19, 24, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      z-index: 10;
+      color: #fff;
+    }
+    .theremin-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .theremin-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, var(--google-blue), var(--google-yellow), var(--google-red));
+      border-radius: 3px;
+      transition: width 0.05s ease;
+    }
+
+    /* History & Architecture Cards */
+    .timeline-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 8px 0;
+    }
+    .timeline-node {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 20px;
+      position: relative;
+    }
+    .timeline-year {
+      font-family: -apple-system, BlinkMacSystemFont, monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--google-blue);
+      text-align: right;
+      padding-top: 2px;
+    }
+    .timeline-card {
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      position: relative;
+      transition: transform var(--transition-fast);
+    }
+    .timeline-card:hover {
+      transform: translateX(4px);
+      border-color: var(--google-blue);
+    }
+    .timeline-title {
+      font-weight: 700;
+      font-size: 0.9375rem;
+      margin-bottom: 4px;
+      color: var(--md-sys-color-on-surface);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .timeline-desc {
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.45;
+    }
+
+    .pipeline-stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 14px 0;
+    }
+    .pipeline-card {
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .pipeline-num {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: rgba(26, 115, 232, 0.12);
+      font-family: monospace;
+    }
+    .pipeline-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--google-blue);
+      margin-bottom: 6px;
+    }
+    .pipeline-body {
+      font-size: 0.78rem;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -1070,14 +1321,20 @@
 
     <nav class="header-center" aria-label="Main Navigation">
       <div class="nav-tabs" role="tablist">
-        <button class="nav-tab-btn active" data-tab="tab-presentation" role="tab" aria-selected="true" id="tabBtn-presentation">
+        <button class="nav-tab-btn active" data-tab="tab-playground" role="tab" aria-selected="true" id="tabBtn-playground">
+          <span>🚀</span> Vision Playground
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-presentation" role="tab" aria-selected="false" id="tabBtn-presentation">
           <span>📑</span> Presentation
         </button>
         <button class="nav-tab-btn" data-tab="tab-drawing" role="tab" aria-selected="false" id="tabBtn-drawing">
-          <span>🎨</span> Air Drawing
+          <span>🎨</span> Air Drawing & Portals
         </button>
         <button class="nav-tab-btn" data-tab="tab-spatial3d" role="tab" aria-selected="false" id="tabBtn-spatial3d">
           <span>🔮</span> 3D Spatial Portal
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-architecture" role="tab" aria-selected="false" id="tabBtn-architecture">
+          <span>📚</span> History & Architecture
         </button>
         <button class="nav-tab-btn" data-tab="tab-telemetry" role="tab" aria-selected="false" id="tabBtn-telemetry">
           <span>🎛️</span> Telemetry & Filters
@@ -1150,6 +1407,23 @@
           </button>
         </div>
 
+        <!-- Live Shader Filter Selector Strip -->
+        <div style="margin-top: 10px; border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 4px;">
+            <span><strong>Live Shaders & Portals</strong> (✌️ Peace: Next | ✊ Fist: Reset)</span>
+            <span id="activeFilterLabel" style="font-weight: 600; color: var(--google-blue);">Normal</span>
+          </div>
+          <div class="filter-strip" id="hudFilterStrip">
+            <button class="filter-chip active-chip" data-filter="normal">Clear / Normal</button>
+            <button class="filter-chip" data-filter="matrix">🟢 Matrix <span class="gesture-hint">(🤘)</span></button>
+            <button class="filter-chip" data-filter="thermal">🔥 Thermal IR</button>
+            <button class="filter-chip" data-filter="sobel">⚡ Sobel Neon</button>
+            <button class="filter-chip" data-filter="cyber_vhs">📼 Cyber VHS</button>
+            <button class="filter-chip" data-filter="hologram">💎 Hologram</button>
+            <button class="filter-chip" data-filter="solar_gold">☀️ Solar Gold <span class="gesture-hint">(👍)</span></button>
+          </div>
+        </div>
+
         <!-- Interactive Virtual Hand Simulator -->
         <div class="simulator-box" id="simulatorBox">
           <div class="simulator-title">
@@ -1211,8 +1485,98 @@
     <!-- Right Column: Interactive Workspaces -->
     <section class="workspace-area">
       
+      <!-- TAB 0: VISION PLAYGROUND -->
+      <div class="tab-content active" id="tab-playground" role="tabpanel">
+        <div class="playground-container">
+          <!-- Modes Bar -->
+          <div class="playground-modes-bar">
+            <button class="pg-mode-btn active" data-pgmode="dual_lens">🔲 Dual-Hand Filter Lens</button>
+            <button class="pg-mode-btn" data-pgmode="drawn_portal">🌀 Drawn Filter Portals</button>
+            <button class="pg-mode-btn" data-pgmode="theremin">🎵 Spatial Audio Theremin</button>
+            <button class="pg-mode-btn" data-pgmode="physics">🪐 3D Grab & Throw Physics</button>
+            <button class="pg-mode-btn" data-pgmode="gesture_wheel">⚡ Gesture Filter Switcher</button>
+          </div>
+
+          <!-- Main Interactive Stage & Side Telemetry Panel -->
+          <div class="playground-main-grid">
+            <div class="playground-stage" id="playgroundStage">
+              <canvas class="playground-canvas" id="playgroundCanvas" width="800" height="520"></canvas>
+              
+              <!-- HUD Overlays -->
+              <div class="stage-hud-overlay">
+                <div class="stage-hud-pill" id="pgModeBadge">
+                  <span>🔲</span> <span id="pgModeName">Dual-Hand Filter Lens</span>
+                </div>
+                <div class="stage-hud-pill" id="pgHandCountBadge">
+                  <span>🖐️</span> <span id="pgHandCountText">2 Hands Attuned</span>
+                </div>
+              </div>
+
+              <!-- Theremin Visualizer Strip -->
+              <div class="theremin-meter-box" id="thereminMeterBox" style="display: none;">
+                <div>
+                  <div style="font-size: 0.65rem; color: #a8c7fa; text-transform: uppercase;">Pitch (Right Hand X)</div>
+                  <div style="font-size: 1rem; font-weight: 700; font-family: monospace; color: #6dd58c;" id="thereminNote">528 Hz (Transformation)</div>
+                </div>
+                <div class="theremin-track">
+                  <div class="theremin-fill" id="thereminBar"></div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-size: 0.65rem; color: #a8c7fa; text-transform: uppercase;">Volume (Left Hand Y)</div>
+                  <div style="font-size: 1rem; font-weight: 700; font-family: monospace; color: #f9ab00;" id="thereminVol">75%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Playground Side Control Panel -->
+            <div class="card" style="margin: 0; display: flex; flex-direction: column; gap: 12px;">
+              <div class="card-title">
+                <span>Playground Studio Controls</span>
+                <span class="version-pill" id="pgStatusPill">Live Wasm</span>
+              </div>
+
+              <!-- Mode Instructions Card -->
+              <div id="pgInstructionsBox" style="background: var(--md-sys-color-surface-container); padding: 12px; border-radius: var(--radius-sm); font-size: 0.8rem; line-height: 1.45; border-left: 3px solid var(--google-blue);">
+                <strong>Dual-Hand Pinch Lens:</strong> Bring both hands in front of the camera and pinch with both index fingers & thumbs. Move or stretch your hands apart to scale and drag a live optical filter lens over the video feed!
+              </div>
+
+              <!-- Quick Action Buttons -->
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button class="btn btn-sm btn-tonal" id="btnResetPlayground">🔄 Clear Overlays & Reset</button>
+                <button class="btn btn-sm btn-tonal" id="btnCyclePgFilter">🎨 Cycle Filter Lens (✌️ Peace)</button>
+                <button class="btn btn-sm btn-tonal" id="btnSpawnPhysics">🪐 Respawn 3D Physics Objects</button>
+              </div>
+
+              <!-- Live Telemetry Gauges -->
+              <div style="border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 10px; font-size: 0.75rem; display: flex; flex-direction: column; gap: 6px;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--md-sys-color-on-surface-variant);">Hand 0 (Left):</span>
+                  <strong id="pgHand0Status" style="color: var(--google-blue);">Searching...</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--md-sys-color-on-surface-variant);">Hand 1 (Right):</span>
+                  <strong id="pgHand1Status" style="color: var(--google-yellow);">Searching...</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--md-sys-color-on-surface-variant);">Hand-to-Hand Span:</span>
+                  <strong id="pgSpanStatus" style="font-family: monospace;">-- px</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--md-sys-color-on-surface-variant);">Active Lens Filter:</span>
+                  <strong id="pgActiveFilter" style="color: var(--google-green);">Normal</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="color: var(--md-sys-color-on-surface-variant);">Drawn Portals:</span>
+                  <strong id="pgPortalsCount">0 active</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- TAB 1: PRESENTATION CONTROLLER -->
-      <div class="tab-content active" id="tab-presentation" role="tabpanel">
+      <div class="tab-content" id="tab-presentation" role="tabpanel">
         <div class="presentation-viewport" id="presViewport">
           <div id="laserPointer"></div>
 
@@ -1398,6 +1762,189 @@
 
         <div class="drawing-board-container" id="drawingBoardContainer">
           <canvas id="drawingCanvas" width="960" height="540"></canvas>
+        </div>
+      </div>
+
+      <!-- TAB 2: HISTORY & ARCHITECTURE -->
+      <div class="tab-content" id="tab-architecture" role="tabpanel">
+        <div style="display: flex; flex-direction: column; gap: 20px; max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 6px;">
+          
+          <!-- Hero Overview -->
+          <div class="card" style="margin: 0; background: linear-gradient(135deg, rgba(26,115,232,0.06), transparent 70%);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+              <div>
+                <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--md-sys-color-on-surface); margin-bottom: 4px;">Under the Hood: Spatial Computer Vision & Kinematics</h2>
+                <p style="font-size: 0.84rem; color: var(--md-sys-color-on-surface-variant); max-width: 780px; line-height: 1.5;">
+                  From 1963 Ivan Sutherland Sketchpad cathode rays to 2026 sub-15ms WebAssembly neural inference, hand tracking evolved from cumbersome glove sensors to pure passive optics. Discover the end-to-end mathematical pipeline that drives this controller.
+                </p>
+              </div>
+              <span class="version-pill">Pure Client-Side Wasm</span>
+            </div>
+
+            <!-- Pipeline Flow Diagram (5-Stage Grid) -->
+            <div class="pipeline-stage-grid">
+              <div class="pipeline-card">
+                <div class="pipeline-num">01</div>
+                <div class="pipeline-title">Optical Ingestion</div>
+                <div class="pipeline-body">
+                  Zero-copy canvas blit from WebRTC media stream. Transforms camera frames to mirrored coordinate system and normalizes aspect ratio without GPU-to-CPU stalls.
+                </div>
+              </div>
+              <div class="pipeline-card">
+                <div class="pipeline-num">02</div>
+                <div class="pipeline-title">BlazePalm Detector</div>
+                <div class="pipeline-body">
+                  Single-shot neural detector extracts oriented bounding boxes and key anchors (wrist, MCP knuckles) invariant to 3D rotation, roll, and extreme camera tilt.
+                </div>
+              </div>
+              <div class="pipeline-card">
+                <div class="pipeline-num">03</div>
+                <div class="pipeline-title">21 3D Joint Regression</div>
+                <div class="pipeline-body">
+                  MediaPipe Wasm regresses 21 continuous 3D coordinate landmarks ($X, Y, Z$) in relative palm coordinates with metric depth approximation and occlusion recovery.
+                </div>
+              </div>
+              <div class="pipeline-card">
+                <div class="pipeline-num">04</div>
+                <div class="pipeline-title">OneEuro & Kinematics</div>
+                <div class="pipeline-body">
+                  Adaptive dual-cutoff low-pass filter eliminates high-frequency sensor noise during stationary fixation while eliminating lag during fast directional ballistic swipes.
+                </div>
+              </div>
+              <div class="pipeline-card">
+                <div class="pipeline-num">05</div>
+                <div class="pipeline-title">Semantic Intent Engine</div>
+                <div class="pipeline-body">
+                  Vector trigonometry computes finger curl angles (θ), euclidean pinch distances (Δd), and multi-modal actions dispatched across 2D canvas, Web Audio, and MCP.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mathematical Foundation Card -->
+          <div class="card" style="margin: 0;">
+            <div class="card-title">
+              <span>Mathematical Invariants & Spatial Formulations</span>
+              <span class="version-pill" style="color: var(--google-green);">Kinematics</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+              <div style="background: var(--md-sys-color-surface-container); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--md-sys-color-outline-variant);">
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--google-blue); margin-bottom: 4px;">Finger Curl Angle Vector Math</div>
+                <div style="font-family: monospace; font-size: 0.76rem; background: rgba(0,0,0,0.04); padding: 6px 8px; border-radius: 4px; margin-bottom: 6px;">
+                  cos θ = (u · v) / (||u|| · ||v||)
+                </div>
+                <div style="font-size: 0.78rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.4;">
+                  Computed across MCP → PIP → DIP → Tip vectors. If θ &lt; 85°, joint is classified as extended; if θ &gt; 120°, finger is curled.
+                </div>
+              </div>
+              <div style="background: var(--md-sys-color-surface-container); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--md-sys-color-outline-variant);">
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--google-green); margin-bottom: 4px;">Euclidean Pinch Distance</div>
+                <div style="font-family: monospace; font-size: 0.76rem; background: rgba(0,0,0,0.04); padding: 6px 8px; border-radius: 4px; margin-bottom: 6px;">
+                  d(Thumb, Index) = √((x₄ - x₈)² + (y₄ - y₈)² + (z₄ - z₈)²)
+                </div>
+                <div style="font-size: 0.78rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.4;">
+                  Normalized by palm span ||p_wrist - p_middle_mcp|| to guarantee distance scale-invariance regardless of user distance from camera.
+                </div>
+              </div>
+              <div style="background: var(--md-sys-color-surface-container); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--md-sys-color-outline-variant);">
+                <div style="font-weight: 700; font-size: 0.85rem; color: var(--google-yellow); margin-bottom: 4px;">Adaptive OneEuro Filter</div>
+                <div style="font-family: monospace; font-size: 0.76rem; background: rgba(0,0,0,0.04); padding: 6px 8px; border-radius: 4px; margin-bottom: 6px;">
+                  f_c = f_{c,min} + β · |dx/dt|
+                </div>
+                <div style="font-size: 0.78rem; color: var(--md-sys-color-on-surface-variant); line-height: 1.4;">
+                  Dynamically modulates low-pass cutoff frequency based on instantaneous landmark speed. Eliminates stationary hand tremors while preventing swipe lag.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- History of Computer Vision Tracking Timeline (1963 - 2026) -->
+          <div class="card" style="margin: 0;">
+            <div class="card-title">
+              <span>Evolution of Spatial Hand Tracking (1963 – 2026)</span>
+              <span class="version-pill" style="color: var(--google-blue);">63-Year Journey</span>
+            </div>
+            <div class="timeline-wrap">
+              <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-title">
+                    <span>1963 — Ivan Sutherland's Sketchpad</span>
+                    <span class="badge badge-tonal">MIT Lincoln Lab</span>
+                  </div>
+                  <div class="timeline-desc">
+                    The birth of direct human-computer graphical interaction. Used a physical light gun on a CRT monitor, laying the foundation for spatial coordinate input and computer graphics primitives.
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-title">
+                    <span>1981 — Lucas-Kanade Optical Flow</span>
+                    <span class="badge badge-tonal">Differential Tracking</span>
+                  </div>
+                  <div class="timeline-desc">
+                    Bruce Lucas and Takeo Kanade introduced differential image velocity estimation. Assumed spatial constancy to track visual motion vectors across video frames without markers.
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-title">
+                    <span>2001 — Viola-Jones Real-Time Cascades</span>
+                    <span class="badge badge-tonal">Integral Images</span>
+                  </div>
+                  <div class="timeline-desc">
+                    Paul Viola and Michael Jones demonstrated 15 FPS real-time facial feature detection on commodity Pentium III CPUs using AdaBoost feature selection and integral image computation.
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-title">
+                    <span>2010 — Microsoft Kinect & Structured Light</span>
+                    <span class="badge badge-tonal">Infrared Depth</span>
+                  </div>
+                  <div class="timeline-desc">
+                    PrimeSense IR speckle projection combined with Jamie Shotton's randomized decision forests enabled markerless whole-body skeletal tracking in consumer living rooms.
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-title">
+                    <span>2020 — Google MediaPipe Hands & BlazePalm</span>
+                    <span class="badge badge-tonal">On-Device ML</span>
+                  </div>
+                  <div class="timeline-desc">
+                    Fan Zhang, Valentin Bazarevsky et al. published the BlazePalm + 2.5D landmark regression pipeline. Real-time 21-joint articulated hand pose detection running entirely client-side on mobile GPUs and WebAssembly.
+                  </div>
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                  <div class="timeline-title">
+                    <span>2024–2026 — Zero-Install In-Browser Spatial Kinematics & MCP</span>
+                    <span class="badge badge-tonal" style="background: rgba(30,142,62,0.12); color: var(--google-green);">Current Era</span>
+                  </div>
+                  <div class="timeline-desc">
+                    Full WebAssembly SIMD execution with zero-latency browser rendering, Solfeggio Web Audio synthesis, interactive shader filter cutouts, dual-hand spatial manipulation, and bi-directional Model Context Protocol (MCP) agent interoperability.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1622,7 +2169,7 @@
 
       // State Management
       const state = {
-        activeTab: 'tab-presentation',
+        activeTab: 'tab-playground',
         isWebcamActive: false,
         isSimulated: true,
         showSkeleton: true,
@@ -1643,6 +2190,8 @@
         lastDrawPos: null,
         drawHistory: [],
         landmarks: [],
+        multiHandLandmarks: [],
+        handGestures: ['OPEN_PALM', 'NONE'],
         simTime: 0,
         sfxEnabled: true,
         mediaPipeReady: false,
@@ -1651,7 +2200,21 @@
         lastSwipeTime: 0,
         wristHistory: [],
         dwellTargetEl: null,
-        dwellStartTime: 0
+        dwellStartTime: 0,
+        // Dual Hand & Vision Playground Extensions
+        dualHandRoi: null,
+        drawnPortals: [],
+        activePgMode: 'dual_lens',
+        physicsObjects: [],
+        theremin: {
+          active: false,
+          osc: null,
+          gain: null,
+          filter: null,
+          freq: 528,
+          vol: 0.75,
+          noteName: '528 Hz (Transformation / Miracles)'
+        }
       };
 
       // 21 Landmark Joint Names Definition
@@ -1692,6 +2255,28 @@
         dwellLabel: document.getElementById('dwellLabel'),
         confValue: document.getElementById('confValue'),
         simButtons: document.querySelectorAll('.sim-btn'),
+        // Filter Strip
+        filterChips: document.querySelectorAll('.filter-chip'),
+        activeFilterLabel: document.getElementById('activeFilterLabel'),
+        // Playground
+        playgroundCanvas: document.getElementById('playgroundCanvas'),
+        playgroundStage: document.getElementById('playgroundStage'),
+        pgModeButtons: document.querySelectorAll('.pg-mode-btn'),
+        pgModeName: document.getElementById('pgModeName'),
+        pgHandCountText: document.getElementById('pgHandCountText'),
+        thereminMeterBox: document.getElementById('thereminMeterBox'),
+        thereminNote: document.getElementById('thereminNote'),
+        thereminBar: document.getElementById('thereminBar'),
+        thereminVol: document.getElementById('thereminVol'),
+        pgInstructionsBox: document.getElementById('pgInstructionsBox'),
+        btnResetPlayground: document.getElementById('btnResetPlayground'),
+        btnCyclePgFilter: document.getElementById('btnCyclePgFilter'),
+        btnSpawnPhysics: document.getElementById('btnSpawnPhysics'),
+        pgHand0Status: document.getElementById('pgHand0Status'),
+        pgHand1Status: document.getElementById('pgHand1Status'),
+        pgSpanStatus: document.getElementById('pgSpanStatus'),
+        pgActiveFilter: document.getElementById('pgActiveFilter'),
+        pgPortalsCount: document.getElementById('pgPortalsCount'),
         // Header Controls
         btnToggleSfx: document.getElementById('btnToggleSfx'),
         sfxIcon: document.getElementById('sfxIcon'),
@@ -1743,6 +2328,7 @@
 
       const visionCtx = els.visionCanvas.getContext('2d');
       const drawCtx = els.drawingCanvas.getContext('2d');
+      const pgCtx = els.playgroundCanvas ? els.playgroundCanvas.getContext('2d') : null;
 
       // Initialize UI & Listeners
       function init() {
@@ -1755,6 +2341,8 @@
         initSpatial3D();
         initTelemetry();
         initMcpHub();
+        initFilterStrip();
+        initPlayground();
         initWebcamHandlers();
         checkBackendHealth();
 
@@ -1816,7 +2404,7 @@
 
       function setGesture(gesture) {
         state.activeGesture = gesture;
-        els.activeGestureName.textContent = gesture;
+        if (els.activeGestureName) els.activeGestureName.textContent = gesture;
 
         // Perform gesture reactive actions
         if (gesture === 'SWIPE_RIGHT') {
@@ -1824,11 +2412,19 @@
         } else if (gesture === 'SWIPE_LEFT') {
           prevSlide();
         } else if (gesture === 'FIST') {
-          goToSlide(1);
+          if (state.activeTab === 'tab-presentation') goToSlide(1);
+          setActiveFilter('normal', '✊ Fist Reset');
         } else if (gesture === 'PINCH') {
           state.isDrawing = true;
+          playPinchClick();
         } else if (gesture === 'OPEN_PALM') {
           state.isDrawing = false;
+        } else if (gesture === 'VICTORY_PEACE') {
+          cycleFilter(1);
+        } else if (gesture === 'ROCK_ON') {
+          setActiveFilter('matrix', '🤘 Rock On Gesture');
+        } else if (gesture === 'THUMBS_UP') {
+          setActiveFilter('solar_gold', '👍 Thumbs Up Gesture');
         }
       }
 
@@ -2273,6 +2869,1082 @@
         } catch(e) {}
       }
 
+      // ── Live Shader Filter Controls ──
+      const FILTER_LIST = ['normal', 'matrix', 'thermal', 'sobel', 'cyber_vhs', 'hologram', 'solar_gold'];
+
+      function initFilterStrip() {
+        if (!els.filterChips) return;
+        els.filterChips.forEach(chip => {
+          chip.addEventListener('click', () => {
+            const filterName = chip.dataset.filter;
+            setActiveFilter(filterName, 'Manual Selection');
+          });
+        });
+      }
+
+      function setActiveFilter(filterName, source) {
+        if (!FILTER_LIST.includes(filterName)) filterName = 'normal';
+        state.activeFilter = filterName;
+
+        // Update UI filter chips
+        if (els.filterChips) {
+          els.filterChips.forEach(c => {
+            if (c.dataset.filter === filterName) {
+              c.classList.add('active-chip');
+            } else {
+              c.classList.remove('active-chip');
+            }
+          });
+        }
+
+        // Format label for display
+        const labelMap = {
+          normal: 'Normal / Clean',
+          matrix: 'Matrix Rain (🤘)',
+          thermal: 'Thermal Infrared',
+          sobel: 'Sobel Neon Edges',
+          cyber_vhs: 'Cyber VHS Glitch',
+          hologram: 'Cyan Hologram Grid',
+          solar_gold: 'Solar Amber (👍)'
+        };
+        const displayLabel = labelMap[filterName] || filterName;
+        if (els.activeFilterLabel) els.activeFilterLabel.textContent = displayLabel;
+        if (els.pgActiveFilter) els.pgActiveFilter.textContent = displayLabel;
+
+        if (source) {
+          showToast(`Active Filter: ${displayLabel} (${source})`);
+        }
+        playFilterSwitchChime();
+      }
+
+      function cycleFilter(direction = 1) {
+        const curIdx = FILTER_LIST.indexOf(state.activeFilter);
+        let nextIdx = (curIdx + direction) % FILTER_LIST.length;
+        if (nextIdx < 0) nextIdx = FILTER_LIST.length - 1;
+        setActiveFilter(FILTER_LIST[nextIdx], '✌️ Peace Gesture Cycle');
+      }
+
+      function playFilterSwitchChime() {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(528, t);
+          osc.frequency.exponentialRampToValueAtTime(792, t + 0.08);
+          gain.gain.setValueAtTime(0.12, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.13);
+        } catch(e) {}
+      }
+
+      // ── Dedicated Vision Playground ──
+      const PG_MODE_INSTRUCTIONS = {
+        dual_lens: "<strong>Dual-Hand Pinch Lens:</strong> Bring both hands in front of the camera and pinch with both index fingers & thumbs. Move or stretch your hands apart to scale and drag a live optical filter lens over the video feed!",
+        drawn_portal: "<strong>Drawn Filter Portals:</strong> Use your pointing index finger or pinch in the air (or mouse drag) to draw a continuous closed loop. When the loop seals, it transforms into an interactive floating shader cutout!",
+        theremin: "<strong>Spatial Audio Theremin:</strong> Left hand Y-axis modulates master output volume & low-pass resonance cutoff. Right hand X-axis smoothly tunes through the 9 sacred Solfeggio healing frequencies (174Hz to 963Hz)!",
+        physics: "<strong>3D Grab & Throw Physics:</strong> Floating kinetic geometric artifacts bounce in the zero-gravity sandbox. Pinch near any artifact to grab it, swing your hand, and release to throw with momentum!",
+        gesture_wheel: "<strong>Gesture Filter Switcher:</strong> Cycle filters instantly with your hands! ✌️ Peace = Next filter, 🤘 Rock On = Matrix rain, 👍 Thumbs Up = Solar Gold, ✊ Fist = Reset to clean feed."
+      };
+
+      function initPlayground() {
+        if (els.pgModeButtons) {
+          els.pgModeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+              els.pgModeButtons.forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              const mode = btn.dataset.pgmode;
+              setPlaygroundMode(mode);
+            });
+          });
+        }
+
+        if (els.btnResetPlayground) {
+          els.btnResetPlayground.addEventListener('click', () => {
+            state.drawnPortals = [];
+            state.dualHandRoi = null;
+            spawnPhysicsObjects(els.playgroundCanvas ? els.playgroundCanvas.width : 800, els.playgroundCanvas ? els.playgroundCanvas.height : 520);
+            if (els.pgPortalsCount) els.pgPortalsCount.textContent = '0 active';
+            showToast("Playground Overlays Reset");
+          });
+        }
+
+        if (els.btnCyclePgFilter) {
+          els.btnCyclePgFilter.addEventListener('click', () => {
+            cycleFilter(1);
+          });
+        }
+
+        if (els.btnSpawnPhysics) {
+          els.btnSpawnPhysics.addEventListener('click', () => {
+            spawnPhysicsObjects(els.playgroundCanvas ? els.playgroundCanvas.width : 800, els.playgroundCanvas ? els.playgroundCanvas.height : 520);
+            showToast("Respawned 3D Kinetic Objects");
+          });
+        }
+
+        // Initialize Physics Objects
+        spawnPhysicsObjects(800, 520);
+
+        // Interactive mouse / touch fallback on playground canvas
+        if (els.playgroundCanvas) {
+          let isPgPointerDown = false;
+          let pgPointerStart = null;
+          let activeDraggedObj = null;
+
+          els.playgroundCanvas.addEventListener('mousedown', (e) => {
+            isPgPointerDown = true;
+            const rect = els.playgroundCanvas.getBoundingClientRect();
+            const px = (e.clientX - rect.left) * (els.playgroundCanvas.width / rect.width);
+            const py = (e.clientY - rect.top) * (els.playgroundCanvas.height / rect.height);
+            pgPointerStart = { x: px, y: py };
+
+            if (state.activePgMode === 'physics') {
+              activeDraggedObj = state.physicsObjects.find(obj => Math.hypot(obj.x - px, obj.y - py) < obj.radius * 1.4);
+              if (activeDraggedObj) {
+                activeDraggedObj.grabbedBy = 'pointer';
+              }
+            } else if (state.activePgMode === 'drawn_portal') {
+              state.currentStrokePoints = [{ x: px, y: py }];
+            } else if (state.activePgMode === 'dual_lens') {
+              state.dualHandRoi = {
+                x: px - 60,
+                y: py - 60,
+                w: 120,
+                h: 120,
+                active: true
+              };
+            }
+          });
+
+          els.playgroundCanvas.addEventListener('mousemove', (e) => {
+            const rect = els.playgroundCanvas.getBoundingClientRect();
+            const px = (e.clientX - rect.left) * (els.playgroundCanvas.width / rect.width);
+            const py = (e.clientY - rect.top) * (els.playgroundCanvas.height / rect.height);
+
+            if (state.activePgMode === 'theremin') {
+              const normX = px / els.playgroundCanvas.width;
+              const normY = py / els.playgroundCanvas.height;
+              updateThereminFromCoordinates(normY, normX);
+            }
+
+            if (!isPgPointerDown) return;
+
+            if (state.activePgMode === 'physics' && activeDraggedObj) {
+              activeDraggedObj.vx = (px - activeDraggedObj.x) * 0.4;
+              activeDraggedObj.vy = (py - activeDraggedObj.y) * 0.4;
+              activeDraggedObj.x = px;
+              activeDraggedObj.y = py;
+            } else if (state.activePgMode === 'drawn_portal') {
+              state.currentStrokePoints.push({ x: px, y: py });
+              if (state.currentStrokePoints.length > 15) {
+                const first = state.currentStrokePoints[0];
+                if (Math.hypot(first.x - px, first.y - py) < 32) {
+                  sealDrawnPortal([...state.currentStrokePoints]);
+                  state.currentStrokePoints = [];
+                  isPgPointerDown = false;
+                }
+              }
+            } else if (state.activePgMode === 'dual_lens' && pgPointerStart) {
+              const minX = Math.min(pgPointerStart.x, px);
+              const minY = Math.min(pgPointerStart.y, py);
+              const maxX = Math.max(pgPointerStart.x, px);
+              const maxY = Math.max(pgPointerStart.y, py);
+              state.dualHandRoi = {
+                x: minX,
+                y: minY,
+                w: Math.max(40, maxX - minX),
+                h: Math.max(40, maxY - minY),
+                active: true
+              };
+            }
+          });
+
+          window.addEventListener('mouseup', () => {
+            if (isPgPointerDown) {
+              isPgPointerDown = false;
+              if (activeDraggedObj) {
+                activeDraggedObj.grabbedBy = null;
+                activeDraggedObj = null;
+              }
+              if (state.activePgMode === 'drawn_portal' && state.currentStrokePoints && state.currentStrokePoints.length > 20) {
+                sealDrawnPortal([...state.currentStrokePoints]);
+                state.currentStrokePoints = [];
+              }
+            }
+          });
+        }
+      }
+
+      function setPlaygroundMode(mode) {
+        state.activePgMode = mode;
+        const modeLabels = {
+          dual_lens: 'Dual-Hand Filter Lens',
+          drawn_portal: 'Drawn Filter Portals',
+          theremin: 'Spatial Audio Theremin',
+          physics: '3D Grab & Throw Physics',
+          gesture_wheel: 'Gesture Filter Switcher'
+        };
+        if (els.pgModeName) els.pgModeName.textContent = modeLabels[mode] || mode;
+        if (els.pgInstructionsBox) {
+          els.pgInstructionsBox.innerHTML = PG_MODE_INSTRUCTIONS[mode] || '';
+        }
+
+        if (els.thereminMeterBox) {
+          els.thereminMeterBox.style.display = mode === 'theremin' ? 'grid' : 'none';
+        }
+
+        if (mode === 'theremin') {
+          startThereminSynth();
+        } else {
+          stopThereminSynth();
+        }
+
+        showToast(`Playground Mode: ${modeLabels[mode]}`);
+      }
+
+      function sealDrawnPortal(pts) {
+        if (!pts || pts.length < 5) return;
+        const colors = ['#00f0ff', '#f9ab00', '#1e8e3e', '#d93025', '#9334e6'];
+        const pColor = colors[state.drawnPortals.length % colors.length];
+        state.drawnPortals.push({
+          id: Date.now(),
+          points: pts,
+          filter: state.activeFilter,
+          color: pColor,
+          pulse: 0
+        });
+        if (els.pgPortalsCount) {
+          els.pgPortalsCount.textContent = `${state.drawnPortals.length} active`;
+        }
+        playPortalSealedSound();
+        showToast(`🌀 Filter Portal Sealed (${state.activeFilter})`);
+      }
+
+      function playPortalSealedSound() {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          [528, 792, 1056].forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t + idx * 0.05);
+            gain.gain.setValueAtTime(0.18, t + idx * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.05 + 0.25);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t + idx * 0.05);
+            osc.stop(t + idx * 0.05 + 0.26);
+          });
+        } catch(e) {}
+      }
+
+      // ── Spatial Audio Theremin Synthesizer ──
+      const SOLFEGGIO_TONES = [
+        { freq: 174, name: '174 Hz (Foundation)' },
+        { freq: 285, name: '285 Hz (Cognition)' },
+        { freq: 396, name: '396 Hz (Liberation)' },
+        { freq: 417, name: '417 Hz (Facilitation)' },
+        { freq: 528, name: '528 Hz (Transformation / Miracles)' },
+        { freq: 639, name: '639 Hz (Connection)' },
+        { freq: 741, name: '741 Hz (Awakening)' },
+        { freq: 852, name: '852 Hz (Intuition)' },
+        { freq: 963, name: '963 Hz (Crown Consensus)' }
+      ];
+
+      let thereminOsc = null;
+      let thereminGain = null;
+      let thereminFilter = null;
+      let thereminSubOsc = null;
+
+      function startThereminSynth() {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx || thereminOsc) return;
+
+        try {
+          thereminOsc = audioCtx.createOscillator();
+          thereminSubOsc = audioCtx.createOscillator();
+          thereminFilter = audioCtx.createBiquadFilter();
+          thereminGain = audioCtx.createGain();
+
+          thereminOsc.type = 'sine';
+          thereminSubOsc.type = 'triangle';
+          thereminFilter.type = 'lowpass';
+          thereminFilter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+          thereminFilter.Q.setValueAtTime(4.0, audioCtx.currentTime);
+
+          thereminOsc.frequency.setValueAtTime(528, audioCtx.currentTime);
+          thereminSubOsc.frequency.setValueAtTime(264, audioCtx.currentTime);
+          thereminGain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+          thereminOsc.connect(thereminFilter);
+          thereminSubOsc.connect(thereminFilter);
+          thereminFilter.connect(thereminGain);
+          thereminGain.connect(audioCtx.destination);
+
+          thereminOsc.start();
+          thereminSubOsc.start();
+          state.theremin.active = true;
+        } catch(e) {
+          console.warn("Theremin synth initialization warning:", e);
+        }
+      }
+
+      function stopThereminSynth() {
+        if (thereminGain && audioCtx) {
+          try {
+            thereminGain.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.05);
+            setTimeout(() => {
+              if (thereminOsc) {
+                thereminOsc.stop();
+                thereminOsc.disconnect();
+                thereminOsc = null;
+              }
+              if (thereminSubOsc) {
+                thereminSubOsc.stop();
+                thereminSubOsc.disconnect();
+                thereminSubOsc = null;
+              }
+              state.theremin.active = false;
+            }, 60);
+          } catch(e) {}
+        }
+      }
+
+      function updateThereminFromCoordinates(normY, normX) {
+        const vol = Math.max(0, Math.min(1.0, 1.0 - normY));
+        const clampedX = Math.max(0, Math.min(1.0, normX));
+        const solfIdx = Math.min(SOLFEGGIO_TONES.length - 1, Math.floor(clampedX * SOLFEGGIO_TONES.length));
+        const targetTone = SOLFEGGIO_TONES[solfIdx];
+
+        state.theremin.vol = vol;
+        state.theremin.freq = targetTone.freq;
+        state.theremin.noteName = targetTone.name;
+
+        if (els.thereminNote) els.thereminNote.textContent = targetTone.name;
+        if (els.thereminVol) els.thereminVol.textContent = `${Math.round(vol * 100)}%`;
+        if (els.thereminBar) els.thereminBar.style.width = `${Math.round(clampedX * 100)}%`;
+
+        if (thereminOsc && thereminGain && thereminFilter && audioCtx) {
+          try {
+            const now = audioCtx.currentTime;
+            thereminOsc.frequency.setTargetAtTime(targetTone.freq, now, 0.04);
+            if (thereminSubOsc) thereminSubOsc.frequency.setTargetAtTime(targetTone.freq * 0.5, now, 0.04);
+            thereminFilter.frequency.setTargetAtTime(300 + vol * 4000, now, 0.04);
+            thereminGain.gain.setTargetAtTime(vol * 0.2, now, 0.03);
+          } catch(e) {}
+        }
+      }
+
+      // ── Touchless 3D Physics Sandbox ──
+      function spawnPhysicsObjects(canvasW, canvasH) {
+        const shapes = ['cube', 'sphere', 'octahedron', 'torus'];
+        const colors = ['#1a73e8', '#f9ab00', '#1e8e3e', '#d93025'];
+        const w = canvasW || 800;
+        const h = canvasH || 520;
+
+        state.physicsObjects = shapes.map((shape, idx) => ({
+          id: idx,
+          shape: shape,
+          x: 140 + idx * 170,
+          y: 120 + (idx % 2) * 90,
+          vx: (Math.random() - 0.5) * 3,
+          vy: (Math.random() - 0.5) * 3,
+          radius: 34,
+          color: colors[idx % colors.length],
+          rotX: Math.random() * Math.PI,
+          rotY: Math.random() * Math.PI,
+          vrotX: (Math.random() - 0.5) * 0.04,
+          vrotY: (Math.random() - 0.5) * 0.04,
+          grabbedBy: null,
+          scale: 1.0
+        }));
+      }
+
+      function updatePhysicsSandbox(dt, w, h) {
+        const gravity = 0.16;
+        const bounceDamping = 0.78;
+        const airDrag = 0.988;
+
+        state.physicsObjects.forEach(obj => {
+          if (obj.grabbedBy !== null && obj.grabbedBy !== undefined) {
+            obj.rotX += 0.04;
+            obj.rotY += 0.05;
+            obj.scale += (1.25 - obj.scale) * 0.15;
+          } else {
+            obj.vy += gravity;
+            obj.vx *= airDrag;
+            obj.vy *= airDrag;
+            obj.x += obj.vx;
+            obj.y += obj.vy;
+            obj.rotX += obj.vrotX;
+            obj.rotY += obj.vrotY;
+            obj.scale += (1.0 - obj.scale) * 0.1;
+
+            if (obj.x - obj.radius < 0) {
+              obj.x = obj.radius;
+              obj.vx = -obj.vx * bounceDamping;
+              playBounceClick();
+            } else if (obj.x + obj.radius > w) {
+              obj.x = w - obj.radius;
+              obj.vx = -obj.vx * bounceDamping;
+              playBounceClick();
+            }
+
+            if (obj.y - obj.radius < 0) {
+              obj.y = obj.radius;
+              obj.vy = -obj.vy * bounceDamping;
+              playBounceClick();
+            } else if (obj.y + obj.radius > h) {
+              obj.y = h - obj.radius;
+              obj.vy = -obj.vy * bounceDamping;
+              if (Math.abs(obj.vy) > 0.6) playBounceClick();
+            }
+          }
+        });
+      }
+
+      function playBounceClick() {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(240, t);
+          osc.frequency.exponentialRampToValueAtTime(80, t + 0.04);
+          gain.gain.setValueAtTime(0.04, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.06);
+        } catch(e) {}
+      }
+
+      // ── Shader Filters and Visualizer Render Engines ──
+      function renderShaderFilter(ctx, filterType, x, y, w, h, t) {
+        if (filterType === 'normal') return;
+
+        if (filterType === 'matrix') {
+          ctx.fillStyle = 'rgba(10, 28, 14, 0.45)';
+          ctx.fillRect(x, y, w, h);
+          ctx.fillStyle = '#34a853';
+          ctx.font = '11px monospace';
+          const cols = Math.floor(w / 16);
+          for (let c = 0; c < cols; c++) {
+            const charX = x + c * 16 + 2;
+            const seed = (c * 17) % 23;
+            const dropY = y + ((t * 0.08 * (seed + 12)) % (h + 30));
+            const glyphs = ["1", "0", "Z", "X", "7", "Ø", "Ψ", "Δ", "λ"];
+            const glyph = glyphs[(c + Math.floor(t * 0.005)) % glyphs.length];
+            ctx.fillText(glyph, charX, dropY);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(glyph, charX, dropY + 12);
+            ctx.fillStyle = '#34a853';
+          }
+        } else if (filterType === 'thermal') {
+          const thermalGrad = ctx.createLinearGradient(x, y, x + w, y + h);
+          thermalGrad.addColorStop(0, 'rgba(0, 0, 139, 0.4)');
+          thermalGrad.addColorStop(0.35, 'rgba(128, 0, 128, 0.4)');
+          thermalGrad.addColorStop(0.7, 'rgba(217, 48, 37, 0.45)');
+          thermalGrad.addColorStop(0.9, 'rgba(249, 171, 0, 0.5)');
+          thermalGrad.addColorStop(1, 'rgba(255, 255, 255, 0.6)');
+          ctx.fillStyle = thermalGrad;
+          ctx.fillRect(x, y, w, h);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(x + 10, y + 10, w - 20, h - 20);
+        } else if (filterType === 'sobel') {
+          ctx.fillStyle = 'rgba(0, 20, 15, 0.4)';
+          ctx.fillRect(x, y, w, h);
+          ctx.strokeStyle = '#00f0ff';
+          ctx.lineWidth = 2;
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 8;
+          ctx.strokeRect(x + 4, y + 4, w - 8, h - 8);
+          ctx.beginPath();
+          ctx.moveTo(x + 4, y + h * 0.33); ctx.lineTo(x + w - 4, y + h * 0.33);
+          ctx.moveTo(x + 4, y + h * 0.66); ctx.lineTo(x + w - 4, y + h * 0.66);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        } else if (filterType === 'cyber_vhs') {
+          ctx.fillStyle = 'rgba(180, 0, 120, 0.15)';
+          ctx.fillRect(x, y, w, h);
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+          for (let sy = y; sy < y + h; sy += 4) {
+            ctx.fillRect(x, sy, w, 1.5);
+          }
+          const glitchY = y + ((t * 0.05) % h);
+          ctx.fillStyle = 'rgba(0, 240, 255, 0.3)';
+          ctx.fillRect(x, glitchY, w, 6);
+        } else if (filterType === 'hologram') {
+          ctx.fillStyle = 'rgba(0, 180, 255, 0.18)';
+          ctx.fillRect(x, y, w, h);
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.35)';
+          ctx.lineWidth = 1;
+          for (let gx = x; gx < x + w; gx += 20) {
+            ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx, y + h); ctx.stroke();
+          }
+          for (let gy = y; gy < y + h; gy += 20) {
+            ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x + w, gy); ctx.stroke();
+          }
+        } else if (filterType === 'solar_gold') {
+          const goldGrad = ctx.createRadialGradient(x + w * 0.5, y + h * 0.5, 10, x + w * 0.5, y + h * 0.5, Math.max(w, h) * 0.7);
+          goldGrad.addColorStop(0, 'rgba(255, 235, 150, 0.45)');
+          goldGrad.addColorStop(0.6, 'rgba(249, 171, 0, 0.3)');
+          goldGrad.addColorStop(1, 'rgba(200, 120, 0, 0.15)');
+          ctx.fillStyle = goldGrad;
+          ctx.fillRect(x, y, w, h);
+        }
+      }
+
+      function renderRoiLensFrame(ctx, x, y, w, h, filterName) {
+        ctx.save();
+        ctx.strokeStyle = '#00f0ff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 4]);
+        ctx.strokeRect(x, y, w, h);
+        ctx.setLineDash([]);
+
+        const bLen = 14;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x, y + bLen); ctx.lineTo(x, y); ctx.lineTo(x + bLen, y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x + w - bLen, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + bLen); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x, y + h - bLen); ctx.lineTo(x, y + h); ctx.lineTo(x + bLen, y + h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x + w - bLen, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - bLen); ctx.stroke();
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+        ctx.fillRect(x, y - 22, Math.min(w, 180), 20);
+        ctx.fillStyle = '#00f0ff';
+        ctx.font = '10px monospace';
+        ctx.fillText(`🔍 PINCH LENS [${filterName.toUpperCase()}]`, x + 4, y - 8);
+        ctx.restore();
+      }
+
+      function renderPlaygroundScene(ctx, w, h, now) {
+        if (!ctx) return;
+
+        ctx.clearRect(0, 0, w, h);
+        if (state.isWebcamActive && els.webcamVideo.readyState >= 2) {
+          ctx.save();
+          ctx.scale(-1, 1);
+          ctx.drawImage(els.webcamVideo, -w, 0, w, h);
+          ctx.restore();
+        } else {
+          const grad = ctx.createLinearGradient(0, 0, w, h);
+          grad.addColorStop(0, '#131822');
+          grad.addColorStop(1, '#0b0f14');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, w, h);
+
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+          ctx.lineWidth = 1;
+          for (let x = 0; x < w; x += 40) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+          }
+          for (let y = 0; y < h; y += 40) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+          }
+        }
+
+        // Render Drawn Filter Portals
+        state.drawnPortals.forEach(portal => {
+          if (!portal.points || portal.points.length < 3) return;
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(portal.points[0].x, portal.points[0].y);
+          for (let i = 1; i < portal.points.length; i++) {
+            ctx.lineTo(portal.points[i].x, portal.points[i].y);
+          }
+          ctx.closePath();
+          ctx.clip();
+          renderShaderFilter(ctx, portal.filter || state.activeFilter, 0, 0, w, h, now);
+          ctx.restore();
+
+          ctx.save();
+          ctx.strokeStyle = portal.color || '#00f0ff';
+          ctx.lineWidth = 2.5;
+          ctx.shadowColor = portal.color || '#00f0ff';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.moveTo(portal.points[0].x, portal.points[0].y);
+          for (let i = 1; i < portal.points.length; i++) {
+            ctx.lineTo(portal.points[i].x, portal.points[i].y);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        if (state.currentStrokePoints && state.currentStrokePoints.length > 1) {
+          ctx.save();
+          ctx.strokeStyle = '#34a853';
+          ctx.lineWidth = 3;
+          ctx.setLineDash([6, 3]);
+          ctx.beginPath();
+          ctx.moveTo(state.currentStrokePoints[0].x, state.currentStrokePoints[0].y);
+          for (let i = 1; i < state.currentStrokePoints.length; i++) {
+            ctx.lineTo(state.currentStrokePoints[i].x, state.currentStrokePoints[i].y);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Render Dual-Hand Pinch ROI Lens
+        if (state.dualHandRoi && state.dualHandRoi.active) {
+          const { x, y, w: rw, h: rh } = state.dualHandRoi;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(x, y, rw, rh);
+          ctx.clip();
+          renderShaderFilter(ctx, state.activeFilter, x, y, rw, rh, now);
+          ctx.restore();
+          renderRoiLensFrame(ctx, x, y, rw, rh, state.activeFilter);
+        }
+
+        // Mode-Specific Passes
+        if (state.activePgMode === 'theremin') {
+          renderThereminVisualizer(ctx, w, h, now);
+        } else if (state.activePgMode === 'physics') {
+          updatePhysicsSandbox(0.016, w, h);
+          renderPhysicsObjects(ctx, w, h);
+        }
+
+        // Render Skeletons for detected hands
+        if (state.showSkeleton) {
+          renderMultiHandSkeletons(ctx, w, h);
+        }
+      }
+
+      function renderThereminVisualizer(ctx, w, h, now) {
+        const h0 = state.multiHandLandmarks && state.multiHandLandmarks[0] ? state.multiHandLandmarks[0] : (state.landmarks.length ? state.landmarks : null);
+        const h1 = state.multiHandLandmarks && state.multiHandLandmarks[1] ? state.multiHandLandmarks[1] : null;
+
+        const p0 = h0 ? { x: h0[8].x * w, y: h0[8].y * h } : { x: w * 0.25, y: h * (1.0 - state.theremin.vol) };
+        const p1 = h1 ? { x: h1[8].x * w, y: h1[8].y * h } : { x: w * 0.75, y: h * 0.5 };
+
+        ctx.save();
+        ctx.strokeStyle = '#6dd58c';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#6dd58c';
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+        const steps = 60;
+        const amp = 15 * state.theremin.vol;
+        const freqCycles = (state.theremin.freq / 100);
+
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const lx = p0.x + (p1.x - p0.x) * t;
+          const ly = p0.y + (p1.y - p0.y) * t + Math.sin(t * freqCycles * Math.PI * 2 + now * 0.01) * amp;
+          if (i === 0) ctx.moveTo(lx, ly);
+          else ctx.lineTo(lx, ly);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = '#f9ab00';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p1.x, p1.y, 22 + Math.sin(now * 0.008) * 4, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#1a73e8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p0.x, p0.y, 16 + state.theremin.vol * 14, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      function renderPhysicsObjects(ctx, w, h) {
+        state.physicsObjects.forEach(obj => {
+          ctx.save();
+          ctx.translate(obj.x, obj.y);
+          ctx.scale(obj.scale, obj.scale);
+
+          if (obj.grabbedBy !== null) {
+            ctx.shadowColor = obj.color;
+            ctx.shadowBlur = 18;
+          }
+
+          ctx.strokeStyle = obj.color;
+          ctx.lineWidth = 2.5;
+
+          const r = obj.radius;
+          const cosX = Math.cos(obj.rotX);
+          const sinX = Math.sin(obj.rotX);
+          const cosY = Math.cos(obj.rotY);
+          const sinY = Math.sin(obj.rotY);
+
+          if (obj.shape === 'cube') {
+            const s = r * 0.7;
+            const vertices = [
+              [-s, -s, -s], [s, -s, -s], [s, s, -s], [-s, s, -s],
+              [-s, -s, s], [s, -s, s], [s, s, s], [-s, s, s]
+            ];
+            const proj = vertices.map(([vx, vy, vz]) => {
+              let x1 = vx * cosY + vz * sinY;
+              let z1 = -vx * sinY + vz * cosY;
+              let y2 = vy * cosX - z1 * sinX;
+              return [x1, y2];
+            });
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+            ctx.beginPath();
+            proj.forEach(([px, py], i) => {
+              if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            });
+            ctx.closePath();
+            ctx.fill();
+
+            const edges = [
+              [0,1],[1,2],[2,3],[3,0],
+              [4,5],[5,6],[6,7],[7,4],
+              [0,4],[1,5],[2,6],[3,7]
+            ];
+            edges.forEach(([i, j]) => {
+              ctx.beginPath();
+              ctx.moveTo(proj[i][0], proj[i][1]);
+              ctx.lineTo(proj[j][0], proj[j][1]);
+              ctx.stroke();
+            });
+          } else if (obj.shape === 'sphere') {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(0, 0, r, r * Math.abs(cosX), obj.rotY, 0, Math.PI * 2);
+            ctx.stroke();
+          } else if (obj.shape === 'octahedron') {
+            const s = r * 0.9;
+            const verts = [
+              [0, -s, 0], [0, s, 0],
+              [-s, 0, 0], [s, 0, 0],
+              [0, 0, -s], [0, 0, s]
+            ];
+            const proj = verts.map(([vx, vy, vz]) => {
+              let x1 = vx * cosY + vz * sinY;
+              let z1 = -vx * sinY + vz * cosY;
+              let y2 = vy * cosX - z1 * sinX;
+              return [x1, y2];
+            });
+            const edges = [
+              [0,2],[0,3],[0,4],[0,5],
+              [1,2],[1,3],[1,4],[1,5],
+              [2,4],[4,3],[3,5],[5,2]
+            ];
+            edges.forEach(([i, j]) => {
+              ctx.beginPath();
+              ctx.moveTo(proj[i][0], proj[i][1]);
+              ctx.lineTo(proj[j][0], proj[j][1]);
+              ctx.stroke();
+            });
+          } else {
+            ctx.beginPath();
+            ctx.ellipse(0, 0, r, r * 0.5, obj.rotY, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(0, 0, r * 0.6, r * 0.3, obj.rotY, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '9px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(obj.shape.toUpperCase(), 0, r + 14);
+
+          ctx.restore();
+        });
+      }
+
+      function renderMultiHandSkeletons(ctx, w, h) {
+        if (!state.multiHandLandmarks || state.multiHandLandmarks.length === 0) {
+          if (state.landmarks && state.landmarks.length === 21) {
+            renderHandSkeleton(ctx, state.landmarks, w, h, 0);
+          }
+          return;
+        }
+
+        state.multiHandLandmarks.forEach((handPoints, hIdx) => {
+          renderHandSkeleton(ctx, handPoints, w, h, hIdx);
+        });
+      }
+
+      function renderHandSkeleton(ctx, points, w, h, handIdx) {
+        if (!points || points.length < 21) return;
+        const baseColor = handIdx === 0 ? 'rgba(26, 115, 232, 0.9)' : 'rgba(249, 171, 0, 0.9)';
+        const jointColor = handIdx === 0 ? '#1a73e8' : '#f9ab00';
+
+        ctx.strokeStyle = baseColor;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+
+        BONE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
+          const p1 = points[startIdx];
+          const p2 = points[endIdx];
+          if (!p1 || !p2) return;
+          ctx.beginPath();
+          ctx.moveTo(p1.x * w, p1.y * h);
+          ctx.lineTo(p2.x * w, p2.y * h);
+          ctx.stroke();
+        });
+
+        const thumb = points[4];
+        const index = points[8];
+        if (thumb && index) {
+          const pDist = Math.hypot(thumb.x - index.x, thumb.y - index.y);
+          if (pDist < 0.1) {
+            ctx.strokeStyle = pDist < 0.065 ? '#34a853' : '#f9ab00';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(thumb.x * w, thumb.y * h);
+            ctx.lineTo(index.x * w, index.y * h);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+
+        points.forEach((p, idx) => {
+          ctx.beginPath();
+          const isTip = [4, 8, 12, 16, 20].includes(idx);
+          const baseRadius = isTip ? 5.5 : 3.5;
+          const depthScale = Math.max(0.6, Math.min(1.6, 1.0 - (p.z || 0) * 4));
+          const r = baseRadius * depthScale;
+
+          ctx.arc(p.x * w, p.y * h, r, 0, Math.PI * 2);
+          if (isTip) {
+            ctx.fillStyle = idx === 8 ? '#d93025' : jointColor;
+          } else if (idx === 0) {
+            ctx.fillStyle = '#1e8e3e';
+          } else {
+            ctx.fillStyle = '#ffffff';
+          }
+          ctx.fill();
+          ctx.strokeStyle = jointColor;
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+
+          if (idx === 8) {
+            const rx = p.x * w;
+            const ry = p.y * h;
+            ctx.strokeStyle = jointColor;
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.arc(rx, ry, 12, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        });
+      }
+
+      function processMultiHandInteractions() {
+        if (!state.multiHandLandmarks || state.multiHandLandmarks.length === 0) return;
+
+        const h0 = state.multiHandLandmarks[0];
+        const h1 = state.multiHandLandmarks.length > 1 ? state.multiHandLandmarks[1] : null;
+
+        const g0 = state.handGestures[0] || 'DETECTING';
+        const g1 = h1 ? (state.handGestures[1] || 'DETECTING') : 'Not Present';
+        if (els.pgHand0Status) els.pgHand0Status.textContent = g0;
+        if (els.pgHand1Status) els.pgHand1Status.textContent = g1;
+
+        if (h0 && h1) {
+          const spanPx = Math.round(Math.hypot(h0[0].x - h1[0].x, h0[0].y - h1[0].y) * (els.playgroundCanvas ? els.playgroundCanvas.width : 800));
+          if (els.pgSpanStatus) els.pgSpanStatus.textContent = `${spanPx} px`;
+          if (els.pgHandCountText) els.pgHandCountText.textContent = `2 Hands Attuned`;
+
+          const isH0Pinch = Math.hypot(h0[4].x - h0[8].x, h0[4].y - h0[8].y) < 0.08;
+          const isH1Pinch = Math.hypot(h1[4].x - h1[8].x, h1[4].y - h1[8].y) < 0.08;
+
+          if (isH0Pinch && isH1Pinch) {
+            const w = els.playgroundCanvas ? els.playgroundCanvas.width : 800;
+            const h = els.playgroundCanvas ? els.playgroundCanvas.height : 520;
+            const p0x = ((h0[4].x + h0[8].x) * 0.5) * w;
+            const p0y = ((h0[4].y + h0[8].y) * 0.5) * h;
+            const p1x = ((h1[4].x + h1[8].x) * 0.5) * w;
+            const p1y = ((h1[4].y + h1[8].y) * 0.5) * h;
+
+            const minX = Math.min(p0x, p1x);
+            const minY = Math.min(p0y, p1y);
+            const maxX = Math.max(p0x, p1x);
+            const maxY = Math.max(p0y, p1y);
+
+            state.dualHandRoi = {
+              x: minX,
+              y: minY,
+              w: Math.max(40, maxX - minX),
+              h: Math.max(40, maxY - minY),
+              active: true
+            };
+          }
+
+          if (state.activePgMode === 'theremin') {
+            updateThereminFromCoordinates(h0[8].y, h1[8].x);
+          }
+
+          if (state.activePgMode === 'physics') {
+            handlePhysicsPinchGrab(h0, 0);
+            handlePhysicsPinchGrab(h1, 1);
+          }
+
+        } else if (h0) {
+          if (els.pgSpanStatus) els.pgSpanStatus.textContent = `-- px`;
+          if (els.pgHandCountText) els.pgHandCountText.textContent = `1 Hand Attuned`;
+
+          if (state.activePgMode === 'theremin') {
+            updateThereminFromCoordinates(h0[8].y, h0[8].x);
+          }
+          if (state.activePgMode === 'physics') {
+            handlePhysicsPinchGrab(h0, 0);
+          }
+          if (state.activePgMode === 'drawn_portal') {
+            handlePortalDrawingWithHand(h0);
+          }
+        }
+      }
+
+      function handlePhysicsPinchGrab(handPoints, handIdx) {
+        const isPinch = Math.hypot(handPoints[4].x - handPoints[8].x, handPoints[4].y - handPoints[8].y) < 0.08;
+        const w = els.playgroundCanvas ? els.playgroundCanvas.width : 800;
+        const h = els.playgroundCanvas ? els.playgroundCanvas.height : 520;
+        const tipX = handPoints[8].x * w;
+        const tipY = handPoints[8].y * h;
+
+        if (isPinch) {
+          let heldObj = state.physicsObjects.find(o => o.grabbedBy === handIdx);
+          if (!heldObj) {
+            heldObj = state.physicsObjects.find(o => Math.hypot(o.x - tipX, o.y - tipY) < o.radius * 1.5 && o.grabbedBy === null);
+            if (heldObj) {
+              heldObj.grabbedBy = handIdx;
+              playPinchClick();
+            }
+          }
+          if (heldObj) {
+            heldObj.vx = (tipX - heldObj.x) * 0.45;
+            heldObj.vy = (tipY - heldObj.y) * 0.45;
+            heldObj.x = tipX;
+            heldObj.y = tipY;
+          }
+        } else {
+          const heldObj = state.physicsObjects.find(o => o.grabbedBy === handIdx);
+          if (heldObj) {
+            heldObj.grabbedBy = null;
+            playSlideChime(1);
+          }
+        }
+      }
+
+      function handlePortalDrawingWithHand(handPoints) {
+        const isDrawingGesture = state.activeGesture === 'PINCH' || state.activeGesture === 'POINTING_INDEX';
+        const w = els.playgroundCanvas ? els.playgroundCanvas.width : 800;
+        const h = els.playgroundCanvas ? els.playgroundCanvas.height : 520;
+        const px = handPoints[8].x * w;
+        const py = handPoints[8].y * h;
+
+        if (isDrawingGesture) {
+          if (!state.currentStrokePoints) state.currentStrokePoints = [];
+          state.currentStrokePoints.push({ x: px, y: py });
+          if (state.currentStrokePoints.length > 20) {
+            const first = state.currentStrokePoints[0];
+            if (Math.hypot(first.x - px, first.y - py) < 38) {
+              sealDrawnPortal([...state.currentStrokePoints]);
+              state.currentStrokePoints = [];
+            }
+          }
+        } else {
+          if (state.currentStrokePoints && state.currentStrokePoints.length > 25) {
+            sealDrawnPortal([...state.currentStrokePoints]);
+          }
+          state.currentStrokePoints = [];
+        }
+      }
+
+      function classifyHandPoints(points) {
+        if (!points || points.length < 21) return 'UNKNOWN';
+        const wrist = points[0];
+        const thumbTip = points[4];
+        const thumbIp = points[3];
+        const indexMcp = points[5];
+        const indexPip = points[6];
+        const indexTip = points[8];
+        const middlePip = points[10];
+        const middleTip = points[12];
+        const ringPip = points[14];
+        const ringTip = points[16];
+        const pinkyPip = points[18];
+        const pinkyTip = points[20];
+
+        function dist(p1, p2) {
+          return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        }
+
+        const isIndexOpen = dist(indexTip, wrist) > dist(indexPip, wrist) * 1.15;
+        const isMiddleOpen = dist(middleTip, wrist) > dist(middlePip, wrist) * 1.15;
+        const isRingOpen = dist(ringTip, wrist) > dist(ringPip, wrist) * 1.15;
+        const isPinkyOpen = dist(pinkyTip, wrist) > dist(pinkyPip, wrist) * 1.15;
+
+        const pinchDistance = dist(thumbTip, indexTip);
+        const isPinch = pinchDistance < 0.07;
+        const isThumbOpen = dist(thumbTip, indexMcp) > 0.11;
+        const isThumbUp = !isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen &&
+                          (thumbTip.y < thumbIp.y) && (thumbTip.y < wrist.y);
+
+        if (isPinch) return 'PINCH';
+        if (isThumbUp) return 'THUMBS_UP';
+        if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'VICTORY_PEACE';
+        if (isIndexOpen && isPinkyOpen && !isMiddleOpen && !isRingOpen) return 'ROCK_ON';
+        if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'POINTING_INDEX';
+        if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen && isThumbOpen) return 'OPEN_PALM';
+        if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen && !isThumbOpen) return 'FIST';
+        return 'UNKNOWN';
+      }
+
+      let lastTriggeredGesture = null;
+      let lastGestureTriggerTime = 0;
+
+      function checkGestureFilterTriggers(g0, g1) {
+        const now = performance.now();
+        if (now - lastGestureTriggerTime < 800) return;
+
+        const activeG = (g0 !== 'UNKNOWN' && g0 !== 'NONE') ? g0 : g1;
+        if (activeG && activeG !== lastTriggeredGesture) {
+          if (activeG === 'VICTORY_PEACE') {
+            lastTriggeredGesture = activeG;
+            lastGestureTriggerTime = now;
+            cycleFilter(1);
+          } else if (activeG === 'ROCK_ON') {
+            lastTriggeredGesture = activeG;
+            lastGestureTriggerTime = now;
+            setActiveFilter('matrix', '🤘 Rock On Gesture');
+          } else if (activeG === 'THUMBS_UP') {
+            lastTriggeredGesture = activeG;
+            lastGestureTriggerTime = now;
+            setActiveFilter('solar_gold', '👍 Thumbs Up Gesture');
+          } else if (activeG === 'FIST') {
+            lastTriggeredGesture = activeG;
+            lastGestureTriggerTime = now;
+            setActiveFilter('normal', '✊ Fist Reset');
+          }
+        }
+      }
+
       // ── 3D Holographic Spatial Portal Engine (Three.js) ──
       let spatialScene = null;
       let spatialCamera = null;
@@ -2503,18 +4175,21 @@
         if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
           state.handDetected = true;
           state.handCount = results.multiHandLandmarks.length;
-          const rawHand = results.multiHandLandmarks[0];
 
-          // Mirror X coordinate because camera view is mirrored
-          const points = rawHand.map((pt, idx) => ({
-            id: idx,
-            name: JOINT_NAMES[idx] || `Joint ${idx}`,
-            x: 1.0 - pt.x,
-            y: pt.y,
-            z: pt.z || 0
-          }));
+          // Map all detected hands
+          state.multiHandLandmarks = results.multiHandLandmarks.map((rawHand, hIdx) => {
+            return rawHand.map((pt, idx) => ({
+              id: idx,
+              name: JOINT_NAMES[idx] || `Joint ${idx}`,
+              x: 1.0 - pt.x, // Mirror X for natural camera view
+              y: pt.y,
+              z: pt.z || 0,
+              handIndex: hIdx
+            }));
+          });
 
-          // Temporal landmark smoothing
+          // Primary hand (Hand 0) with temporal smoothing
+          const points = state.multiHandLandmarks[0];
           const smoothing = parseFloat(els.rangeSmoothing ? els.rangeSmoothing.value : 0.6) || 0.6;
           if (state.landmarks.length === 21 && smoothing > 0) {
             const alpha = 1.0 - (smoothing * 0.7);
@@ -2529,11 +4204,23 @@
           state.confidence = 0.96;
           if (els.confValue) els.confValue.textContent = "96%";
 
-          // Classify live gesture from real 3D geometry
+          // Classify gestures for each detected hand
+          const g0 = classifyHandPoints(state.multiHandLandmarks[0]);
+          const g1 = state.multiHandLandmarks[1] ? classifyHandPoints(state.multiHandLandmarks[1]) : 'NONE';
+          state.handGestures = [g0, g1];
+
+          // Trigger hand gesture filter switching (Peace, Rock On, Thumbs Up, Fist)
+          checkGestureFilterTriggers(g0, g1);
+
+          // Update primary active gesture & interactive features
           classifyLiveGesture(points);
+
+          // Process multi-hand interactions (Dual-hand Pinch Lens, Theremin, Physics)
+          processMultiHandInteractions();
         } else {
           state.handDetected = false;
           state.handCount = 0;
+          state.multiHandLandmarks = [];
           state.confidence = 0.0;
           if (els.confValue) els.confValue.textContent = "0%";
           state.isDrawing = false;
@@ -2749,72 +4436,105 @@
       function updateSimulatedLandmarks(time) {
         state.simTime += 0.03;
         const t = state.simTime;
-        const cx = 0.5 + Math.sin(t * 0.7) * 0.05;
-        const cy = 0.6 + Math.cos(t * 0.5) * 0.03;
 
-        const points = [];
-        points.push({ id: 0, name: JOINT_NAMES[0], x: cx, y: cy + 0.25, z: 0 });
+        function createHandPoints(cx, cy, gesture, handIdx) {
+          const points = [];
+          points.push({ id: 0, name: JOINT_NAMES[0], x: cx, y: cy + 0.22, z: 0, handIndex: handIdx });
 
-        function makeFinger(mcpX, mcpY, angle, isFolded, isPinching) {
-          const joints = [];
-          let curX = cx + mcpX;
-          let curY = cy + mcpY;
-          joints.push({ x: curX, y: curY, z: -0.02 });
+          function makeFinger(mcpX, mcpY, angle, isFolded, isPinching) {
+            const joints = [];
+            let curX = cx + mcpX;
+            let curY = cy + mcpY;
+            joints.push({ x: curX, y: curY, z: -0.02 });
 
-          const segLen = isFolded ? 0.03 : 0.06;
-          for (let i = 1; i <= 3; i++) {
-            curX += Math.sin(angle) * segLen;
-            curY -= Math.cos(angle) * (isFolded ? segLen * 0.5 : segLen);
-            if (isPinching && i === 3) {
-              curX = cx - 0.02;
-              curY = cy - 0.05;
+            const segLen = isFolded ? 0.03 : 0.055;
+            for (let i = 1; i <= 3; i++) {
+              curX += Math.sin(angle) * segLen;
+              curY -= Math.cos(angle) * (isFolded ? segLen * 0.5 : segLen);
+              if (isPinching && i === 3) {
+                curX = cx - 0.02;
+                curY = cy - 0.04;
+              }
+              joints.push({ x: curX, y: curY, z: -0.02 * i });
             }
-            joints.push({ x: curX, y: curY, z: -0.02 * i });
+            return joints;
           }
-          return joints;
+
+          const isFist = gesture === 'FIST';
+          const isPinch = gesture === 'PINCH';
+          const isPoint = gesture === 'POINTING_INDEX';
+          const isVictory = gesture === 'VICTORY_PEACE';
+          const isThumb = gesture === 'THUMBS_UP';
+
+          // Thumb
+          const thumb = makeFinger(-0.08, 0.08, isThumb ? -0.8 : -0.4, isFist, isPinch);
+          thumb.forEach((pt, i) => points.push({ id: 1 + i, name: JOINT_NAMES[1 + i], handIndex: handIdx, ...pt }));
+
+          // Index
+          const indexFolded = isFist || isThumb;
+          const index = makeFinger(-0.03, 0.0, -0.1, indexFolded, isPinch);
+          index.forEach((pt, i) => points.push({ id: 5 + i, name: JOINT_NAMES[5 + i], handIndex: handIdx, ...pt }));
+
+          // Middle
+          const midFolded = isFist || isThumb || isPoint;
+          const middle = makeFinger(0.01, -0.02, 0.0, midFolded, false);
+          middle.forEach((pt, i) => points.push({ id: 9 + i, name: JOINT_NAMES[9 + i], handIndex: handIdx, ...pt }));
+
+          // Ring
+          const ringFolded = isFist || isThumb || isPoint || isVictory;
+          const ring = makeFinger(0.05, 0.0, 0.1, ringFolded, false);
+          ring.forEach((pt, i) => points.push({ id: 13 + i, name: JOINT_NAMES[13 + i], handIndex: handIdx, ...pt }));
+
+          // Pinky
+          const pinkyFolded = isFist || isThumb || isPoint || isVictory;
+          const pinky = makeFinger(0.09, 0.04, 0.2, pinkyFolded, false);
+          pinky.forEach((pt, i) => points.push({ id: 17 + i, name: JOINT_NAMES[17 + i], handIndex: handIdx, ...pt }));
+
+          return points;
         }
 
-        const isFist = state.activeGesture === 'FIST';
-        const isPinch = state.activeGesture === 'PINCH';
-        const isPoint = state.activeGesture === 'POINTING_INDEX';
-        const isVictory = state.activeGesture === 'VICTORY_PEACE';
-        const isThumb = state.activeGesture === 'THUMBS_UP';
+        // Determine simulated gestures per mode
+        let g0 = state.activeGesture;
+        let g1 = 'OPEN_PALM';
 
-        // Thumb
-        const thumb = makeFinger(-0.1, 0.1, isThumb ? -0.8 : -0.4, isFist, isPinch);
-        thumb.forEach((pt, i) => points.push({ id: 1 + i, name: JOINT_NAMES[1 + i], ...pt }));
+        if (state.activePgMode === 'dual_lens') {
+          g0 = 'PINCH';
+          g1 = 'PINCH';
+        } else if (state.activePgMode === 'theremin') {
+          g0 = 'OPEN_PALM';
+          g1 = 'POINTING_INDEX';
+        } else if (state.activePgMode === 'physics') {
+          g0 = 'PINCH';
+          g1 = 'OPEN_PALM';
+        }
 
-        // Index
-        const indexFolded = isFist || isThumb;
-        const index = makeFinger(-0.04, 0.0, -0.1, indexFolded, isPinch);
-        index.forEach((pt, i) => points.push({ id: 5 + i, name: JOINT_NAMES[5 + i], ...pt }));
+        // Hand 0 (Left)
+        const cx0 = 0.35 + Math.sin(t * 0.7) * 0.04;
+        const cy0 = 0.52 + Math.cos(t * 0.5) * 0.03;
+        const hand0 = createHandPoints(cx0, cy0, g0, 0);
 
-        // Middle
-        const midFolded = isFist || isThumb || isPoint;
-        const middle = makeFinger(0.01, -0.02, 0.0, midFolded, false);
-        middle.forEach((pt, i) => points.push({ id: 9 + i, name: JOINT_NAMES[9 + i], ...pt }));
+        // Hand 1 (Right)
+        const cx1 = 0.65 - Math.sin(t * 0.7) * 0.04;
+        const cy1 = 0.52 + Math.sin(t * 0.6) * 0.03;
+        const hand1 = createHandPoints(cx1, cy1, g1, 1);
 
-        // Ring
-        const ringFolded = isFist || isThumb || isPoint || isVictory;
-        const ring = makeFinger(0.06, 0.0, 0.1, ringFolded, false);
-        ring.forEach((pt, i) => points.push({ id: 13 + i, name: JOINT_NAMES[13 + i], ...pt }));
+        state.landmarks = hand0;
+        state.multiHandLandmarks = [hand0, hand1];
+        state.handGestures = [g0, g1];
+        state.handDetected = true;
+        state.handCount = 2;
 
-        // Pinky
-        const pinkyFolded = isFist || isThumb || isPoint || isVictory;
-        const pinky = makeFinger(0.11, 0.05, 0.2, pinkyFolded, false);
-        pinky.forEach((pt, i) => points.push({ id: 17 + i, name: JOINT_NAMES[17 + i], ...pt }));
+        processMultiHandInteractions();
 
-        state.landmarks = points;
-
-        if ((isPinch || isPoint) && state.activeTab === 'tab-drawing') {
-          const tip = points[8];
+        if ((g0 === 'PINCH' || g0 === 'POINTING_INDEX') && state.activeTab === 'tab-drawing') {
+          const tip = hand0[8];
           const drawX = tip.x * els.drawingCanvas.width;
           const drawY = tip.y * els.drawingCanvas.height;
           addStrokePoint(drawX, drawY);
         }
 
         if (state.laserActive && state.activeTab === 'tab-presentation') {
-          const tip = points[8];
+          const tip = hand0[8];
           els.laserPointer.style.left = (tip.x * 100) + '%';
           els.laserPointer.style.top = (tip.y * 100) + '%';
         }
@@ -2925,18 +4645,61 @@
           }
         }
 
-        // 2. Video Filters
-        applyActiveFilter(visionCtx, w, h);
+        // 2. Render Drawn Filter Portals
+        state.drawnPortals.forEach(portal => {
+          if (!portal.points || portal.points.length < 3) return;
+          visionCtx.save();
+          visionCtx.beginPath();
+          visionCtx.moveTo(portal.points[0].x, portal.points[0].y);
+          for (let i = 1; i < portal.points.length; i++) {
+            visionCtx.lineTo(portal.points[i].x, portal.points[i].y);
+          }
+          visionCtx.closePath();
+          visionCtx.clip();
+          renderShaderFilter(visionCtx, portal.filter || state.activeFilter, 0, 0, w, h, now);
+          visionCtx.restore();
 
-        // 3. Render Skeleton with Reticle & Pinch Line
-        if (state.showSkeleton && state.landmarks.length === 21) {
-          renderEnhancedSkeleton(visionCtx, w, h);
+          visionCtx.save();
+          visionCtx.strokeStyle = portal.color || '#00f0ff';
+          visionCtx.lineWidth = 2.5;
+          visionCtx.beginPath();
+          visionCtx.moveTo(portal.points[0].x, portal.points[0].y);
+          for (let i = 1; i < portal.points.length; i++) {
+            visionCtx.lineTo(portal.points[i].x, portal.points[i].y);
+          }
+          visionCtx.closePath();
+          visionCtx.stroke();
+          visionCtx.restore();
+        });
+
+        // 3. Render Dual-Hand Pinch ROI Lens or Global Shader Filter
+        if (state.dualHandRoi && state.dualHandRoi.active) {
+          const { x: rx, y: ry, w: rw, h: rh } = state.dualHandRoi;
+          visionCtx.save();
+          visionCtx.beginPath();
+          visionCtx.rect(rx, ry, rw, rh);
+          visionCtx.clip();
+          renderShaderFilter(visionCtx, state.activeFilter, rx, ry, rw, rh, now);
+          visionCtx.restore();
+          renderRoiLensFrame(visionCtx, rx, ry, rw, rh, state.activeFilter);
+        } else {
+          renderShaderFilter(visionCtx, state.activeFilter, 0, 0, w, h, now);
         }
 
-        // 4. Update 3D Spatial Portal
+        // 4. Render Multi-Hand Skeletons
+        if (state.showSkeleton) {
+          renderMultiHandSkeletons(visionCtx, w, h);
+        }
+
+        // 5. If activeTab is playground, render playground stage
+        if (state.activeTab === 'tab-playground' && pgCtx && els.playgroundCanvas) {
+          renderPlaygroundScene(pgCtx, els.playgroundCanvas.width, els.playgroundCanvas.height, now);
+        }
+
+        // 6. Update 3D Spatial Portal
         updateSpatialPortal();
 
-        // 5. Update Telemetry Table once per 10 frames
+        // 7. Update Telemetry Table once per 10 frames
         if (frameCount % 10 === 0 && state.activeTab === 'tab-telemetry') {
           updateTelemetryTable();
         }
@@ -2945,29 +4708,7 @@
       }
 
       function applyActiveFilter(ctx, w, h) {
-        if (state.activeFilter === 'normal') return;
-
-        if (state.activeFilter === 'sobel') {
-          ctx.strokeStyle = '#34a853';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(10, 10, w - 20, h - 20);
-        } else if (state.activeFilter === 'thermal') {
-          ctx.fillStyle = 'rgba(217, 48, 37, 0.15)';
-          ctx.fillRect(0, 0, w, h);
-        } else if (state.activeFilter === 'neon') {
-          ctx.shadowColor = '#1a73e8';
-          ctx.shadowBlur = 12;
-        } else if (state.activeFilter === 'matrix') {
-          ctx.fillStyle = 'rgba(30, 142, 62, 0.14)';
-          ctx.fillRect(0, 0, w, h);
-          ctx.fillStyle = '#34a853';
-          ctx.font = '10px monospace';
-          for (let i = 0; i < 8; i++) {
-            const rx = (Math.sin(state.simTime + i) * 0.5 + 0.5) * w;
-            const ry = ((state.simTime * 80 + i * 40) % h);
-            ctx.fillText(Math.random() > 0.5 ? "10110" : "01001", rx, ry);
-          }
-        }
+        renderShaderFilter(ctx, state.activeFilter, 0, 0, w, h, performance.now());
       }
 
       function renderEnhancedSkeleton(ctx, w, h) {
