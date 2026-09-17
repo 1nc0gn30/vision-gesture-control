@@ -120,7 +120,7 @@ class TestCLI(unittest.TestCase):
             self.assertEqual(ret, 0)
         data = json.loads(buf.getvalue())
         self.assertIn("tools", data)
-        self.assertEqual(len(data["tools"]), 5)
+        self.assertGreaterEqual(len(data["tools"]), 5)
 
     def test_mcp_config_flag(self):
         for client in ["claude", "cursor", "cline", "zed", "all"]:

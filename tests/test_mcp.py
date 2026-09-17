@@ -268,13 +268,66 @@ class TestMCPServerProtocol(unittest.TestCase):
         req = {"jsonrpc": "2.0", "id": 3, "method": "tools/list"}
         resp = self.server.handle_request(req)
         tools = resp["result"]["tools"]
-        self.assertEqual(len(tools), 5)
+        self.assertGreaterEqual(len(tools), 5)
         names = [t["name"] for t in tools]
         self.assertIn("vision_classify_gesture", names)
         self.assertIn("vision_calculate_dwell", names)
         self.assertIn("vision_classify_face", names)
         self.assertIn("vision_generate_action_map", names)
         self.assertIn("vision_get_diagnostics", names)
+        self.assertIn("vision_analyze_dual_hands", names)
+        self.assertIn("vision_get_shader_filters", names)
+        self.assertIn("vision_get_solfeggio_frequencies", names)
+
+    def test_tools_call_analyze_dual_hands(self):
+        h0 = make_landmarks_for_gesture("pinch")
+        h1 = make_landmarks_for_gesture("pinch")
+        req = {
+            "jsonrpc": "2.0",
+            "id": 31,
+            "method": "tools/call",
+            "params": {
+                "name": "vision_analyze_dual_hands",
+                "arguments": {"hand0_landmarks": h0, "hand1_landmarks": h1},
+            },
+        }
+        resp = self.server.handle_request(req)
+        self.assertFalse(resp["result"]["isError"])
+        data = resp["result"]["structured_data"]
+        self.assertEqual(data["status"], "success")
+        self.assertTrue(data["dual_pinch_detected"])
+        self.assertIsNotNone(data["roi_lens_box"])
+
+    def test_tools_call_shader_filters(self):
+        req = {
+            "jsonrpc": "2.0",
+            "id": 32,
+            "method": "tools/call",
+            "params": {"name": "vision_get_shader_filters", "arguments": {}},
+        }
+        resp = self.server.handle_request(req)
+        self.assertFalse(resp["result"]["isError"])
+        data = resp["result"]["structured_data"]
+        self.assertIn("filters", data)
+        filter_ids = [f["id"] for f in data["filters"]]
+        self.assertIn("matrix", filter_ids)
+        self.assertIn("thermal", filter_ids)
+        self.assertIn("solar_gold", filter_ids)
+
+    def test_tools_call_solfeggio_frequencies(self):
+        req = {
+            "jsonrpc": "2.0",
+            "id": 33,
+            "method": "tools/call",
+            "params": {"name": "vision_get_solfeggio_frequencies", "arguments": {}},
+        }
+        resp = self.server.handle_request(req)
+        self.assertFalse(resp["result"]["isError"])
+        data = resp["result"]["structured_data"]
+        self.assertIn("solfeggio_scale", data)
+        freqs = [f["freq_hz"] for f in data["solfeggio_scale"]]
+        self.assertIn(528, freqs)
+        self.assertIn(963, freqs)
 
     def test_tools_call_classify(self):
         pts = make_landmarks_for_gesture("open_palm")

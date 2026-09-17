@@ -801,11 +801,210 @@ def generate_mcp_client_config(
         }
 
 
+def analyze_dual_hands(
+    hand0_landmarks: Any,
+    hand1_landmarks: Any,
+    confidence_threshold: float = 0.5,
+) -> Dict[str, Any]:
+    """Analyzes dual-hand spatial geometry, inter-hand span, dual pinch, and ROI lens box."""
+    pts0 = _normalize_landmarks(hand0_landmarks)
+    pts1 = _normalize_landmarks(hand1_landmarks)
+
+    if len(pts0) < 21 or len(pts1) < 21:
+        return {
+            "status": "partial_detection",
+            "hands_detected": (1 if len(pts0) >= 21 else 0) + (1 if len(pts1) >= 21 else 0),
+            "dual_pinch_detected": False,
+            "hand_span_wrist": None,
+            "roi_lens_box": None,
+            "message": "Both hands must have at least 21 3D landmarks for dual spatial analysis."
+        }
+
+    g0 = classify_gesture(pts0, handedness="Left", confidence_threshold=confidence_threshold)
+    g1 = classify_gesture(pts1, handedness="Right", confidence_threshold=confidence_threshold)
+
+    wrist0, wrist1 = pts0[0], pts1[0]
+    span_wrist = _euclidean_distance(wrist0, wrist1, use_3d=True)
+
+    index0, index1 = pts0[8], pts1[8]
+    span_index = _euclidean_distance(index0, index1, use_3d=True)
+
+    is_pinch0 = g0.get("pinch", {}).get("is_pinching", False)
+    is_pinch1 = g1.get("pinch", {}).get("is_pinching", False)
+    is_dual_pinch = is_pinch0 and is_pinch1
+
+    roi_lens_box = None
+    if is_dual_pinch:
+        p0 = {
+            "x": (pts0[4]["x"] + pts0[8]["x"]) / 2.0,
+            "y": (pts0[4]["y"] + pts0[8]["y"]) / 2.0,
+        }
+        p1 = {
+            "x": (pts1[4]["x"] + pts1[8]["x"]) / 2.0,
+            "y": (pts1[4]["y"] + pts1[8]["y"]) / 2.0,
+        }
+        min_x = min(p0["x"], p1["x"])
+        min_y = min(p0["y"], p1["y"])
+        max_x = max(p0["x"], p1["x"])
+        max_y = max(p0["y"], p1["y"])
+        roi_lens_box = {
+            "min_x": round(min_x, 4),
+            "min_y": round(min_y, 4),
+            "max_x": round(max_x, 4),
+            "max_y": round(max_y, 4),
+            "width": round(abs(max_x - min_x), 4),
+            "height": round(abs(max_y - min_y), 4),
+        }
+
+    return {
+        "status": "success",
+        "hands_detected": 2,
+        "dual_pinch_detected": is_dual_pinch,
+        "hand_span_wrist": round(span_wrist, 4),
+        "hand_span_index": round(span_index, 4),
+        "relative_depth_z": round(wrist0.get("z", 0.0) - wrist1.get("z", 0.0), 4),
+        "roi_lens_box": roi_lens_box,
+        "hand_left": {
+            "gesture": g0.get("gesture"),
+            "confidence": g0.get("confidence"),
+            "pinch": g0.get("pinch"),
+        },
+        "hand_right": {
+            "gesture": g1.get("gesture"),
+            "confidence": g1.get("confidence"),
+            "pinch": g1.get("pinch"),
+        },
+    }
+
+
+def get_shader_filters() -> Dict[str, Any]:
+    """Returns the catalog of live shaders and their gestural triggers."""
+    return {
+        "filters": [
+            {
+                "id": "normal",
+                "name": "Normal / Clean Feed",
+                "trigger_gesture": "FIST (✊)",
+                "description": "Unfiltered native WebRTC optical ingestion stream.",
+                "color": "#ffffff"
+            },
+            {
+                "id": "matrix",
+                "name": "Matrix Digital Rain",
+                "trigger_gesture": "ROCK_ON (🤘)",
+                "description": "Falling columns of phosphor-green glyphs with lead brightness trails.",
+                "color": "#1e8e3e"
+            },
+            {
+                "id": "thermal",
+                "name": "Thermal Infrared IR",
+                "trigger_gesture": "Manual / Cycle",
+                "description": "False-color thermal heat spectrum from deep blue to white-hot.",
+                "color": "#d93025"
+            },
+            {
+                "id": "sobel",
+                "name": "Sobel Neon Edges",
+                "trigger_gesture": "Manual / Cycle",
+                "description": "Electric cyan high-pass edge illumination with circuit line overlays.",
+                "color": "#00f0ff"
+            },
+            {
+                "id": "cyber_vhs",
+                "name": "Cyber VHS Glitch",
+                "trigger_gesture": "Manual / Cycle",
+                "description": "Analog chromatic aberration, CRT scanlines, and vertical tracking noise.",
+                "color": "#b40078"
+            },
+            {
+                "id": "hologram",
+                "name": "Cyan Hologram Grid",
+                "trigger_gesture": "Manual / Cycle",
+                "description": "Volumetric projection grid with scanlines and coordinate crosshairs.",
+                "color": "#a8c7fa"
+            },
+            {
+                "id": "solar_gold",
+                "name": "Solar Amber Gold",
+                "trigger_gesture": "THUMBS_UP (👍)",
+                "description": "Radial warm golden luminescence with solar bloom.",
+                "color": "#f9ab00"
+            }
+        ],
+        "cycle_gesture": "VICTORY_PEACE (✌️)",
+        "reset_gesture": "FIST (✊)",
+    }
+
+
+def get_solfeggio_frequencies() -> Dict[str, Any]:
+    """Returns Solfeggio sacred frequency scale and spatial audio Theremin mappings."""
+    return {
+        "solfeggio_scale": [
+            {"freq_hz": 174, "tone": "UT_qu", "name": "174 Hz (Foundation)", "description": "Natural pain reduction and somatic stabilization."},
+            {"freq_hz": 285, "tone": "RE_qu", "name": "285 Hz (Cognition)", "description": "Cellular blueprint restructuring and cognitive memory."},
+            {"freq_hz": 396, "tone": "UT", "name": "396 Hz (Liberation)", "description": "Releasing emotional blockages and guilt."},
+            {"freq_hz": 417, "tone": "RE", "name": "417 Hz (Facilitation)", "description": "Facilitating positive transformation and change."},
+            {"freq_hz": 528, "tone": "MI", "name": "528 Hz (Transformation / Miracles)", "description": "Harmonic DNA repair and golden mean resonance."},
+            {"freq_hz": 639, "tone": "FA", "name": "639 Hz (Connection)", "description": "Interpersonal harmony, empathy, and relationship balance."},
+            {"freq_hz": 741, "tone": "SOL", "name": "741 Hz (Awakening)", "description": "Problem solving, clarity, and intuitive awakening."},
+            {"freq_hz": 852, "tone": "LA", "name": "852 Hz (Intuition)", "description": "Returning to spiritual order and third-eye focus."},
+            {"freq_hz": 963, "tone": "SI", "name": "963 Hz (Crown Consensus)", "description": "Universal oneness and swarm consciousness."}
+        ],
+        "theremin_mapping": {
+            "volume_axis": "Left Hand Y (Tip: normY -> gain = 1.0 - normY)",
+            "pitch_axis": "Right Hand X (Tip: normX -> 174Hz to 963Hz Solfeggio Scale)",
+            "filter_resonance": "Modulated low-pass Biquad (300Hz to 4300Hz)",
+            "waveform": "Dual oscillator (Sine fundamental + Triangle sub-octave)"
+        }
+    }
+
+
 # ---------------------------------------------------------------------------
 # MCP Tool Schemas (Model Context Protocol JSON Schemas)
 # ---------------------------------------------------------------------------
 
 MCP_TOOLS_DEFINITIONS = [
+    {
+        "name": "vision_analyze_dual_hands",
+        "description": "Analyzes dual-hand spatial geometry, wrist-to-wrist span, index span, dual pinch state, and dynamic ROI filter lens bounding box coordinates.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "hand0_landmarks": {
+                    "description": "Array of 21 3D landmarks for primary hand (Left).",
+                    "type": "array",
+                    "items": {"type": "object"},
+                },
+                "hand1_landmarks": {
+                    "description": "Array of 21 3D landmarks for secondary hand (Right).",
+                    "type": "array",
+                    "items": {"type": "object"},
+                },
+                "confidence_threshold": {
+                    "description": "Confidence threshold (default: 0.5).",
+                    "type": "number",
+                    "default": 0.5,
+                },
+            },
+            "required": ["hand0_landmarks", "hand1_landmarks"],
+        },
+    },
+    {
+        "name": "vision_get_shader_filters",
+        "description": "Returns all available real-time optical shader filters (Matrix Rain, Thermal IR, Sobel Neon, Cyber VHS, Hologram, Solar Amber) and their hand gesture triggers.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+        },
+    },
+    {
+        "name": "vision_get_solfeggio_frequencies",
+        "description": "Returns the 9 sacred Solfeggio acoustic frequencies (174Hz to 963Hz) and spatial audio Theremin mapping equations.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+        },
+    },
     {
         "name": "vision_classify_gesture",
         "description": "Classifies 21 3D/2D hand landmarks (MediaPipe format) into gesture types (e.g. open_palm, fist, pointing_up, peace_sign, pinch, thumbs_up, rock_on, ok_sign) with confidence score, pinch metrics, and individual finger extension states.",
@@ -936,7 +1135,19 @@ class MCPServer:
 
     def execute_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Executes an MCP tool and returns structured result."""
-        if tool_name == "vision_classify_gesture":
+        if tool_name == "vision_analyze_dual_hands":
+            hand0 = arguments.get("hand0_landmarks", [])
+            hand1 = arguments.get("hand1_landmarks", [])
+            thresh = float(arguments.get("confidence_threshold", 0.5))
+            return analyze_dual_hands(hand0, hand1, thresh)
+
+        elif tool_name == "vision_get_shader_filters":
+            return get_shader_filters()
+
+        elif tool_name == "vision_get_solfeggio_frequencies":
+            return get_solfeggio_frequencies()
+
+        elif tool_name == "vision_classify_gesture":
             landmarks = arguments.get("landmarks", [])
             handedness = arguments.get("handedness", "Right")
             confidence_threshold = float(arguments.get("confidence_threshold", 0.5))
