@@ -1933,7 +1933,7 @@
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 4px; flex-wrap: wrap; gap: 6px;">
             <div style="display: flex; align-items: center; gap: 8px;">
               <span><strong>13 Live Shaders & Portals</strong></span>
-              <button id="btnToggleGestureFilter" class="btn btn-xs" style="padding: 2px 8px; font-size: 0.65rem; border-radius: 12px; border: 1px solid var(--md-sys-color-outline-variant); background: transparent; cursor: pointer;" title="Toggle hand gesture filter switching (Peace = Next, Rock = Matrix, ThumbsUp = Gold)">🖐️ Gesture Switch: <strong id="lblGestureFilterState">OFF</strong></button>
+              <button id="btnToggleGestureFilter" class="btn btn-xs" style="padding: 2px 8px; font-size: 0.65rem; border-radius: 12px; border: 1px solid var(--google-blue); background: rgba(26,115,232,0.1); cursor: pointer;" title="Toggle hand gesture filter switching (Peace = Next, Rock = Matrix, ThumbsUp = Gold)">🖐️ Gesture Switch: <strong id="lblGestureFilterState" style="color: var(--google-green);">ON</strong></button>
             </div>
             <span id="activeFilterLabel" style="font-weight: 600; color: var(--google-blue);">Normal</span>
           </div>
@@ -2874,8 +2874,9 @@
         dwellTargetEl: null,
         dwellStartTime: 0,
         // Gesture Filter Switching & Lock
-        gestureFilterSwitching: false,
+        gestureFilterSwitching: true,
         manualFilterLockTime: 0,
+        lensFilter: 'matrix',
         // Dual Hand & Vision Playground Extensions
         dualHandRoi: null,
         drawnPortals: [],
@@ -3287,6 +3288,10 @@
 
       // Air Drawing Canvas
       function initDrawing() {
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.airDrawing && window.VisionApp.tools.airDrawing.init) {
+          window.VisionApp.tools.airDrawing.init();
+          return;
+        }
         els.colorSwatches.forEach(swatch => {
           swatch.addEventListener('click', () => {
             els.colorSwatches.forEach(s => s.classList.remove('active-color'));
@@ -4820,16 +4825,19 @@
           ctx.restore();
         }
 
-        // Render Dual-Hand Pinch ROI Lens
-        if (state.dualHandRoi && state.dualHandRoi.active) {
+        // Render Dual-Hand Pinch ROI Lens (isolated to playground canvas)
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.playgroundLens && typeof window.VisionApp.tools.playgroundLens.renderLens === 'function') {
+          window.VisionApp.tools.playgroundLens.renderLens(ctx, w, h, now);
+        } else if (state.dualHandRoi && state.dualHandRoi.active) {
           const { x, y, w: rw, h: rh } = state.dualHandRoi;
+          const currentLensFilter = state.lensFilter || 'matrix';
           ctx.save();
           ctx.beginPath();
           ctx.rect(x, y, rw, rh);
           ctx.clip();
-          renderShaderFilter(ctx, state.activeFilter, x, y, rw, rh, now);
+          renderShaderFilter(ctx, currentLensFilter, x, y, rw, rh, now);
           ctx.restore();
-          renderRoiLensFrame(ctx, x, y, rw, rh, state.activeFilter);
+          renderRoiLensFrame(ctx, x, y, rw, rh, currentLensFilter);
         }
 
         // Mode-Specific Passes
@@ -5215,7 +5223,9 @@
           const isH0Pinch = Math.hypot(h0[4].x - h0[8].x, h0[4].y - h0[8].y) < 0.08;
           const isH1Pinch = Math.hypot(h1[4].x - h1[8].x, h1[4].y - h1[8].y) < 0.08;
 
-          if (isH0Pinch && isH1Pinch && state.activeTab === 'tab-playground' && state.activePgMode === 'dual_lens') {
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.playgroundLens && typeof window.VisionApp.tools.playgroundLens.processHands === 'function') {
+            window.VisionApp.tools.playgroundLens.processHands(h0, h1);
+          } else if (isH0Pinch && isH1Pinch && state.activeTab === 'tab-playground' && state.activePgMode === 'dual_lens') {
             const w = els.playgroundCanvas ? els.playgroundCanvas.width : 800;
             const h = els.playgroundCanvas ? els.playgroundCanvas.height : 520;
             const p0x = ((h0[4].x + h0[8].x) * 0.5) * w;
@@ -5264,6 +5274,10 @@
         } else if (h0) {
           if (els.pgSpanStatus) els.pgSpanStatus.textContent = `-- px`;
           if (els.pgHandCountText) els.pgHandCountText.textContent = `1 Hand Attuned`;
+
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.playgroundLens && typeof window.VisionApp.tools.playgroundLens.processHands === 'function') {
+            window.VisionApp.tools.playgroundLens.processHands(h0, null);
+          }
 
           if (state.activePgMode === 'theremin') {
             updateThereminFromCoordinates(h0[8].y, h0[8].x);
@@ -5418,6 +5432,9 @@
       }
 
       function castSpell(spellName, originX, originY, targetX, targetY) {
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.gestureFx && typeof window.VisionApp.tools.gestureFx.castSpell === 'function') {
+          return window.VisionApp.tools.gestureFx.castSpell(spellName, originX, originY, targetX, targetY);
+        }
         const meta = SPELL_METADATA[spellName] || SPELL_METADATA.fireball;
         const now = performance.now();
         if (now - lastSpellCastTime < 240) return;
@@ -5468,6 +5485,9 @@
       }
 
       function executeMacroAction(macroKey) {
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.gestureFx && typeof window.VisionApp.tools.gestureFx.executeMacroAction === 'function') {
+          return window.VisionApp.tools.gestureFx.executeMacroAction(macroKey);
+        }
         const now = performance.now();
         if (now - lastMacroTriggerTime < 350) return;
         lastMacroTriggerTime = now;
@@ -5510,6 +5530,9 @@
       }
 
       function selectSpell(spellKey) {
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.gestureFx && typeof window.VisionApp.tools.gestureFx.selectSpell === 'function') {
+          return window.VisionApp.tools.gestureFx.selectSpell(spellKey);
+        }
         if (!SPELL_METADATA[spellKey]) return;
         state.gestureFx.activeSpell = spellKey;
         const meta = SPELL_METADATA[spellKey];
@@ -5594,6 +5617,10 @@
 
       function renderGestureFxScene(ctx, w, h, now) {
         if (!ctx) return;
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.gestureFx && typeof window.VisionApp.tools.gestureFx.renderScene === 'function') {
+          window.VisionApp.tools.gestureFx.renderScene(ctx, w, h, now);
+          return;
+        }
         ctx.clearRect(0, 0, w, h);
 
         const dt = (16 / 1000) * state.gestureFx.bulletTimeFactor;
@@ -6324,7 +6351,8 @@
         }
 
         // Do not use drawing / pointing / pinching gestures for filter switching
-        if (activeG === 'PINCH' || activeG === 'POINTING_INDEX') {
+        // Complete isolation: Drawing tools never trigger filter switching or leak into other tools
+        if (activeG === 'PINCH' || activeG === 'POINTING_INDEX' || state.activeTab === 'tab-drawing') {
           return;
         }
 
@@ -6348,8 +6376,12 @@
           lastGestureTriggerTime = now;
 
           if (activeG === 'VICTORY_PEACE') {
-            cycleFilter(1);
-            showGestureHudBanner("✌️ VICTORY / PEACE", `Next Filter → ${state.activeFilter.toUpperCase()}`, "✌️");
+            if (state.activeTab === 'tab-playground' && state.activePgMode === 'dual_lens' && window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.playgroundLens) {
+              window.VisionApp.tools.playgroundLens.cycleLensFilter(1);
+            } else {
+              cycleFilter(1);
+              showGestureHudBanner("✌️ VICTORY / PEACE", `Next Filter → ${state.activeFilter.toUpperCase()}`, "✌️");
+            }
           } else if (activeG === 'ROCK_ON') {
             setActiveFilter('matrix', '🤘 Rock On');
             showGestureHudBanner("🤘 ROCK ON", "Matrix Code Rain", "🤘");
@@ -6401,6 +6433,7 @@
       window.addEventListener('resize', resizeSpatial3D);
 
       function initSpatial3D() {
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.presentationSpatial) return;
         if (!els.spatial3dHost || typeof THREE === 'undefined') return;
 
         const w = els.spatial3dHost.clientWidth || 800;
@@ -6772,7 +6805,13 @@
         } else if (newGesture === 'THUMBS_UP') {
           playSlideChime(1);
         } else if (newGesture === 'FIST') {
-          if (state.activeTab === 'tab-presentation') goToSlide(1);
+          if (state.activeTab === 'tab-presentation') {
+            if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.presentationSpatial && window.VisionApp.tools.presentationSpatial.resetPresentation) {
+              window.VisionApp.tools.presentationSpatial.resetPresentation();
+            } else {
+              goToSlide(1);
+            }
+          }
           playSlideChime(-1);
         }
       }
@@ -6807,14 +6846,20 @@
       }
 
       function handleSwipe(direction) {
-        playSlideChime(direction === 'SWIPE_RIGHT' ? 1 : -1);
         if (state.activeTab === 'tab-presentation') {
-          if (direction === 'SWIPE_RIGHT') {
-            nextSlide();
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.presentationSpatial && window.VisionApp.tools.presentationSpatial.handleSwipe) {
+            window.VisionApp.tools.presentationSpatial.handleSwipe(direction);
           } else {
-            prevSlide();
+            playSlideChime(direction === 'SWIPE_RIGHT' ? 1 : -1);
+            if (direction === 'SWIPE_RIGHT') {
+              nextSlide();
+            } else {
+              prevSlide();
+            }
+            showToast(direction === 'SWIPE_RIGHT' ? "👉 Next Slide (Swipe Right)" : "👈 Prev Slide (Swipe Left)");
           }
-          showToast(direction === 'SWIPE_RIGHT' ? "👉 Next Slide (Swipe Right)" : "👈 Prev Slide (Swipe Left)");
+        } else {
+          playSlideChime(direction === 'SWIPE_RIGHT' ? 1 : -1);
         }
       }
 
@@ -6824,6 +6869,10 @@
 
         // Air Drawing
         if (state.activeTab === 'tab-drawing') {
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.airDrawing && window.VisionApp.tools.airDrawing.updateHandTracking) {
+            window.VisionApp.tools.airDrawing.updateHandTracking(points, gesture);
+            return;
+          }
           if (els.drawingCursor) {
             els.drawingCursor.style.left = (tip.x * 100) + '%';
             els.drawingCursor.style.top = (tip.y * 100) + '%';
@@ -6848,18 +6897,22 @@
 
         // Presentation Laser Pointer & Dwell Click
         if (state.activeTab === 'tab-presentation') {
-          const lx = tip.x * 100;
-          const ly = tip.y * 100;
-          if (els.laserPointer) {
-            els.laserPointer.style.left = lx + '%';
-            els.laserPointer.style.top = ly + '%';
-            els.laserPointer.style.display = 'block';
-          }
-
-          if (gesture === 'POINTING_INDEX') {
-            processDwellHover(tip.x, tip.y);
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.presentationSpatial && window.VisionApp.tools.presentationSpatial.updatePresentation) {
+            window.VisionApp.tools.presentationSpatial.updatePresentation(state, points, gesture);
           } else {
-            resetDwell();
+            const lx = tip.x * 100;
+            const ly = tip.y * 100;
+            if (els.laserPointer) {
+              els.laserPointer.style.left = lx + '%';
+              els.laserPointer.style.top = ly + '%';
+              els.laserPointer.style.display = 'block';
+            }
+
+            if (gesture === 'POINTING_INDEX') {
+              processDwellHover(tip.x, tip.y);
+            } else {
+              resetDwell();
+            }
           }
         } else {
           resetDwell();
@@ -7176,40 +7229,9 @@
           }
         }
 
-        // 2. Render Drawn Filter Portals
-        state.drawnPortals.forEach(portal => {
-          if (!portal.points || portal.points.length < 3) return;
-          visionCtx.save();
-          visionCtx.beginPath();
-          visionCtx.moveTo(portal.points[0].x, portal.points[0].y);
-          for (let i = 1; i < portal.points.length; i++) {
-            visionCtx.lineTo(portal.points[i].x, portal.points[i].y);
-          }
-          visionCtx.closePath();
-          visionCtx.clip();
-          renderShaderFilter(visionCtx, portal.filter || state.activeFilter, 0, 0, w, h, now);
-          visionCtx.restore();
-
-          visionCtx.save();
-          visionCtx.strokeStyle = portal.color || '#00f0ff';
-          visionCtx.lineWidth = 2.5;
-          visionCtx.beginPath();
-          visionCtx.moveTo(portal.points[0].x, portal.points[0].y);
-          for (let i = 1; i < portal.points.length; i++) {
-            visionCtx.lineTo(portal.points[i].x, portal.points[i].y);
-          }
-          visionCtx.closePath();
-          visionCtx.stroke();
-          visionCtx.restore();
-        });
-
-        // 3. Always apply the active global shader filter to the main camera feed
-        renderShaderFilter(visionCtx, state.activeFilter, 0, 0, w, h, now);
-
-        // 3b. Render Dual-Hand Pinch ROI Lens Frame when active in Playground Dual-Lens mode
-        if (state.activeTab === 'tab-playground' && state.activePgMode === 'dual_lens' && state.dualHandRoi && state.dualHandRoi.active) {
-          const { x: rx, y: ry, w: rw, h: rh } = state.dualHandRoi;
-          renderRoiLensFrame(visionCtx, rx, ry, rw, rh, state.activeFilter);
+        // 3. Apply the active global shader filter to the main camera feed (only when not normal)
+        if (state.activeFilter && state.activeFilter !== 'normal') {
+          renderShaderFilter(visionCtx, state.activeFilter, 0, 0, w, h, now);
         }
 
         // 4. Render Multi-Hand Skeletons
@@ -7219,7 +7241,11 @@
 
         // 5. If activeTab is playground, render playground stage
         if (state.activeTab === 'tab-playground' && pgCtx && els.playgroundCanvas) {
-          renderPlaygroundScene(pgCtx, els.playgroundCanvas.width, els.playgroundCanvas.height, now);
+          if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.playgroundLens && typeof window.VisionApp.tools.playgroundLens.renderScene === 'function') {
+            window.VisionApp.tools.playgroundLens.renderScene(pgCtx, els.playgroundCanvas.width, els.playgroundCanvas.height, now);
+          } else {
+            renderPlaygroundScene(pgCtx, els.playgroundCanvas.width, els.playgroundCanvas.height, now);
+          }
         }
 
         // 5b. If activeTab is gesturefx, render gesture FX studio stage
@@ -7228,7 +7254,11 @@
         }
 
         // 6. Update 3D Spatial Portal
-        updateSpatialPortal();
+        if (window.VisionApp && window.VisionApp.tools && window.VisionApp.tools.presentationSpatial && window.VisionApp.tools.presentationSpatial.updateSpatial) {
+          window.VisionApp.tools.presentationSpatial.updateSpatial(state);
+        } else {
+          updateSpatialPortal();
+        }
 
         // 7. Update Telemetry Table once per 10 frames
         if (frameCount % 10 === 0 && state.activeTab === 'tab-telemetry') {
@@ -7359,6 +7389,27 @@
       // Initialize on Load
       window.addEventListener('DOMContentLoaded', init);
 
+      // Expose to window for modular tool extensions
+      window.VisionApp = {
+        state,
+        els,
+        JOINT_NAMES,
+        BONE_CONNECTIONS,
+        FILTER_LIST,
+        renderShaderFilter,
+        renderRoiLensFrame,
+        setActiveFilter,
+        cycleFilter,
+        showToast,
+        showGestureHudBanner,
+        ensureAudioContext,
+        getAudioContext: () => audioCtx,
+        playPinchClick,
+        playSlideChime,
+        playVictoryFanfare,
+        tools: {}
+      };
+
     })();
   </script>
 
@@ -7399,5 +7450,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Modular Tool Extension Engines -->
+  <script src="js/tool-playground-lens.js"></script>
+  <script src="js/tool-air-drawing.js"></script>
+  <script src="js/tool-presentation-spatial.js"></script>
+  <script src="js/tool-gesturefx.js"></script>
 </body>
 </html>

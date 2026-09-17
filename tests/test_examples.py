@@ -109,6 +109,79 @@ class TestAirDrawingAppExample:
         assert "Pinch" in readme_content
 
 
+class TestToolAirDrawingJs:
+    """Test suite for public/js/tool-air-drawing.js modular extension."""
+
+    @pytest.fixture
+    def script_content(self) -> str:
+        script_path = REPO_ROOT / "public" / "js" / "tool-air-drawing.js"
+        assert script_path.exists(), f"Missing {script_path}"
+        content = script_path.read_text(encoding="utf-8")
+        assert len(content) > 500, "tool-air-drawing.js is unexpectedly small"
+        return content
+
+    def test_file_exists_and_syntax_valid(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-air-drawing.js"
+        cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        assert res.returncode == 0, f"JS syntax check failed: {res.stderr}"
+
+    def test_attaches_to_vision_app(self, script_content: str):
+        assert "VisionApp.tools.airDrawing" in script_content or "VisionApp.tools['airDrawing']" in script_content
+        assert "VisionApp.tools = VisionApp.tools || {}" in script_content
+
+    def test_smoothed_fingertip_reticle_kinematics(self, script_content: str):
+        assert "updateSmoothedFingertip" in script_content
+        assert "minSmoothingAlpha" in script_content
+        assert "velocityDamping" in script_content
+        assert "deadzoneThreshold" in script_content
+        assert "drawing-cursor-hover" in script_content
+        assert "drawing-cursor-drawing" in script_content
+
+    def test_natural_drawing_pipeline(self, script_content: str):
+        assert "quadraticCurveTo" in script_content
+        assert "velocityScale" in script_content or "velocity" in script_content
+        assert "renderSplineSegment" in script_content or "quadratic" in script_content
+
+    def test_brush_sizes_and_swatches(self, script_content: str):
+        assert "brushSizes" in script_content
+        assert "fine" in script_content and "medium" in script_content and "broad" in script_content and "chisel" in script_content
+        assert "setColor" in script_content
+        assert "setBrushSize" in script_content
+
+    def test_open_palm_hold_clear_and_audio(self, script_content: str):
+        assert "palmHoldThresholdMs: 350" in script_content or "350" in script_content
+        assert "OPEN_PALM" in script_content
+        assert "clearCanvas" in script_content
+        assert "playClearChime" in script_content or "playClearChimeCue" in script_content
+
+    def test_undo_and_png_export(self, script_content: str):
+        assert "undoStroke" in script_content or "undo" in script_content
+        assert "exportHighResPNG" in script_content or "exportPNG" in script_content
+        assert "toDataURL('image/png')" in script_content
+
+    def test_workspace_isolation(self, script_content: str):
+        assert "tab-drawing" in script_content
+        assert "manualFilterLockTime" in script_content
+
+    def test_node_execution_interface(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-air-drawing.js"
+        node_code = f"""
+        const tool = require('{script_path}');
+        const cfg = tool.getConfig();
+        if (cfg.palmHoldThresholdMs !== 350) process.exit(1);
+        if (cfg.brushSizes.fine !== 4 || cfg.brushSizes.chisel !== 28) process.exit(2);
+        const sm = tool.updateSmoothedFingertip(0.5, 0.5, 100);
+        if (typeof sm.x !== 'number' || typeof sm.y !== 'number') process.exit(3);
+        console.log('SUCCESS');
+        """
+        res = subprocess.run(["node", "-e", node_code], capture_output=True, text=True)
+        assert res.returncode == 0, f"Node execution test failed: {res.stderr}"
+
+
+
 class TestMcpClientConfigs:
     """Test suite for examples/mcp-clients/."""
 
@@ -254,3 +327,190 @@ class TestDocumentationCompleteness:
         assert "Zero Cloud" in content
         assert "GDPR" in content
         assert "Security Audit Checklist" in content
+
+
+class TestGestureFxToolExtension:
+    """Test suite for public/js/tool-gesturefx.js Gesture FX Studio & Touchless Macropad."""
+
+    @pytest.fixture
+    def script_content(self) -> str:
+        script_path = REPO_ROOT / "public" / "js" / "tool-gesturefx.js"
+        assert script_path.exists(), f"File {script_path} does not exist"
+        content = script_path.read_text(encoding="utf-8")
+        assert len(content) > 1000, "public/js/tool-gesturefx.js is unexpectedly small"
+        return content
+
+    def test_script_syntax_with_node(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-gesturefx.js"
+        cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        assert res.returncode == 0, f"Node syntax error in tool-gesturefx.js: {res.stderr}"
+
+    def test_spell_particle_emitters(self, script_content: str):
+        # Fireball, Cryo Frost, Tesla Arc Lightning, Grav Repulsor, Chrono Time Echoes
+        assert "fireball" in script_content.lower()
+        assert "cryo" in script_content.lower()
+        assert "lightning" in script_content.lower()
+        assert "repulsor" in script_content.lower()
+        assert "chrono" in script_content.lower() or "bullet_time" in script_content.lower()
+        assert "particles" in script_content.lower()
+
+    def test_posture_triggering(self, script_content: str):
+        # Open palm charging, index finger aiming/casting, two-hand shockwave bursts
+        assert "OPEN_PALM" in script_content
+        assert "POINTING_INDEX" in script_content
+        assert "charging" in script_content.lower()
+        assert "aiming" in script_content.lower()
+        assert "shockwave" in script_content.lower()
+
+    def test_dj_audio_filter_engine(self, script_content: str):
+        # BiquadFilterNode Low-Pass filter, 200 Hz - 12000 Hz, 0.5 - 15.0 Q, analyser
+        assert "BiquadFilter" in script_content or "biquad" in script_content.lower()
+        assert "lowpass" in script_content.lower()
+        assert "analyser" in script_content.lower()
+        assert "12000" in script_content or "12,000" in script_content
+        assert "cutoff" in script_content.lower()
+        assert "resonance" in script_content.lower()
+
+    def test_touchless_macropad(self, script_content: str):
+        # Collision detection, hover glow, dwell/trigger
+        assert "macropad" in script_content.lower()
+        assert "hover" in script_content.lower()
+        assert "bullet_time" in script_content.lower()
+        assert "snapshot" in script_content.lower()
+        assert "reset_all" in script_content.lower() or "clear" in script_content.lower()
+
+    def test_vision_app_attachment(self, script_content: str):
+        assert "VisionApp" in script_content
+        assert "gestureFx" in script_content
+        assert "castSpell" in script_content
+        assert "executeMacroAction" in script_content
+
+
+class TestPresentationSpatialToolExtension:
+    """Test suite for public/js/tool-presentation-spatial.js Touchless Presentation & 3D Spatial Portal."""
+
+    @pytest.fixture
+    def script_content(self) -> str:
+        script_path = REPO_ROOT / "public" / "js" / "tool-presentation-spatial.js"
+        assert script_path.exists(), f"File {script_path} does not exist"
+        content = script_path.read_text(encoding="utf-8")
+        assert len(content) > 1000, "public/js/tool-presentation-spatial.js is unexpectedly small"
+        return content
+
+    def test_script_syntax_with_node(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-presentation-spatial.js"
+        cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        assert res.returncode == 0, f"Node syntax error in tool-presentation-spatial.js: {res.stderr}"
+
+    def test_presentation_controller_features(self, script_content: str):
+        # Laser reticle, motion trail canvas, dwell ring, bounding box hit testing
+        assert "presMotionTrailCanvas" in script_content
+        assert "laserPointer" in script_content
+        assert "dwell" in script_content.lower()
+        assert "presDwellCircle" in script_content or "dwellCircleEl" in script_content
+        assert "getBoundingClientRect" in script_content
+        assert "SWIPE_RIGHT" in script_content
+        assert "SWIPE_LEFT" in script_content
+        assert "FIST" in script_content
+        assert "goToSlide" in script_content
+        assert "nextSlide" in script_content
+        assert "prevSlide" in script_content
+
+    def test_3d_spatial_portal_features(self, script_content: str):
+        # WebGL Three.js core, zero-dimension safe handling, two-hand span zoom, pinch roll
+        assert "THREE" in script_content
+        assert "WebGLRenderer" in script_content
+        assert "ResizeObserver" in script_content or "handleResize" in script_content
+        assert "multiHandLandmarks" in script_content
+        assert "spanInter" in script_content or "targetScale" in script_content
+        assert "lerp" in script_content.lower() or "targetScale" in script_content
+        assert "rotation" in script_content
+
+    def test_all_five_shape_geometries(self, script_content: str):
+        # Icosahedron, TorusKnot, Dodecahedron, Octahedron, Sphere
+        for shape in ["Icosahedron", "TorusKnot", "Dodecahedron", "Octahedron", "Sphere"]:
+            assert shape in script_content, f"Missing shape geometry: {shape}"
+
+    def test_neon_color_palettes(self, script_content: str):
+        # Quantum Cyan, Solar Amber, Matrix Emerald, Hyper Ruby, Cosmic Violet, Electric Plasma
+        for palette in ["Quantum Cyan", "Solar Amber", "Matrix Emerald", "Hyper Ruby", "Cosmic Violet", "Electric Plasma"]:
+            assert palette in script_content, f"Missing neon palette: {palette}"
+
+    def test_vision_app_attachment(self, script_content: str):
+        assert "VisionApp" in script_content
+        assert "presentationSpatial" in script_content
+        assert "updatePresentation" in script_content
+        assert "updateSpatial" in script_content
+        assert "cycleShape" in script_content
+        assert "cyclePalette" in script_content
+        assert "resetSpatial" in script_content
+
+
+class TestPlaygroundLensToolExtension:
+    """Test suite for public/js/tool-playground-lens.js Vision Playground & Dual-Hand Filter Lens."""
+
+    @pytest.fixture
+    def script_content(self) -> str:
+        script_path = REPO_ROOT / "public" / "js" / "tool-playground-lens.js"
+        assert script_path.exists(), f"File {script_path} does not exist"
+        content = script_path.read_text(encoding="utf-8")
+        assert len(content) > 1000, "public/js/tool-playground-lens.js is unexpectedly small"
+        return content
+
+    def test_script_syntax_with_node(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-playground-lens.js"
+        cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
+        res = subprocess.run(cmd, capture_output=True, text=True)
+        assert res.returncode == 0, f"Node syntax error in tool-playground-lens.js: {res.stderr}"
+
+    def test_deadzone_and_ema_smoothing(self, script_content: str):
+        assert "DEADZONE_PX" in script_content or "deadzone" in script_content.lower()
+        assert "EMA_ALPHA" in script_content or "ema" in script_content.lower()
+        assert "applyEmaDeadzone" in script_content
+
+    def test_rock_solid_sticky_lock_state(self, script_content: str):
+        assert "locked" in script_content
+        assert "active" in script_content
+        assert "mode" in script_content
+        assert "isPointNearLens" in script_content
+        assert "dragAnchor" in script_content
+
+    def test_isolated_lens_filter(self, script_content: str):
+        assert "lensFilter" in script_content
+        assert "renderShaderFilter" in script_content
+        assert "renderRoiLensFrame" in script_content
+        assert "cycleLensFilter" in script_content
+        assert "VICTORY_PEACE" in script_content
+
+    def test_playground_overlays_support(self, script_content: str):
+        for overlay in ["drawn_portal", "theremin", "air_drums", "physics", "gesture_wheel"]:
+            assert overlay in script_content, f"Missing overlay support for {overlay}"
+
+    def test_node_execution_interface(self):
+        import subprocess
+        script_path = REPO_ROOT / "public" / "js" / "tool-playground-lens.js"
+        node_code = f"""
+        const tool = require('{script_path}');
+        if (tool.name !== 'playgroundLens') process.exit(1);
+        if (typeof tool.applyEmaDeadzone !== 'function') process.exit(2);
+        // Test zero jitter in deadzone
+        const val1 = tool.applyEmaDeadzone(100, 102, 0.24, 4.0);
+        if (val1 !== 100) process.exit(3);
+        const val2 = tool.applyEmaDeadzone(100, 98, 0.24, 4.0);
+        if (val2 !== 100) process.exit(4);
+        // Test smooth movement outside deadzone
+        const val3 = tool.applyEmaDeadzone(100, 120, 0.24, 4.0);
+        if (val3 <= 100 || val3 >= 120) process.exit(5);
+        console.log('PLAYGROUND_LENS_SUCCESS');
+        """
+        res = subprocess.run(["node", "-e", node_code], capture_output=True, text=True)
+        assert res.returncode == 0, f"Node execution test failed: {res.stderr}"
+        assert "PLAYGROUND_LENS_SUCCESS" in res.stdout
+
+
+
