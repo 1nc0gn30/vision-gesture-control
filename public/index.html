@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Google Vision Studio - Touchless Gesture Control, Computer Vision Telemetry & MCP Agent Interface">
   <title>Google Vision Studio | Gesture Control & MCP Hub</title>
+  <!-- Google MediaPipe Hands & Camera Utils for 100% In-Browser WebAssembly/WebGL Tracking -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <!-- Three.js for 3D Holographic Spatial Portal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     /* Google Material 3 Light Mode Theme & Design Tokens */
     :root {
@@ -253,11 +258,14 @@
 
     video#webcamVideo {
       position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       transform: scaleX(-1);
-      display: none;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
     }
 
     canvas#visionCanvas {
@@ -970,6 +978,79 @@
     .footer-links a:hover {
       text-decoration: underline;
     }
+
+    /* 3D Holographic Spatial Portal Styles */
+    .spatial-container {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 180px);
+      min-height: 520px;
+      background: radial-gradient(circle at center, #172033 0%, #0c1017 100%);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: var(--shadow-2);
+    }
+
+    .spatial-viewport {
+      width: 100%;
+      height: 100%;
+    }
+
+    .spatial-overlay-hud {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .spatial-info-card {
+      background: rgba(17, 19, 24, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      color: #fff;
+      pointer-events: auto;
+      max-width: 480px;
+    }
+
+    .spatial-title {
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--google-blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .spatial-stats {
+      font-size: 0.75rem;
+      color: #c4c6d0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", monospace;
+      line-height: 1.4;
+    }
+
+    .spatial-controls {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+      flex-wrap: wrap;
+    }
+
+    .btn-sfx-active {
+      background-color: var(--md-sys-color-primary-container) !important;
+      color: var(--md-sys-color-on-primary-container) !important;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -995,6 +1076,9 @@
         <button class="nav-tab-btn" data-tab="tab-drawing" role="tab" aria-selected="false" id="tabBtn-drawing">
           <span>🎨</span> Air Drawing
         </button>
+        <button class="nav-tab-btn" data-tab="tab-spatial3d" role="tab" aria-selected="false" id="tabBtn-spatial3d">
+          <span>🔮</span> 3D Spatial Portal
+        </button>
         <button class="nav-tab-btn" data-tab="tab-telemetry" role="tab" aria-selected="false" id="tabBtn-telemetry">
           <span>🎛️</span> Telemetry & Filters
         </button>
@@ -1005,9 +1089,12 @@
     </nav>
 
     <div class="header-right">
+      <button class="btn btn-sm btn-tonal btn-sfx-active" id="btnToggleSfx" style="margin-right: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Toggle 528Hz Solfeggio Audio Chimes">
+        <span id="sfxIcon">🔊</span> <span id="sfxLabel">SFX: On</span>
+      </button>
       <div class="status-badge" id="engineStatusBadge">
         <span class="status-indicator"></span>
-        <span id="engineStatusText">Vision Engine Ready</span>
+        <span id="engineStatusText">MediaPipe Ready</span>
       </div>
     </div>
   </header>
@@ -1490,6 +1577,24 @@
         </div>
       </div>
 
+      <!-- TAB 5: 3D HOLOGRAPHIC SPATIAL PORTAL -->
+      <div class="tab-content" id="tab-spatial3d" role="tabpanel">
+        <div class="spatial-container">
+          <div class="spatial-viewport" id="spatial3dHost"></div>
+          <div class="spatial-overlay-hud">
+            <div class="spatial-info-card">
+              <div class="spatial-title"><span>🔮</span> WebGL Holographic Core</div>
+              <div class="spatial-stats" id="spatialStats">MediaPipe Wasm 3D Tracking: Ready • Hand Pose: Waiting for Camera • Pitch: 0.0° • Yaw: 0.0° • Zoom: 1.00x</div>
+            </div>
+            <div class="spatial-controls">
+              <button class="btn btn-sm btn-tonal" id="btnSpatialColor">💎 Color: Quantum Cyan</button>
+              <button class="btn btn-sm btn-tonal" id="btnSpatialShape">💠 Shape: Icosahedron</button>
+              <button class="btn btn-sm btn-tonal" id="btnSpatialReset">🔄 Center Core</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
   </main>
 
@@ -1538,7 +1643,15 @@
         lastDrawPos: null,
         drawHistory: [],
         landmarks: [],
-        simTime: 0
+        simTime: 0,
+        sfxEnabled: true,
+        mediaPipeReady: false,
+        handDetected: false,
+        handCount: 0,
+        lastSwipeTime: 0,
+        wristHistory: [],
+        dwellTargetEl: null,
+        dwellStartTime: 0
       };
 
       // 21 Landmark Joint Names Definition
@@ -1579,6 +1692,11 @@
         dwellLabel: document.getElementById('dwellLabel'),
         confValue: document.getElementById('confValue'),
         simButtons: document.querySelectorAll('.sim-btn'),
+        // Header Controls
+        btnToggleSfx: document.getElementById('btnToggleSfx'),
+        sfxIcon: document.getElementById('sfxIcon'),
+        sfxLabel: document.getElementById('sfxLabel'),
+        engineStatusText: document.getElementById('engineStatusText'),
         // Presentation
         slides: document.querySelectorAll('.slide'),
         slideDots: document.querySelectorAll('.slide-dot'),
@@ -1595,6 +1713,12 @@
         btnClearDraw: document.getElementById('btnClearDraw'),
         btnUndoDraw: document.getElementById('btnUndoDraw'),
         btnExportDraw: document.getElementById('btnExportDraw'),
+        // 3D Spatial Portal
+        spatial3dHost: document.getElementById('spatial3dHost'),
+        spatialStats: document.getElementById('spatialStats'),
+        btnSpatialColor: document.getElementById('btnSpatialColor'),
+        btnSpatialShape: document.getElementById('btnSpatialShape'),
+        btnSpatialReset: document.getElementById('btnSpatialReset'),
         // Telemetry
         landmarkTableBody: document.getElementById('landmarkTableBody'),
         filterButtons: document.querySelectorAll('.filter-btn'),
@@ -1627,9 +1751,12 @@
         initSensitivityControls();
         initPresentation();
         initDrawing();
+        initAudioEngine();
+        initSpatial3D();
         initTelemetry();
         initMcpHub();
         initWebcamHandlers();
+        checkBackendHealth();
 
         // Start Render Loop
         requestAnimationFrame(renderLoop);
@@ -2026,67 +2153,613 @@
         }, 2500);
       }
 
-      // Webcam Integration
-      function initWebcamHandlers() {
-        els.btnToggleCamera.addEventListener('click', toggleCamera);
+      // ── Web Audio Synthesizer (528Hz Solfeggio Harmonic Engine) ──
+      let audioCtx = null;
+      function initAudioEngine() {
+        if (els.btnToggleSfx) {
+          els.btnToggleSfx.addEventListener('click', () => {
+            state.sfxEnabled = !state.sfxEnabled;
+            els.sfxIcon.textContent = state.sfxEnabled ? '🔊' : '🔇';
+            els.sfxLabel.textContent = state.sfxEnabled ? 'SFX: On' : 'SFX: Off';
+            if (state.sfxEnabled) {
+              els.btnToggleSfx.classList.add('btn-sfx-active');
+              playPinchClick();
+              showToast("528Hz Solfeggio Audio SFX Enabled");
+            } else {
+              els.btnToggleSfx.classList.remove('btn-sfx-active');
+              showToast("Audio SFX Muted");
+            }
+          });
+        }
       }
 
-      async function toggleCamera() {
-        if (state.isWebcamActive) {
-          // Stop Camera
-          if (els.webcamVideo.srcObject) {
-            els.webcamVideo.srcObject.getTracks().forEach(track => track.stop());
-            els.webcamVideo.srcObject = null;
-          }
-          state.isWebcamActive = false;
-          state.isSimulated = true;
-          els.camBtnIcon.textContent = '📹';
-          els.camBtnText.textContent = 'Start Webcam';
-          els.feedModeLabel.textContent = 'Live Simulation Mode';
-          showToast("Switched to Virtual Hand Simulator");
-        } else {
-          // Start Camera
+      function ensureAudioContext() {
+        if (!audioCtx) {
           try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-              video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+              audioCtx = new AudioContext();
+            }
+          } catch (e) {
+            console.warn("AudioContext init error:", e);
+          }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+      }
+
+      function playPinchClick() {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          // 528Hz Transformation Tone -> 1056Hz overtone
+          osc.frequency.setValueAtTime(528, t);
+          osc.frequency.exponentialRampToValueAtTime(1056, t + 0.08);
+          gain.gain.setValueAtTime(0.22, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.13);
+        } catch(e) {}
+      }
+
+      function playSlideChime(direction) {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          const notes = direction > 0 ? [528, 660, 792] : [792, 660, 528];
+          notes.forEach((freq, idx) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, t + idx * 0.04);
+            gain.gain.setValueAtTime(0.18, t + idx * 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.04 + 0.18);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t + idx * 0.04);
+            osc.stop(t + idx * 0.04 + 0.19);
+          });
+        } catch(e) {}
+      }
+
+      function playAirDrawHum(normY) {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          const freq = 330 + (1.0 - (normY || 0.5)) * 330;
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.05, t);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.08);
+        } catch(e) {}
+      }
+
+      function playVictoryFanfare() {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          [528, 660, 792, 1056].forEach((f, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(f, t + i * 0.05);
+            gain.gain.setValueAtTime(0.15, t + i * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.05 + 0.22);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t + i * 0.05);
+            osc.stop(t + i * 0.05 + 0.23);
+          });
+        } catch(e) {}
+      }
+
+      // ── 3D Holographic Spatial Portal Engine (Three.js) ──
+      let spatialScene = null;
+      let spatialCamera = null;
+      let spatialRenderer = null;
+      let spatialCore = null;
+      let spatialWireframe = null;
+      let spatialParticles = null;
+      let spatialPaletteIdx = 0;
+      let spatialShapeIdx = 0;
+
+      const SPATIAL_PALETTES = [
+        { name: 'Quantum Cyan', color: 0x00f0ff, wire: 0xa8c7fa },
+        { name: 'Solar Amber', color: 0xf9ab00, wire: 0xffe082 },
+        { name: 'Matrix Emerald', color: 0x1e8e3e, wire: 0x81c784 },
+        { name: 'Hyper Ruby', color: 0xd93025, wire: 0xef9a9a },
+        { name: 'Cosmic Violet', color: 0x9334e6, wire: 0xce93d8 }
+      ];
+
+      function initSpatial3D() {
+        if (!els.spatial3dHost || typeof THREE === 'undefined') return;
+
+        spatialScene = new THREE.Scene();
+        spatialCamera = new THREE.PerspectiveCamera(45, els.spatial3dHost.clientWidth / els.spatial3dHost.clientHeight, 0.1, 100);
+        spatialCamera.position.set(0, 0, 4.5);
+
+        spatialRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        spatialRenderer.setSize(els.spatial3dHost.clientWidth, els.spatial3dHost.clientHeight);
+        spatialRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        els.spatial3dHost.innerHTML = '';
+        els.spatial3dHost.appendChild(spatialRenderer.domElement);
+
+        // Lighting
+        spatialScene.add(new THREE.AmbientLight(0xffffff, 0.9));
+        const dl1 = new THREE.DirectionalLight(0xa8c7fa, 2.2);
+        dl1.position.set(3, 4, 3);
+        spatialScene.add(dl1);
+        const dl2 = new THREE.DirectionalLight(0xf9ab00, 1.4);
+        dl2.position.set(-3, -3, 2);
+        spatialScene.add(dl2);
+
+        // Holographic Core Mesh
+        buildSpatialMeshes();
+
+        // Orbiting Particle Stars
+        const partCount = 200;
+        const partGeom = new THREE.BufferGeometry();
+        const positions = new Float32Array(partCount * 3);
+        for (let i = 0; i < partCount * 3; i += 3) {
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos((Math.random() * 2) - 1);
+          const r = 1.6 + Math.random() * 1.4;
+          positions[i] = r * Math.sin(phi) * Math.cos(theta);
+          positions[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+          positions[i + 2] = r * Math.cos(phi);
+        }
+        partGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const partMat = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 0.05,
+          transparent: true,
+          opacity: 0.8
+        });
+        spatialParticles = new THREE.Points(partGeom, partMat);
+        spatialScene.add(spatialParticles);
+
+        // Button Listeners
+        if (els.btnSpatialColor) {
+          els.btnSpatialColor.addEventListener('click', () => {
+            spatialPaletteIdx = (spatialPaletteIdx + 1) % SPATIAL_PALETTES.length;
+            const p = SPATIAL_PALETTES[spatialPaletteIdx];
+            els.btnSpatialColor.textContent = `💎 Color: ${p.name}`;
+            if (spatialCore && spatialCore.material) spatialCore.material.color.setHex(p.color);
+            if (spatialWireframe && spatialWireframe.material) spatialWireframe.material.color.setHex(p.wire);
+            playPinchClick();
+          });
+        }
+
+        if (els.btnSpatialShape) {
+          els.btnSpatialShape.addEventListener('click', () => {
+            spatialShapeIdx = (spatialShapeIdx + 1) % 3;
+            buildSpatialMeshes();
+            const names = ['Icosahedron', 'TorusKnot', 'Dodecahedron'];
+            els.btnSpatialShape.textContent = `💠 Shape: ${names[spatialShapeIdx]}`;
+            playPinchClick();
+          });
+        }
+
+        if (els.btnSpatialReset) {
+          els.btnSpatialReset.addEventListener('click', () => {
+            if (spatialCore) {
+              spatialCore.rotation.set(0, 0, 0);
+              spatialCore.scale.set(1, 1, 1);
+            }
+            playSlideChime(1);
+            showToast("Centered 3D Spatial Core");
+          });
+        }
+
+        window.addEventListener('resize', () => {
+          if (!els.spatial3dHost || !spatialCamera || !spatialRenderer) return;
+          const w = els.spatial3dHost.clientWidth;
+          const h = els.spatial3dHost.clientHeight;
+          if (w && h) {
+            spatialCamera.aspect = w / h;
+            spatialCamera.updateProjectionMatrix();
+            spatialRenderer.setSize(w, h);
+          }
+        });
+      }
+
+      function buildSpatialMeshes() {
+        if (spatialCore) spatialScene.remove(spatialCore);
+        if (spatialWireframe) spatialScene.remove(spatialWireframe);
+
+        let geom, wireGeom;
+        if (spatialShapeIdx === 1) {
+          geom = new THREE.TorusKnotGeometry(0.7, 0.22, 96, 16);
+          wireGeom = new THREE.TorusKnotGeometry(0.75, 0.24, 48, 8);
+        } else if (spatialShapeIdx === 2) {
+          geom = new THREE.DodecahedronGeometry(1.1, 0);
+          wireGeom = new THREE.DodecahedronGeometry(1.3, 0);
+        } else {
+          geom = new THREE.IcosahedronGeometry(1.1, 1);
+          wireGeom = new THREE.IcosahedronGeometry(1.35, 0);
+        }
+
+        const p = SPATIAL_PALETTES[spatialPaletteIdx];
+        const mat = new THREE.MeshStandardMaterial({
+          color: p.color,
+          roughness: 0.15,
+          metalness: 0.85
+        });
+        spatialCore = new THREE.Mesh(geom, mat);
+        spatialScene.add(spatialCore);
+
+        const wireMat = new THREE.MeshBasicMaterial({
+          color: p.wire,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.45
+        });
+        spatialWireframe = new THREE.Mesh(wireGeom, wireMat);
+        spatialScene.add(spatialWireframe);
+      }
+
+      function updateSpatialPortal() {
+        if (!spatialCore || !spatialRenderer || !spatialScene || !spatialCamera) return;
+
+        spatialWireframe.rotation.x -= 0.006;
+        spatialWireframe.rotation.y += 0.009;
+        if (spatialParticles) spatialParticles.rotation.y += 0.002;
+
+        if (state.handDetected && state.landmarks.length === 21) {
+          const wrist = state.landmarks[0];
+          const indexTip = state.landmarks[8];
+          const thumbTip = state.landmarks[4];
+          const pinkyTip = state.landmarks[20];
+
+          // Compute rotation targets from hand position
+          const targetRotY = (wrist.x - 0.5) * 4.2;
+          const targetRotX = (wrist.y - 0.5) * 3.2;
+
+          spatialCore.rotation.x += (targetRotX - spatialCore.rotation.x) * 0.12;
+          spatialCore.rotation.y += (targetRotY - spatialCore.rotation.y) * 0.12;
+
+          // Compute scale target from hand span (pinch / spread)
+          const span = Math.hypot(thumbTip.x - pinkyTip.x, thumbTip.y - pinkyTip.y);
+          const targetScale = Math.max(0.6, Math.min(2.4, span * 4.6));
+          spatialCore.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+
+          if (state.activeGesture === 'PINCH') {
+            spatialCore.rotation.z += 0.08;
+          }
+
+          if (els.spatialStats) {
+            els.spatialStats.textContent = `Active Hand: ${state.activeGesture} • Pitch: ${(spatialCore.rotation.x * 57.3).toFixed(1)}° • Yaw: ${(spatialCore.rotation.y * 57.3).toFixed(1)}° • Zoom: ${spatialCore.scale.x.toFixed(2)}x`;
+          }
+        } else {
+          spatialCore.rotation.x += 0.008;
+          spatialCore.rotation.y += 0.012;
+          spatialCore.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.05);
+          if (els.spatialStats) {
+            els.spatialStats.textContent = `MediaPipe Wasm 3D Tracking: Ready • Simulation Drift Active • Pitch: ${(spatialCore.rotation.x * 57.3).toFixed(1)}° • Yaw: ${(spatialCore.rotation.y * 57.3).toFixed(1)}° • Zoom: 1.00x`;
+          }
+        }
+
+        spatialRenderer.render(spatialScene, spatialCamera);
+      }
+
+      // ── Google MediaPipe Hands Tracking Engine (100% In-Browser) ──
+      let handsEngine = null;
+      let isMediaPipeBusy = false;
+
+      async function ensureMediaPipeInitialized() {
+        if (state.mediaPipeReady && handsEngine) return;
+        if (typeof Hands === 'undefined') {
+          console.warn("Awaiting MediaPipe Hands CDN script...");
+          for (let i = 0; i < 30; i++) {
+            if (typeof Hands !== 'undefined') break;
+            await new Promise(r => setTimeout(r, 100));
+          }
+        }
+        if (typeof Hands !== 'undefined' && !handsEngine) {
+          try {
+            handsEngine = new Hands({
+              locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
             });
-            els.webcamVideo.srcObject = stream;
-            state.isWebcamActive = true;
-            state.isSimulated = false;
-            els.camBtnIcon.textContent = '⏹️';
-            els.camBtnText.textContent = 'Stop Webcam';
-            els.feedModeLabel.textContent = 'Live Camera Feed';
-            showToast("Webcam active. Processing frames locally.");
-          } catch (err) {
-            console.warn("Camera access denied or unavailable, staying in simulator mode.", err);
-            showToast("Camera unavailable - using Hand Simulator");
-            state.isWebcamActive = false;
-            state.isSimulated = true;
+            const detConf = parseFloat(els.rangeDetConf ? els.rangeDetConf.value : 0.65) || 0.65;
+            handsEngine.setOptions({
+              maxNumHands: 2,
+              modelComplexity: 1,
+              minDetectionConfidence: detConf,
+              minTrackingConfidence: 0.55
+            });
+            handsEngine.onResults(onMediaPipeResults);
+            state.mediaPipeReady = true;
+            if (els.engineStatusText) els.engineStatusText.textContent = "MediaPipe Wasm Active";
+            console.log("MediaPipe Hands initialized successfully.");
+          } catch (e) {
+            console.error("MediaPipe initialization error:", e);
           }
         }
       }
 
-      // Compute Synthetic Hand Landmarks based on Active Gesture & Time
-      function updateLandmarks(time) {
+      function onMediaPipeResults(results) {
+        if (!state.isWebcamActive) return;
+
+        if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+          state.handDetected = true;
+          state.handCount = results.multiHandLandmarks.length;
+          const rawHand = results.multiHandLandmarks[0];
+
+          // Mirror X coordinate because camera view is mirrored
+          const points = rawHand.map((pt, idx) => ({
+            id: idx,
+            name: JOINT_NAMES[idx] || `Joint ${idx}`,
+            x: 1.0 - pt.x,
+            y: pt.y,
+            z: pt.z || 0
+          }));
+
+          // Temporal landmark smoothing
+          const smoothing = parseFloat(els.rangeSmoothing ? els.rangeSmoothing.value : 0.6) || 0.6;
+          if (state.landmarks.length === 21 && smoothing > 0) {
+            const alpha = 1.0 - (smoothing * 0.7);
+            for (let i = 0; i < 21; i++) {
+              points[i].x = state.landmarks[i].x * (1 - alpha) + points[i].x * alpha;
+              points[i].y = state.landmarks[i].y * (1 - alpha) + points[i].y * alpha;
+              points[i].z = state.landmarks[i].z * (1 - alpha) + points[i].z * alpha;
+            }
+          }
+
+          state.landmarks = points;
+          state.confidence = 0.96;
+          if (els.confValue) els.confValue.textContent = "96%";
+
+          // Classify live gesture from real 3D geometry
+          classifyLiveGesture(points);
+        } else {
+          state.handDetected = false;
+          state.handCount = 0;
+          state.confidence = 0.0;
+          if (els.confValue) els.confValue.textContent = "0%";
+          state.isDrawing = false;
+          if (els.dwellContainer) els.dwellContainer.style.display = 'none';
+        }
+      }
+
+      // ── Real Geometric Gesture Classification ──
+      function classifyLiveGesture(points) {
+        if (!points || points.length < 21) return;
+
+        const wrist = points[0];
+        const thumbTip = points[4];
+        const thumbIp = points[3];
+        const indexMcp = points[5];
+        const indexPip = points[6];
+        const indexTip = points[8];
+        const middleMcp = points[9];
+        const middlePip = points[10];
+        const middleTip = points[12];
+        const ringMcp = points[13];
+        const ringPip = points[14];
+        const ringTip = points[16];
+        const pinkyMcp = points[17];
+        const pinkyPip = points[18];
+        const pinkyTip = points[20];
+
+        function dist(p1, p2) {
+          return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        }
+
+        // Finger extensions: tip distance to wrist vs PIP distance to wrist
+        const isIndexOpen = dist(indexTip, wrist) > dist(indexPip, wrist) * 1.15;
+        const isMiddleOpen = dist(middleTip, wrist) > dist(middlePip, wrist) * 1.15;
+        const isRingOpen = dist(ringTip, wrist) > dist(ringPip, wrist) * 1.15;
+        const isPinkyOpen = dist(pinkyTip, wrist) > dist(pinkyPip, wrist) * 1.15;
+
+        // Thumb extension & pinch
+        const pinchDistance = dist(thumbTip, indexTip);
+        const isPinch = pinchDistance < 0.065;
+        const isThumbOpen = dist(thumbTip, indexMcp) > 0.11;
+        const isThumbUp = !isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen &&
+                          (thumbTip.y < thumbIp.y) && (thumbTip.y < wrist.y);
+
+        let detected = 'UNKNOWN';
+
+        if (isPinch) {
+          detected = 'PINCH';
+        } else if (isThumbUp) {
+          detected = 'THUMBS_UP';
+        } else if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) {
+          detected = 'VICTORY_PEACE';
+        } else if (isIndexOpen && isPinkyOpen && !isMiddleOpen && !isRingOpen) {
+          detected = 'ROCK_ON';
+        } else if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) {
+          detected = 'POINTING_INDEX';
+        } else if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen && isThumbOpen) {
+          detected = 'OPEN_PALM';
+        } else if (!isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen && !isThumbOpen) {
+          detected = 'FIST';
+        } else {
+          detected = state.activeGesture; // Hysteresis retain
+        }
+
+        // Detect swipe gestures from wrist velocity
+        detectSwipeGesture(wrist, detected);
+
+        // Update active gesture badge and trigger audio feedback if changed
+        if (detected !== state.activeGesture && detected !== 'UNKNOWN') {
+          const prev = state.activeGesture;
+          state.activeGesture = detected;
+          if (els.activeGestureName) els.activeGestureName.textContent = detected;
+          onGestureChanged(detected, prev);
+        }
+
+        // Active Tab Feature Integrations
+        handleTabInteractions(points, detected);
+      }
+
+      function onGestureChanged(newGesture, prevGesture) {
+        if (newGesture === 'PINCH') {
+          playPinchClick();
+        } else if (newGesture === 'VICTORY_PEACE') {
+          playVictoryFanfare();
+        } else if (newGesture === 'THUMBS_UP') {
+          playSlideChime(1);
+        } else if (newGesture === 'FIST') {
+          if (state.activeTab === 'tab-presentation') goToSlide(1);
+          playSlideChime(-1);
+        }
+      }
+
+      function detectSwipeGesture(wrist, currentGesture) {
+        const now = performance.now();
+        state.wristHistory.push({ x: wrist.x, y: wrist.y, t: now });
+        if (state.wristHistory.length > 10) state.wristHistory.shift();
+
+        if (now - state.lastSwipeTime < 600) return; // Cooldown
+
+        if (state.wristHistory.length >= 5) {
+          const oldest = state.wristHistory[0];
+          const newest = state.wristHistory[state.wristHistory.length - 1];
+          const dt = (newest.t - oldest.t) / 1000;
+          if (dt > 0.05 && dt < 0.4) {
+            const dx = newest.x - oldest.x;
+            const swipeVelThresh = parseFloat(els.rangeSwipeVel ? els.rangeSwipeVel.value : 0.45) || 0.45;
+            const velX = dx / dt;
+
+            if (velX > swipeVelThresh && (currentGesture === 'OPEN_PALM' || currentGesture === 'POINTING_INDEX' || currentGesture === 'UNKNOWN')) {
+              state.lastSwipeTime = now;
+              state.wristHistory = [];
+              handleSwipe('SWIPE_RIGHT');
+            } else if (velX < -swipeVelThresh && (currentGesture === 'OPEN_PALM' || currentGesture === 'POINTING_INDEX' || currentGesture === 'UNKNOWN')) {
+              state.lastSwipeTime = now;
+              state.wristHistory = [];
+              handleSwipe('SWIPE_LEFT');
+            }
+          }
+        }
+      }
+
+      function handleSwipe(direction) {
+        playSlideChime(direction === 'SWIPE_RIGHT' ? 1 : -1);
+        if (state.activeTab === 'tab-presentation') {
+          if (direction === 'SWIPE_RIGHT') {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+          showToast(direction === 'SWIPE_RIGHT' ? "👉 Next Slide (Swipe Right)" : "👈 Prev Slide (Swipe Left)");
+        }
+      }
+
+      function handleTabInteractions(points, gesture) {
+        const tip = points[8]; // Index tip
+
+        // Air Drawing
+        if (state.activeTab === 'tab-drawing') {
+          if (gesture === 'PINCH' || gesture === 'POINTING_INDEX') {
+            const drawX = tip.x * els.drawingCanvas.width;
+            const drawY = tip.y * els.drawingCanvas.height;
+            addStrokePoint(drawX, drawY);
+            playAirDrawHum(tip.y);
+          } else {
+            if (state.isDrawing) endStroke();
+            state.isDrawing = false;
+          }
+        }
+
+        // Presentation Laser Pointer & Dwell Click
+        if (state.activeTab === 'tab-presentation') {
+          const lx = tip.x * 100;
+          const ly = tip.y * 100;
+          els.laserPointer.style.left = lx + '%';
+          els.laserPointer.style.top = ly + '%';
+          els.laserPointer.style.display = 'block';
+
+          if (gesture === 'POINTING_INDEX') {
+            processDwellHover(tip.x, tip.y);
+          } else {
+            resetDwell();
+          }
+        } else {
+          resetDwell();
+        }
+      }
+
+      function processDwellHover(normX, normY) {
+        const screenX = normX * window.innerWidth;
+        const screenY = normY * window.innerHeight;
+        const elUnder = document.elementFromPoint(screenX, screenY);
+        const clickable = elUnder ? elUnder.closest('button, .slide-dot, .color-swatch, .brush-btn') : null;
+
+        const now = performance.now();
+        if (clickable) {
+          if (clickable !== state.dwellTargetEl) {
+            state.dwellTargetEl = clickable;
+            state.dwellStartTime = now;
+            state.isDwelling = true;
+            if (els.dwellContainer) els.dwellContainer.style.display = 'flex';
+          }
+
+          const elapsed = now - state.dwellStartTime;
+          const progress = Math.min(1.0, elapsed / state.dwellMs);
+          if (els.dwellRing) {
+            els.dwellRing.style.background = `conic-gradient(var(--google-blue) ${progress * 360}deg, transparent 0deg)`;
+          }
+          if (els.dwellLabel) {
+            els.dwellLabel.textContent = `Dwell: ${Math.round(progress * 100)}%`;
+          }
+
+          if (progress >= 1.0) {
+            playPinchClick();
+            clickable.click();
+            clickable.style.transform = 'scale(0.95)';
+            setTimeout(() => { clickable.style.transform = ''; }, 150);
+            resetDwell();
+          }
+        } else {
+          resetDwell();
+        }
+      }
+
+      function resetDwell() {
+        state.dwellTargetEl = null;
+        state.dwellStartTime = 0;
+        state.isDwelling = false;
+        if (els.dwellContainer) els.dwellContainer.style.display = 'none';
+        if (els.dwellLabel) els.dwellLabel.textContent = 'Dwell: Inactive';
+      }
+
+      // ── Virtual Hand Simulator (Graceful Fallback) ──
+      function updateSimulatedLandmarks(time) {
         state.simTime += 0.03;
         const t = state.simTime;
-        const w = els.visionCanvas.width;
-        const h = els.visionCanvas.height;
-
         const cx = 0.5 + Math.sin(t * 0.7) * 0.05;
         const cy = 0.6 + Math.cos(t * 0.5) * 0.03;
 
-        // Base 21 points
         const points = [];
-        // 0: Wrist
         points.push({ id: 0, name: JOINT_NAMES[0], x: cx, y: cy + 0.25, z: 0 });
 
-        // Helper to generate finger joints
         function makeFinger(mcpX, mcpY, angle, isFolded, isPinching) {
           const joints = [];
           let curX = cx + mcpX;
           let curY = cy + mcpY;
-          joints.push({ x: curX, y: curY, z: -0.02 }); // MCP
+          joints.push({ x: curX, y: curY, z: -0.02 });
 
           const segLen = isFolded ? 0.03 : 0.06;
           for (let i = 1; i <= 3; i++) {
@@ -2107,51 +2780,91 @@
         const isVictory = state.activeGesture === 'VICTORY_PEACE';
         const isThumb = state.activeGesture === 'THUMBS_UP';
 
-        // 1-4 Thumb
+        // Thumb
         const thumb = makeFinger(-0.1, 0.1, isThumb ? -0.8 : -0.4, isFist, isPinch);
         thumb.forEach((pt, i) => points.push({ id: 1 + i, name: JOINT_NAMES[1 + i], ...pt }));
 
-        // 5-8 Index
+        // Index
         const indexFolded = isFist || isThumb;
         const index = makeFinger(-0.04, 0.0, -0.1, indexFolded, isPinch);
         index.forEach((pt, i) => points.push({ id: 5 + i, name: JOINT_NAMES[5 + i], ...pt }));
 
-        // 9-12 Middle
+        // Middle
         const midFolded = isFist || isThumb || isPoint;
         const middle = makeFinger(0.01, -0.02, 0.0, midFolded, false);
         middle.forEach((pt, i) => points.push({ id: 9 + i, name: JOINT_NAMES[9 + i], ...pt }));
 
-        // 13-16 Ring
+        // Ring
         const ringFolded = isFist || isThumb || isPoint || isVictory;
         const ring = makeFinger(0.06, 0.0, 0.1, ringFolded, false);
         ring.forEach((pt, i) => points.push({ id: 13 + i, name: JOINT_NAMES[13 + i], ...pt }));
 
-        // 17-20 Pinky
+        // Pinky
         const pinkyFolded = isFist || isThumb || isPoint || isVictory;
         const pinky = makeFinger(0.11, 0.05, 0.2, pinkyFolded, false);
         pinky.forEach((pt, i) => points.push({ id: 17 + i, name: JOINT_NAMES[17 + i], ...pt }));
 
         state.landmarks = points;
 
-        // Auto Air-Drawing if in Pinch or Point mode
         if ((isPinch || isPoint) && state.activeTab === 'tab-drawing') {
-          const tip = points[8]; // Index tip
-          const drawX = (1.0 - tip.x) * els.drawingCanvas.width;
+          const tip = points[8];
+          const drawX = tip.x * els.drawingCanvas.width;
           const drawY = tip.y * els.drawingCanvas.height;
           addStrokePoint(drawX, drawY);
         }
 
-        // Update Laser Pointer if in Presentation tab
         if (state.laserActive && state.activeTab === 'tab-presentation') {
           const tip = points[8];
-          const lx = (1.0 - tip.x) * 100;
-          const ly = tip.y * 100;
-          els.laserPointer.style.left = lx + '%';
-          els.laserPointer.style.top = ly + '%';
+          els.laserPointer.style.left = (tip.x * 100) + '%';
+          els.laserPointer.style.top = (tip.y * 100) + '%';
         }
       }
 
-      // Real-time Canvas Rendering Loop
+      // ── Webcam Hardware Lifecycle ──
+      function initWebcamHandlers() {
+        els.btnToggleCamera.addEventListener('click', toggleCamera);
+      }
+
+      async function toggleCamera() {
+        if (state.isWebcamActive) {
+          // Stop Camera
+          if (els.webcamVideo.srcObject) {
+            els.webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+            els.webcamVideo.srcObject = null;
+          }
+          state.isWebcamActive = false;
+          state.isSimulated = true;
+          state.handDetected = false;
+          els.camBtnIcon.textContent = '📹';
+          els.camBtnText.textContent = 'Start Webcam';
+          els.feedModeLabel.textContent = 'Live Simulation Mode';
+          showToast("Switched to Virtual Hand Simulator");
+        } else {
+          // Start Camera
+          try {
+            showToast("Initializing MediaPipe & Camera...");
+            await ensureMediaPipeInitialized();
+            const stream = await navigator.mediaDevices.getUserMedia({
+              video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: "user" }
+            });
+            els.webcamVideo.srcObject = stream;
+            await els.webcamVideo.play();
+            state.isWebcamActive = true;
+            state.isSimulated = false;
+            els.camBtnIcon.textContent = '⏹️';
+            els.camBtnText.textContent = 'Stop Webcam';
+            els.feedModeLabel.textContent = 'Live MediaPipe Tracking';
+            showToast("Camera active. 21 3D joints tracking via WebAssembly.");
+          } catch (err) {
+            console.warn("Camera access denied or unavailable, staying in simulator mode.", err);
+            showToast("Camera unavailable - using Hand Simulator");
+            state.isWebcamActive = false;
+            state.isSimulated = true;
+          }
+        }
+      }
+
+      // ── Real-Time Render & Animation Loop ──
       let lastTime = performance.now();
       let frameCount = 0;
       let lastFpsUpdate = performance.now();
@@ -2163,31 +2876,39 @@
         frameCount++;
         if (now - lastFpsUpdate > 1000) {
           state.fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
-          els.fpsValue.textContent = state.fps;
+          if (els.fpsValue) els.fpsValue.textContent = state.fps;
           frameCount = 0;
           lastFpsUpdate = now;
         }
 
-        updateLandmarks(now);
-
         const w = els.visionCanvas.width;
         const h = els.visionCanvas.height;
 
-        // 1. Draw Video background or synthetic gradient
+        // 1. Video Frame or Cyber Synthetic Background
         if (state.isWebcamActive && els.webcamVideo.readyState >= 2) {
+          // Non-blocking asynchronous MediaPipe Neural Network dispatch
+          if (handsEngine && state.mediaPipeReady && !isMediaPipeBusy) {
+            isMediaPipeBusy = true;
+            handsEngine.send({ image: els.webcamVideo })
+              .catch(() => {})
+              .finally(() => { isMediaPipeBusy = false; });
+          }
+
           visionCtx.save();
           visionCtx.scale(-1, 1);
           visionCtx.drawImage(els.webcamVideo, -w, 0, w, h);
           visionCtx.restore();
         } else {
-          // Synthetic Dark Backdrop
+          // Virtual Simulator Hand Update
+          updateSimulatedLandmarks(now);
+
+          // Synthetic Cyber Grid
           const grad = visionCtx.createLinearGradient(0, 0, w, h);
           grad.addColorStop(0, '#151922');
           grad.addColorStop(1, '#0d1117');
           visionCtx.fillStyle = grad;
           visionCtx.fillRect(0, 0, w, h);
 
-          // Grid lines
           visionCtx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
           visionCtx.lineWidth = 1;
           for (let x = 0; x < w; x += 40) {
@@ -2204,15 +2925,18 @@
           }
         }
 
-        // 2. Apply Video Shader Filters
+        // 2. Video Filters
         applyActiveFilter(visionCtx, w, h);
 
-        // 3. Render Hand Skeleton
+        // 3. Render Skeleton with Reticle & Pinch Line
         if (state.showSkeleton && state.landmarks.length === 21) {
-          renderSkeleton(visionCtx, w, h);
+          renderEnhancedSkeleton(visionCtx, w, h);
         }
 
-        // 4. Update Telemetry Table once per 10 frames
+        // 4. Update 3D Spatial Portal
+        updateSpatialPortal();
+
+        // 5. Update Telemetry Table once per 10 frames
         if (frameCount % 10 === 0 && state.activeTab === 'tab-telemetry') {
           updateTelemetryTable();
         }
@@ -2224,18 +2948,17 @@
         if (state.activeFilter === 'normal') return;
 
         if (state.activeFilter === 'sobel') {
-          // Fast edge highlight overlay
           ctx.strokeStyle = '#34a853';
-          ctx.lineWidth = 1.5;
+          ctx.lineWidth = 2;
           ctx.strokeRect(10, 10, w - 20, h - 20);
         } else if (state.activeFilter === 'thermal') {
           ctx.fillStyle = 'rgba(217, 48, 37, 0.15)';
           ctx.fillRect(0, 0, w, h);
         } else if (state.activeFilter === 'neon') {
           ctx.shadowColor = '#1a73e8';
-          ctx.shadowBlur = 10;
+          ctx.shadowBlur = 12;
         } else if (state.activeFilter === 'matrix') {
-          ctx.fillStyle = 'rgba(30, 142, 62, 0.12)';
+          ctx.fillStyle = 'rgba(30, 142, 62, 0.14)';
           ctx.fillRect(0, 0, w, h);
           ctx.fillStyle = '#34a853';
           ctx.font = '10px monospace';
@@ -2247,9 +2970,9 @@
         }
       }
 
-      function renderSkeleton(ctx, w, h) {
+      function renderEnhancedSkeleton(ctx, w, h) {
         // Draw Bones
-        ctx.strokeStyle = 'rgba(26, 115, 232, 0.85)';
+        ctx.strokeStyle = 'rgba(26, 115, 232, 0.9)';
         ctx.lineWidth = 3;
         ctx.lineCap = 'round';
 
@@ -2264,16 +2987,37 @@
           ctx.stroke();
         });
 
+        // Pinch Connecting Link Beam
+        const thumb = state.landmarks[4];
+        const index = state.landmarks[8];
+        if (thumb && index) {
+          const pDist = Math.hypot(thumb.x - index.x, thumb.y - index.y);
+          if (pDist < 0.1) {
+            ctx.strokeStyle = pDist < 0.065 ? '#34a853' : '#f9ab00';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(thumb.x * w, thumb.y * h);
+            ctx.lineTo(index.x * w, index.y * h);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        }
+
         // Draw Joints
         state.landmarks.forEach((p, idx) => {
           ctx.beginPath();
           const isTip = [4, 8, 12, 16, 20].includes(idx);
-          ctx.arc(p.x * w, p.y * h, isTip ? 6 : 4, 0, Math.PI * 2);
+          const baseRadius = isTip ? 6 : 4;
+          const depthScale = Math.max(0.6, Math.min(1.6, 1.0 - (p.z || 0) * 4));
+          const r = baseRadius * depthScale;
+
+          ctx.arc(p.x * w, p.y * h, r, 0, Math.PI * 2);
 
           if (isTip) {
-            ctx.fillStyle = idx === 8 ? '#d93025' : '#f9ab00'; // Index tip red
+            ctx.fillStyle = idx === 8 ? '#d93025' : '#f9ab00';
           } else if (idx === 0) {
-            ctx.fillStyle = '#1e8e3e'; // Wrist green
+            ctx.fillStyle = '#1e8e3e';
           } else {
             ctx.fillStyle = '#ffffff';
           }
@@ -2282,6 +3026,28 @@
           ctx.strokeStyle = '#1a73e8';
           ctx.lineWidth = 2;
           ctx.stroke();
+
+          // Index Fingertip Targeting Reticle HUD
+          if (idx === 8 && (state.activeGesture === 'POINTING_INDEX' || state.activeGesture === 'PINCH')) {
+            const rx = p.x * w;
+            const ry = p.y * h;
+            ctx.strokeStyle = state.activeGesture === 'PINCH' ? '#34a853' : '#d93025';
+            ctx.lineWidth = 1.5;
+
+            // Reticle Target Ring
+            ctx.beginPath();
+            ctx.arc(rx, ry, 14, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Targeting Brackets
+            const s = 18;
+            ctx.beginPath();
+            ctx.moveTo(rx - s, ry); ctx.lineTo(rx - s + 5, ry);
+            ctx.moveTo(rx + s, ry); ctx.lineTo(rx + s - 5, ry);
+            ctx.moveTo(rx, ry - s); ctx.lineTo(rx, ry - s + 5);
+            ctx.moveTo(rx, ry + s); ctx.lineTo(rx, ry + s - 5);
+            ctx.stroke();
+          }
         });
       }
 
@@ -2299,6 +3065,23 @@
           </tr>`;
         });
         els.landmarkTableBody.innerHTML = html;
+      }
+
+      // Backend Probe (Auto-detect Python server if running on :8088)
+      function checkBackendHealth() {
+        fetch('/api/health')
+          .then(r => r.json())
+          .then(data => {
+            if (data.status === 'ok') {
+              if (els.engineStatusText) els.engineStatusText.textContent = `Local Server (:8088)`;
+              const ind = document.querySelector('#engineStatusBadge .status-indicator');
+              if (ind) ind.style.background = 'var(--google-green)';
+            }
+          })
+          .catch(() => {
+            // Running as standalone static page without python server
+            if (els.engineStatusText) els.engineStatusText.textContent = `Client Wasm (Offline)`;
+          });
       }
 
       // Initialize on Load

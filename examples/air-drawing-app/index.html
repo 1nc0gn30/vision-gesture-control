@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Touchless Air-Drawing Canvas | Vision Gesture Control</title>
+  <!-- Google MediaPipe Hands for Real-Time On-Device Tracking -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <style>
     :root {
       --primary: #1a73e8;
@@ -432,6 +435,102 @@
         clearCanvas();
       });
 
+      // Google MediaPipe Hands Initialization
+      let handsEngine = null;
+      let isMediaPipeBusy = false;
+      let lastHandPoints = null;
+
+      async function initHands() {
+        if (handsEngine || typeof Hands === 'undefined') return;
+        try {
+          handsEngine = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+          handsEngine.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+          });
+          handsEngine.onResults((results) => {
+            if (!isWebcam) return;
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+              const raw = results.multiHandLandmarks[0];
+              lastHandPoints = raw.map(p => ({ x: 1.0 - p.x, y: p.y, z: p.z || 0 }));
+              processHandGestures(lastHandPoints);
+            } else {
+              lastHandPoints = null;
+              if (isDrawing && currentStroke) {
+                drawHistory.push(currentStroke);
+                currentStroke = null;
+              }
+            }
+          });
+        } catch(e) {
+          console.warn("MediaPipe init error:", e);
+        }
+      }
+
+      function processHandGestures(points) {
+        if (!points || points.length < 21) return;
+        const wrist = points[0];
+        const thumbTip = points[4];
+        const indexTip = points[8];
+        const indexPip = points[6];
+        const middleTip = points[12];
+        const middlePip = points[10];
+        const ringTip = points[16];
+        const ringPip = points[14];
+        const pinkyTip = points[20];
+        const pinkyPip = points[18];
+
+        const dist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        const pinchDist = dist(thumbTip, indexTip);
+        const isPinch = pinchDist < 0.065;
+        const isIndexOpen = dist(indexTip, wrist) > dist(indexPip, wrist) * 1.15;
+        const isMiddleOpen = dist(middleTip, wrist) > dist(middlePip, wrist) * 1.15;
+        const isRingOpen = dist(ringTip, wrist) > dist(ringPip, wrist) * 1.15;
+        const isPinkyOpen = dist(pinkyTip, wrist) > dist(pinkyPip, wrist) * 1.15;
+
+        if (isPinch) {
+          isDrawing = true;
+          hudBadge.textContent = "🤏 PINCH (DRAWING)";
+        } else if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) {
+          isDrawing = true;
+          hudBadge.textContent = "☝️ POINT (DRAWING)";
+        } else if (isIndexOpen && isMiddleOpen && isRingOpen && isPinkyOpen) {
+          isDrawing = false;
+          if (currentStroke) {
+            drawHistory.push(currentStroke);
+            currentStroke = null;
+          }
+          hudBadge.textContent = "👋 OPEN PALM (HOVER)";
+        } else {
+          isDrawing = false;
+          if (currentStroke) {
+            drawHistory.push(currentStroke);
+            currentStroke = null;
+          }
+          hudBadge.textContent = "🖐️ READY";
+        }
+
+        if (isDrawing) {
+          const canvasX = indexTip.x * paintCanvas.width;
+          const canvasY = indexTip.y * paintCanvas.height;
+          if (!currentStroke) {
+            currentStroke = { color, size: brushSize, points: [{ x: canvasX, y: canvasY }] };
+            paintCtx.beginPath();
+            paintCtx.strokeStyle = color;
+            paintCtx.lineWidth = brushSize;
+            paintCtx.moveTo(canvasX, canvasY);
+          } else {
+            currentStroke.points.push({ x: canvasX, y: canvasY });
+            paintCtx.lineTo(canvasX, canvasY);
+            paintCtx.stroke();
+          }
+        }
+      }
+
       // Webcam Toggle
       btnCam.addEventListener('click', async () => {
         if (isWebcam) {
@@ -440,27 +539,65 @@
             webcam.srcObject = null;
           }
           isWebcam = false;
+          lastHandPoints = null;
           btnCam.textContent = "📹 Start Webcam";
           document.getElementById('trackingMode').textContent = "Simulator";
         } else {
           try {
+            await initHands();
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             webcam.srcObject = stream;
+            await webcam.play();
             isWebcam = true;
             btnCam.textContent = "⏹️ Stop Webcam";
-            document.getElementById('trackingMode').textContent = "Camera Live";
+            document.getElementById('trackingMode').textContent = "Camera Live (MediaPipe)";
           } catch (err) {
             alert("Camera not accessible, continuing in simulation mode.");
           }
         }
       });
 
-      // Synthetic Hand Animation on HUD
+      // Hand Animation & Tracking on HUD
       let simT = 0;
       function renderHud() {
         simT += 0.04;
         hudCtx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
-        if (!isWebcam) {
+        if (isWebcam && webcam.readyState >= 2) {
+          if (handsEngine && !isMediaPipeBusy) {
+            isMediaPipeBusy = true;
+            handsEngine.send({ image: webcam }).catch(() => {}).finally(() => { isMediaPipeBusy = false; });
+          }
+
+          // Draw live video frame mirrored
+          hudCtx.save();
+          hudCtx.scale(-1, 1);
+          hudCtx.drawImage(webcam, -hudCanvas.width, 0, hudCanvas.width, hudCanvas.height);
+          hudCtx.restore();
+
+          // Render Hand Skeleton
+          if (lastHandPoints) {
+            hudCtx.strokeStyle = isDrawing ? '#d93025' : '#1a73e8';
+            hudCtx.lineWidth = 2.5;
+
+            // Joints
+            lastHandPoints.forEach((p, idx) => {
+              hudCtx.beginPath();
+              hudCtx.arc(p.x * hudCanvas.width, p.y * hudCanvas.height, idx === 8 ? 7 : (idx === 4 ? 6 : 3), 0, Math.PI * 2);
+              hudCtx.fillStyle = idx === 8 ? '#d93025' : (idx === 4 ? '#f9ab00' : '#ffffff');
+              hudCtx.fill();
+              hudCtx.stroke();
+            });
+
+            // Reticle around drawing tip
+            const tip = lastHandPoints[8];
+            if (isDrawing) {
+              hudCtx.strokeStyle = '#d93025';
+              hudCtx.beginPath();
+              hudCtx.arc(tip.x * hudCanvas.width, tip.y * hudCanvas.height, 14, 0, Math.PI * 2);
+              hudCtx.stroke();
+            }
+          }
+        } else {
           hudCtx.fillStyle = '#151922';
           hudCtx.fillRect(0, 0, hudCanvas.width, hudCanvas.height);
 
@@ -484,7 +621,6 @@
           }
 
           if (isDrawing) {
-            // Draw simulated line on canvas
             const canvasX = (cx / hudCanvas.width) * paintCanvas.width;
             const canvasY = (cy / hudCanvas.height) * paintCanvas.height;
             if (!currentStroke) {

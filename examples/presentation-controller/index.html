@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Touchless Presentation Controller | Vision Gesture Control</title>
+  <!-- Google MediaPipe Hands for Real-Time On-Device Tracking -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <style>
     :root {
       --primary: #1a73e8;
@@ -567,6 +570,80 @@
         }
       });
 
+      // Google MediaPipe Hands Tracking for Presentations
+      let handsEngine = null;
+      let isMediaPipeBusy = false;
+      let lastHandPoints = null;
+      let lastSwipeTime = 0;
+      let wristHistory = [];
+
+      async function initHands() {
+        if (handsEngine || typeof Hands === 'undefined') return;
+        try {
+          handsEngine = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+          });
+          handsEngine.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+          });
+          handsEngine.onResults((results) => {
+            if (!isWebcam) return;
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+              const raw = results.multiHandLandmarks[0];
+              lastHandPoints = raw.map(p => ({ x: 1.0 - p.x, y: p.y, z: p.z || 0 }));
+              processPresentationGestures(lastHandPoints);
+            } else {
+              lastHandPoints = null;
+            }
+          });
+        } catch(e) {
+          console.warn("MediaPipe init error:", e);
+        }
+      }
+
+      function processPresentationGestures(points) {
+        if (!points || points.length < 21) return;
+        const wrist = points[0];
+        const indexTip = points[8];
+        const indexPip = points[6];
+
+        const dist = (p1, p2) => Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        const isIndexOpen = dist(indexTip, wrist) > dist(indexPip, wrist) * 1.15;
+
+        // Laser pointer follows index tip
+        if (laserActive) {
+          laserDot.style.left = (indexTip.x * 100) + '%';
+          laserDot.style.top = (indexTip.y * 100) + '%';
+        }
+
+        // Swipe Gesture Detection
+        const now = performance.now();
+        wristHistory.push({ x: wrist.x, t: now });
+        if (wristHistory.length > 8) wristHistory.shift();
+
+        if (now - lastSwipeTime > 600 && wristHistory.length >= 4) {
+          const oldest = wristHistory[0];
+          const newest = wristHistory[wristHistory.length - 1];
+          const dt = (newest.t - oldest.t) / 1000;
+          if (dt > 0.05 && dt < 0.4) {
+            const dx = newest.x - oldest.x;
+            const vel = dx / dt;
+            if (vel > 0.45) {
+              lastSwipeTime = now;
+              wristHistory = [];
+              showSlide(currentSlide + 1);
+            } else if (vel < -0.45) {
+              lastSwipeTime = now;
+              wristHistory = [];
+              showSlide(currentSlide - 1);
+            }
+          }
+        }
+      }
+
       // Camera toggle
       const btnCam = document.getElementById('btnToggleCam');
       btnCam.addEventListener('click', async () => {
@@ -576,15 +653,18 @@
             video.srcObject = null;
           }
           isWebcam = false;
+          lastHandPoints = null;
           btnCam.textContent = "📹 Start Webcam";
           document.getElementById('visionStatus').textContent = "Simulator";
         } else {
           try {
+            await initHands();
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             video.srcObject = stream;
+            await video.play();
             isWebcam = true;
             btnCam.textContent = "⏹️ Stop Webcam";
-            document.getElementById('visionStatus').textContent = "Camera Live";
+            document.getElementById('visionStatus').textContent = "Camera Live (MediaPipe)";
           } catch (err) {
             alert("Camera unavailable. Using simulation mode.");
           }
@@ -596,7 +676,28 @@
       function renderHud() {
         t += 0.05;
         hudCtx.clearRect(0, 0, hudCanvas.width, hudCanvas.height);
-        if (!isWebcam) {
+        if (isWebcam && video.readyState >= 2) {
+          if (handsEngine && !isMediaPipeBusy) {
+            isMediaPipeBusy = true;
+            handsEngine.send({ image: video }).catch(() => {}).finally(() => { isMediaPipeBusy = false; });
+          }
+
+          hudCtx.save();
+          hudCtx.scale(-1, 1);
+          hudCtx.drawImage(video, -hudCanvas.width, 0, hudCanvas.width, hudCanvas.height);
+          hudCtx.restore();
+
+          if (lastHandPoints) {
+            hudCtx.strokeStyle = '#1a73e8';
+            hudCtx.lineWidth = 2;
+            const tip = lastHandPoints[8];
+            hudCtx.beginPath();
+            hudCtx.arc(tip.x * hudCanvas.width, tip.y * hudCanvas.height, 8, 0, Math.PI * 2);
+            hudCtx.fillStyle = '#d93025';
+            hudCtx.fill();
+            hudCtx.stroke();
+          }
+        } else {
           hudCtx.fillStyle = '#1e2430';
           hudCtx.fillRect(0, 0, hudCanvas.width, hudCanvas.height);
 
