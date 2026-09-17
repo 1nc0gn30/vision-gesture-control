@@ -604,7 +604,10 @@ class VisionUIRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self._set_cors_headers()
         self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     def _send_error_json(self, message: str, status: int = HTTPStatus.BAD_REQUEST) -> None:
         self._send_json({"error": message, "status": status}, status=status)
@@ -669,6 +672,15 @@ class VisionUIRequestHandler(SimpleHTTPRequestHandler):
         elif path == "/api/export-bundle":
             # Allow GET download of export bundle as well
             self._handle_export_bundle()
+            return
+
+        elif path == "/favicon.ico":
+            ico_path = os.path.join(self.public_dir, "favicon.ico")
+            if os.path.isfile(ico_path):
+                self._serve_file(ico_path, "image/x-icon")
+            else:
+                self.send_response(HTTPStatus.NO_CONTENT)
+                self.end_headers()
             return
 
         # -------------------------------------------------------------------
@@ -763,7 +775,10 @@ class VisionUIRequestHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-Length", str(len(content)))
             self._set_cors_headers()
             self.end_headers()
-            self.wfile.write(content)
+            try:
+                self.wfile.write(content)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
         except Exception as e:
             self._send_error_json(f"Failed to read file: {str(e)}", HTTPStatus.INTERNAL_SERVER_ERROR)
 

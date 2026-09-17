@@ -929,9 +929,51 @@ def get_shader_filters() -> Dict[str, Any]:
                 "trigger_gesture": "THUMBS_UP (👍)",
                 "description": "Radial warm golden luminescence with solar bloom.",
                 "color": "#f9ab00"
+            },
+            {
+                "id": "vortex_blackhole",
+                "name": "Vortex Singularity Warp",
+                "trigger_gesture": "OK_SIGN / PINCH (👌)",
+                "description": "Gravitational lensing event horizon, accretion glow, and photon ring warp.",
+                "color": "#9333ea"
+            },
+            {
+                "id": "lightning_plasma",
+                "name": "Tesla Arc Lightning",
+                "trigger_gesture": "Manual / Hotkey",
+                "description": "Branching procedural electrical discharges with violet-cyan plasma halo.",
+                "color": "#00f0ff"
+            },
+            {
+                "id": "hyper_kaleidoscope",
+                "name": "Hyper Kaleidoscope",
+                "trigger_gesture": "Manual / Hotkey",
+                "description": "8-fold radial sacred geometry mandala with chromatic dispersion.",
+                "color": "#ec4899"
+            },
+            {
+                "id": "cyber_glitch_mosh",
+                "name": "Datamosh Glitch",
+                "trigger_gesture": "SHAKA (🤙)",
+                "description": "Sliced datamosh block shearing, chromatic displacement, and corrupted hex dump.",
+                "color": "#f43f5e"
+            },
+            {
+                "id": "fire_inferno",
+                "name": "Solar Inferno Flame",
+                "trigger_gesture": "Manual / Fireball",
+                "description": "Turbulent rising flame plumes, incandescent heat spectrum, and ember particles.",
+                "color": "#f97316"
+            },
+            {
+                "id": "chrono_echo",
+                "name": "Chrono Echo Strobe",
+                "trigger_gesture": "Manual / Bullet Time",
+                "description": "Multi-frame additive time-lag silhouette echoes with chromatic ghosting.",
+                "color": "#14b8a6"
             }
         ],
-        "cycle_gesture": "VICTORY_PEACE (✌️)",
+        "cycle_gesture": "VICTORY_PEACE (✌️ Next) / POINTING_INDEX (☝️ Prev)",
         "reset_gesture": "FIST (✊)",
     }
 

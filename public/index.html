@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Google Vision Studio - Touchless Gesture Control, Computer Vision Telemetry & MCP Agent Interface">
   <title>Google Vision Studio | Gesture Control & MCP Hub</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!-- Google MediaPipe Hands & Camera Utils for 100% In-Browser WebAssembly/WebGL Tracking -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
@@ -1302,6 +1303,143 @@
       color: var(--md-sys-color-on-surface-variant);
       line-height: 1.4;
     }
+
+    /* Floating Gesture HUD Notification Banner */
+    .gesture-hud-banner {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      background: rgba(17, 19, 24, 0.94);
+      border: 1.5px solid var(--google-blue);
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 24px rgba(26, 115, 232, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #fff;
+      pointer-events: none;
+      animation: bannerSlideDown 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes bannerSlideDown {
+      from { opacity: 0; transform: translate(-50%, -12px) scale(0.9); }
+      to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    }
+    .gesture-banner-icon {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+    .gesture-banner-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .gesture-banner-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--google-blue);
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .gesture-banner-sub {
+      font-size: 0.68rem;
+      color: var(--md-sys-color-on-surface-variant);
+      white-space: nowrap;
+    }
+
+    /* Kinetic Gesture FX Studio & Visual Controller */
+    .gesturefx-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .gesturefx-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 1024px) {
+      .gesturefx-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .gesturefx-stage {
+      position: relative;
+      background: #000;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-2);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      aspect-ratio: 800 / 520;
+    }
+    .gesturefx-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .spatial-macropad {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(17, 19, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 10;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      max-width: 240px;
+    }
+    .macropad-header {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #a8c7fa;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .macropad-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+    .macro-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 6px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      color: #fff;
+      transition: all 0.15s ease;
+    }
+    .macro-btn:hover, .macro-btn.active-macro {
+      background: rgba(26, 115, 232, 0.35);
+      border-color: var(--google-blue);
+      transform: scale(1.06);
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+    }
+    .macro-icon {
+      font-size: 0.95rem;
+    }
+    .macro-label {
+      font-size: 0.52rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
   </style>
 </head>
 <body>
@@ -1323,6 +1461,9 @@
       <div class="nav-tabs" role="tablist">
         <button class="nav-tab-btn active" data-tab="tab-playground" role="tab" aria-selected="true" id="tabBtn-playground">
           <span>🚀</span> Vision Playground
+        </button>
+        <button class="nav-tab-btn" data-tab="tab-gesturefx" role="tab" aria-selected="false" id="tabBtn-gesturefx">
+          <span>⚡</span> Gesture FX Studio
         </button>
         <button class="nav-tab-btn" data-tab="tab-presentation" role="tab" aria-selected="false" id="tabBtn-presentation">
           <span>📑</span> Presentation
@@ -1372,6 +1513,15 @@
           <video id="webcamVideo" autoplay playsinline muted></video>
           <canvas id="visionCanvas" width="640" height="480"></canvas>
 
+          <!-- Floating Gesture HUD Notification Banner -->
+          <div class="gesture-hud-banner" id="gestureHudBanner" style="display: none;">
+            <span class="gesture-banner-icon" id="gestureBannerIcon">✌️</span>
+            <div class="gesture-banner-info">
+              <div class="gesture-banner-title" id="gestureBannerTitle">VICTORY / PEACE</div>
+              <div class="gesture-banner-sub" id="gestureBannerSub">Switching Filter → SOBEL NEON</div>
+            </div>
+          </div>
+
           <!-- Top HUD -->
           <div class="hud-overlay-top">
             <div class="hud-pill gesture-live-badge" id="activeGestureBadge">
@@ -1413,17 +1563,23 @@
         <!-- Live Shader Filter Selector Strip -->
         <div style="margin-top: 10px; border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--md-sys-color-on-surface-variant); margin-bottom: 4px;">
-            <span><strong>Live Shaders & Portals</strong> (✌️ Peace: Next | ✊ Fist: Reset)</span>
+            <span><strong>13 Live Shaders & Portals</strong> (✌️ Peace: Next | ☝️ Point: Prev | ✊ Fist: Reset)</span>
             <span id="activeFilterLabel" style="font-weight: 600; color: var(--google-blue);">Normal</span>
           </div>
           <div class="filter-strip" id="hudFilterStrip">
-            <button class="filter-chip active-chip" data-filter="normal">Clear / Normal</button>
-            <button class="filter-chip" data-filter="matrix">🟢 Matrix <span class="gesture-hint">(🤘)</span></button>
-            <button class="filter-chip" data-filter="thermal">🔥 Thermal IR</button>
+            <button class="filter-chip active-chip" data-filter="normal">Clear / Normal <span class="gesture-hint">(✊)</span></button>
+            <button class="filter-chip" data-filter="matrix">🟢 Matrix Rain <span class="gesture-hint">(🤘)</span></button>
+            <button class="filter-chip" data-filter="thermal">🔥 Thermal IR <span class="gesture-hint">(👎)</span></button>
             <button class="filter-chip" data-filter="sobel">⚡ Sobel Neon</button>
-            <button class="filter-chip" data-filter="cyber_vhs">📼 Cyber VHS</button>
-            <button class="filter-chip" data-filter="hologram">💎 Hologram</button>
+            <button class="filter-chip" data-filter="cyber_vhs">📼 Cyber VHS <span class="gesture-hint">(🤙)</span></button>
+            <button class="filter-chip" data-filter="hologram">💎 Hologram <span class="gesture-hint">(🖐️)</span></button>
             <button class="filter-chip" data-filter="solar_gold">☀️ Solar Gold <span class="gesture-hint">(👍)</span></button>
+            <button class="filter-chip" data-filter="vortex_blackhole">🌌 Black Hole Singularity <span class="gesture-hint">(👌)</span></button>
+            <button class="filter-chip" data-filter="lightning_plasma">⚡ Tesla Plasma Storm</button>
+            <button class="filter-chip" data-filter="hyper_kaleidoscope">🔮 Sacred Kaleidoscope</button>
+            <button class="filter-chip" data-filter="cyber_glitch_mosh">👾 Glitch Datamosh</button>
+            <button class="filter-chip" data-filter="fire_inferno">🌋 Fire Inferno Aura</button>
+            <button class="filter-chip" data-filter="chrono_echo">⏳ Chronos Time Echoes</button>
           </div>
         </div>
 
@@ -1438,8 +1594,11 @@
             <button class="sim-btn" data-sim="PINCH">🤏 Pinch</button>
             <button class="sim-btn" data-sim="POINTING_INDEX">☝️ Point</button>
             <button class="sim-btn" data-sim="VICTORY_PEACE">✌️ Victory</button>
+            <button class="sim-btn" data-sim="ROCK_ON">🤘 Rock On</button>
+            <button class="sim-btn" data-sim="SHAKA">🤙 Shaka</button>
+            <button class="sim-btn" data-sim="THUMBS_UP">👍 Thumb Up</button>
+            <button class="sim-btn" data-sim="THUMBS_DOWN">👎 Thumb Down</button>
             <button class="sim-btn" data-sim="FIST">✊ Fist</button>
-            <button class="sim-btn" data-sim="THUMBS_UP">👍 Thumb</button>
             <button class="sim-btn" data-sim="SWIPE_LEFT">👈 Left</button>
             <button class="sim-btn" data-sim="SWIPE_RIGHT">👉 Right</button>
           </div>
@@ -2147,6 +2306,122 @@
         </div>
       </div>
 
+      <!-- TAB 6: KINETIC GESTURE CONTROLLER & MAGIC FX -->
+      <div class="tab-content" id="tab-gesturefx" role="tabpanel">
+        <div class="gesturefx-container">
+          <div class="gesturefx-main-grid">
+            <div class="gesturefx-stage" id="gestureFxStage">
+              <canvas class="gesturefx-canvas" id="gestureFxCanvas" width="800" height="520"></canvas>
+              
+              <!-- Interactive Magic HUD Overlays -->
+              <div class="stage-hud-overlay">
+                <div class="stage-hud-pill" id="fxSpellBadge">
+                  <span>✨</span> <span id="fxSpellName">Pyrokinesis: Solar Fireball</span>
+                </div>
+                <div class="stage-hud-pill" id="fxGesturePowerBadge">
+                  <span>⚡</span> <span id="fxPowerText">Mana: 100% • Cast Ready</span>
+                </div>
+              </div>
+
+              <!-- Floating Touchless Macro Trigger Matrix -->
+              <div class="spatial-macropad" id="spatialMacropad">
+                <div class="macropad-header"><span>🎮</span> Touchless Spatial Hotkeys</div>
+                <div class="macropad-grid">
+                  <button class="macro-btn" data-macro="snapshot" title="Pinch or hover to capture high-res snapshot">
+                    <span class="macro-icon">📸</span>
+                    <span class="macro-label">Snap</span>
+                  </button>
+                  <button class="macro-btn" data-macro="next_filter" title="Pinch to advance shader filter">
+                    <span class="macro-icon">🎨</span>
+                    <span class="macro-label">Next FX</span>
+                  </button>
+                  <button class="macro-btn" data-macro="fireball" title="Cast explosive solar fireball">
+                    <span class="macro-icon">🔥</span>
+                    <span class="macro-label">Fire</span>
+                  </button>
+                  <button class="macro-btn" data-macro="ice_freeze" title="Cast cryogenic frost freeze">
+                    <span class="macro-icon">❄️</span>
+                    <span class="macro-label">Freeze</span>
+                  </button>
+                  <button class="macro-btn" data-macro="tesla_storm" title="Summon Tesla arc lightning storm">
+                    <span class="macro-icon">⚡</span>
+                    <span class="macro-label">Tesla</span>
+                  </button>
+                  <button class="macro-btn" data-macro="bullet_time" title="Engage matrix bullet time slow-mo">
+                    <span class="macro-icon">⏱️</span>
+                    <span class="macro-label">SlowMo</span>
+                  </button>
+                  <button class="macro-btn" data-macro="toggle_sfx" title="Toggle audio synthesizer chimes">
+                    <span class="macro-icon">🔊</span>
+                    <span class="macro-label">Audio</span>
+                  </button>
+                  <button class="macro-btn" data-macro="reset_all" title="Clear and reset all overlays">
+                    <span class="macro-icon">🔄</span>
+                    <span class="macro-label">Reset</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gesture Controller Sidebar Controls -->
+            <div class="card" style="margin: 0; display: flex; flex-direction: column; gap: 12px;">
+              <div class="card-title">
+                <span>Kinetic Gesture Controller</span>
+                <span class="version-pill" id="fxLiveBadge">Active Sense</span>
+              </div>
+
+              <!-- Mode / Spell Selector Chips -->
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div style="font-size: 0.75rem; font-weight: 600; color: var(--md-sys-color-on-surface-variant);">
+                  Select Elemental Spell / Kinetic Mode:
+                </div>
+                <div class="filter-strip" id="spellSelectorStrip">
+                  <button class="filter-chip active-chip" data-spell="fireball">🔥 Fireball (Push)</button>
+                  <button class="filter-chip" data-spell="cryo">❄️ Cryo Freeze (Spread)</button>
+                  <button class="filter-chip" data-spell="lightning">⚡ Tesla Lightning (Point)</button>
+                  <button class="filter-chip" data-spell="repulsor">🌌 Grav Repulsor (Dual Palms)</button>
+                  <button class="filter-chip" data-spell="bullet_time">⏱️ Bullet Time (Fist Hold)</button>
+                  <button class="filter-chip" data-spell="optical_particles">🌊 Fluid Particle Wave</button>
+                </div>
+              </div>
+
+              <!-- Gesture DJ Audio Sweep Visualizer -->
+              <div style="background: var(--md-sys-color-surface-container); padding: 10px; border-radius: var(--radius-sm); border-left: 3px solid #38bdf8;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #a8c7fa; text-transform: uppercase;">
+                  🎛️ Gesture DJ Filter Sweep
+                </div>
+                <div style="font-size: 0.78rem; margin-top: 4px; display: flex; justify-content: space-between;">
+                  <span>Cutoff (Left Y): <strong id="djCutoffVal" style="color:#6dd58c;">3,200 Hz</strong></span>
+                  <span>Res (Right X): <strong id="djResonanceVal" style="color:#f9ab00;">4.2 Q</strong></span>
+                </div>
+                <div style="margin-top: 6px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                  <div id="djMeterBar" style="width: 50%; height: 100%; background: linear-gradient(90deg, #00f0ff, #f9ab00); transition: width 0.08s ease;"></div>
+                </div>
+              </div>
+
+              <!-- Action Log -->
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--md-sys-color-on-surface-variant);">
+                  <span>Gesture Event Stream</span>
+                  <span id="fxEventCount">0 events</span>
+                </div>
+                <div id="fxLogBox" style="background: #0b0f14; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 6px; padding: 8px; font-family: monospace; font-size: 0.70rem; color: #6dd58c; height: 105px; overflow-y: auto;">
+                  [Ready] Kinetic Gesture Controller initialized.<br>
+                  [Hint] Thrust open palm forward to cast Fireball.<br>
+                  [Hint] Touch or hover over spatial hotkeys to trigger macros.
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm btn-primary" id="btnCastSpellTrigger" style="flex: 1;">⚡ Cast Active Spell</button>
+                <button class="btn btn-sm btn-tonal" id="btnClearFxStage">🧹 Clear FX</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
   </main>
 
@@ -2219,6 +2494,16 @@
           freq: 528,
           vol: 0.75,
           noteName: '528 Hz (Transformation / Miracles)'
+        },
+        gestureFx: {
+          activeSpell: 'fireball',
+          mana: 1.0,
+          spells: [],
+          particles: [],
+          djCutoff: 3200,
+          djResonance: 4.2,
+          bulletTimeFactor: 1.0,
+          events: []
         }
       };
 
@@ -2260,6 +2545,11 @@
         dwellLabel: document.getElementById('dwellLabel'),
         confValue: document.getElementById('confValue'),
         simButtons: document.querySelectorAll('.sim-btn'),
+        // Floating Gesture Banner
+        gestureHudBanner: document.getElementById('gestureHudBanner'),
+        gestureBannerIcon: document.getElementById('gestureBannerIcon'),
+        gestureBannerTitle: document.getElementById('gestureBannerTitle'),
+        gestureBannerSub: document.getElementById('gestureBannerSub'),
         // Filter Strip
         filterChips: document.querySelectorAll('.filter-chip'),
         activeFilterLabel: document.getElementById('activeFilterLabel'),
@@ -2284,6 +2574,22 @@
         pgSpanStatus: document.getElementById('pgSpanStatus'),
         pgActiveFilter: document.getElementById('pgActiveFilter'),
         pgPortalsCount: document.getElementById('pgPortalsCount'),
+        // Gesture FX Studio
+        gestureFxCanvas: document.getElementById('gestureFxCanvas'),
+        gestureFxStage: document.getElementById('gestureFxStage'),
+        fxSpellBadge: document.getElementById('fxSpellBadge'),
+        fxSpellName: document.getElementById('fxSpellName'),
+        fxGesturePowerBadge: document.getElementById('fxGesturePowerBadge'),
+        fxPowerText: document.getElementById('fxPowerText'),
+        spellSelectorChips: document.querySelectorAll('#spellSelectorStrip .filter-chip'),
+        macroButtons: document.querySelectorAll('.macro-btn'),
+        djCutoffVal: document.getElementById('djCutoffVal'),
+        djResonanceVal: document.getElementById('djResonanceVal'),
+        djMeterBar: document.getElementById('djMeterBar'),
+        fxLogBox: document.getElementById('fxLogBox'),
+        fxEventCount: document.getElementById('fxEventCount'),
+        btnCastSpellTrigger: document.getElementById('btnCastSpellTrigger'),
+        btnClearFxStage: document.getElementById('btnClearFxStage'),
         // Header Controls
         btnToggleSfx: document.getElementById('btnToggleSfx'),
         sfxIcon: document.getElementById('sfxIcon'),
@@ -2336,6 +2642,7 @@
       const visionCtx = els.visionCanvas.getContext('2d');
       const drawCtx = els.drawingCanvas.getContext('2d');
       const pgCtx = els.playgroundCanvas ? els.playgroundCanvas.getContext('2d') : null;
+      const fxCtx = els.gestureFxCanvas ? els.gestureFxCanvas.getContext('2d') : null;
 
       // Initialize UI & Listeners
       function init() {
@@ -2350,6 +2657,7 @@
         initMcpHub();
         initFilterStrip();
         initPlayground();
+        initGestureFx();
         initWebcamHandlers();
         checkBackendHealth();
 
@@ -2965,7 +3273,34 @@
       }
 
       // ── Live Shader Filter Controls ──
-      const FILTER_LIST = ['normal', 'matrix', 'thermal', 'sobel', 'cyber_vhs', 'hologram', 'solar_gold'];
+      const FILTER_LIST = [
+        'normal',
+        'matrix',
+        'thermal',
+        'sobel',
+        'cyber_vhs',
+        'hologram',
+        'solar_gold',
+        'vortex_blackhole',
+        'lightning_plasma',
+        'hyper_kaleidoscope',
+        'cyber_glitch_mosh',
+        'fire_inferno',
+        'chrono_echo'
+      ];
+
+      let bannerTimeout = null;
+      function showGestureHudBanner(title, subtitle, icon = '✌️') {
+        if (!els.gestureHudBanner) return;
+        if (els.gestureBannerTitle) els.gestureBannerTitle.textContent = title;
+        if (els.gestureBannerSub) els.gestureBannerSub.textContent = subtitle;
+        if (els.gestureBannerIcon) els.gestureBannerIcon.textContent = icon;
+        els.gestureHudBanner.style.display = 'flex';
+        if (bannerTimeout) clearTimeout(bannerTimeout);
+        bannerTimeout = setTimeout(() => {
+          if (els.gestureHudBanner) els.gestureHudBanner.style.display = 'none';
+        }, 1400);
+      }
 
       function initFilterStrip() {
         if (!els.filterChips) return;
@@ -2994,13 +3329,19 @@
 
         // Format label for display
         const labelMap = {
-          normal: 'Normal / Clean',
+          normal: 'Normal / Clean (✊)',
           matrix: 'Matrix Rain (🤘)',
-          thermal: 'Thermal Infrared',
+          thermal: 'Thermal Infrared (👎)',
           sobel: 'Sobel Neon Edges',
-          cyber_vhs: 'Cyber VHS Glitch',
-          hologram: 'Cyan Hologram Grid',
-          solar_gold: 'Solar Amber (👍)'
+          cyber_vhs: 'Cyber VHS Glitch (🤙)',
+          hologram: 'Cyan Hologram (🖐️)',
+          solar_gold: 'Solar Gold (👍)',
+          vortex_blackhole: 'Vortex Black Hole (👌)',
+          lightning_plasma: 'Tesla Plasma Storm',
+          hyper_kaleidoscope: 'Sacred Kaleidoscope',
+          cyber_glitch_mosh: 'Glitch Datamosh',
+          fire_inferno: 'Fire Inferno Aura',
+          chrono_echo: 'Chronos Time Echoes'
         };
         const displayLabel = labelMap[filterName] || filterName;
         if (els.activeFilterLabel) els.activeFilterLabel.textContent = displayLabel;
@@ -3016,7 +3357,8 @@
         const curIdx = FILTER_LIST.indexOf(state.activeFilter);
         let nextIdx = (curIdx + direction) % FILTER_LIST.length;
         if (nextIdx < 0) nextIdx = FILTER_LIST.length - 1;
-        setActiveFilter(FILTER_LIST[nextIdx], '✌️ Peace Gesture Cycle');
+        const dirLabel = direction > 0 ? 'Next' : 'Prev';
+        setActiveFilter(FILTER_LIST[nextIdx], `Gesture Cycle (${dirLabel})`);
       }
 
       function playFilterSwitchChime() {
@@ -3707,6 +4049,197 @@
           goldGrad.addColorStop(1, 'rgba(200, 120, 0, 0.15)');
           ctx.fillStyle = goldGrad;
           ctx.fillRect(x, y, w, h);
+        } else if (filterType === 'vortex_blackhole') {
+          const cx = x + w * 0.5;
+          const cy = y + h * 0.5;
+          const maxR = Math.min(w, h) * 0.48;
+
+          ctx.save();
+          const diskGrad = ctx.createRadialGradient(cx, cy, maxR * 0.2, cx, cy, maxR);
+          diskGrad.addColorStop(0, 'rgba(168, 85, 247, 0.7)');
+          diskGrad.addColorStop(0.3, 'rgba(56, 189, 248, 0.4)');
+          diskGrad.addColorStop(0.7, 'rgba(236, 72, 153, 0.25)');
+          diskGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = diskGrad;
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxR, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.lineWidth = 2;
+          for (let s = 0; s < 4; s++) {
+            ctx.beginPath();
+            ctx.strokeStyle = s % 2 === 0 ? '#38bdf8' : '#e879f9';
+            ctx.shadowColor = ctx.strokeStyle;
+            ctx.shadowBlur = 10;
+            const rotOffset = (s * Math.PI * 0.5) + (t * 0.003);
+            for (let r = 10; r < maxR; r += 5) {
+              const theta = rotOffset + r * 0.045;
+              const px = cx + Math.cos(theta) * r;
+              const py = cy + Math.sin(theta) * r;
+              if (r === 10) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = '#050608';
+          ctx.shadowColor = '#ffffff';
+          ctx.shadowBlur = 16;
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxR * 0.22, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxR * 0.22, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+
+        } else if (filterType === 'lightning_plasma') {
+          ctx.save();
+          ctx.fillStyle = 'rgba(15, 10, 35, 0.35)';
+          ctx.fillRect(x, y, w, h);
+
+          const cx = x + w * 0.5;
+          const cy = y + h * 0.5;
+          const boltCount = 3;
+
+          for (let b = 0; b < boltCount; b++) {
+            ctx.beginPath();
+            ctx.strokeStyle = b === 0 ? '#ffffff' : (b === 1 ? '#38bdf8' : '#c084fc');
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 14;
+            ctx.lineWidth = b === 0 ? 3 : 1.5;
+
+            let curX = cx + (Math.sin(t * 0.01 + b) * w * 0.25);
+            let curY = cy + (Math.cos(t * 0.012 + b) * h * 0.25);
+            ctx.moveTo(curX, curY);
+
+            const targetAngle = (b * Math.PI * 2 / boltCount) + (t * 0.002);
+            const targetX = cx + Math.cos(targetAngle) * (w * 0.55);
+            const targetY = cy + Math.sin(targetAngle) * (h * 0.55);
+            const steps = 14;
+
+            for (let i = 1; i <= steps; i++) {
+              const prog = i / steps;
+              const jitter = (Math.random() - 0.5) * 36;
+              const bx = curX + (targetX - curX) * prog + jitter;
+              const by = curY + (targetY - curY) * prog + jitter;
+              ctx.lineTo(bx, by);
+            }
+            ctx.stroke();
+          }
+
+          if (Math.random() < 0.12) {
+            ctx.fillStyle = 'rgba(200, 230, 255, 0.2)';
+            ctx.fillRect(x, y, w, h);
+          }
+          ctx.restore();
+
+        } else if (filterType === 'hyper_kaleidoscope') {
+          ctx.save();
+          const cx = x + w * 0.5;
+          const cy = y + h * 0.5;
+          const radius = Math.min(w, h) * 0.45;
+
+          ctx.translate(cx, cy);
+          ctx.rotate(t * 0.0008);
+
+          const folds = 8;
+          ctx.lineWidth = 1.5;
+          for (let f = 0; f < folds; f++) {
+            ctx.save();
+            ctx.rotate((Math.PI * 2 / folds) * f);
+            const grad = ctx.createLinearGradient(0, 0, radius, radius);
+            grad.addColorStop(0, 'rgba(0, 240, 255, 0.4)');
+            grad.addColorStop(0.5, 'rgba(249, 171, 0, 0.35)');
+            grad.addColorStop(1, 'rgba(147, 52, 230, 0.3)');
+            ctx.fillStyle = grad;
+            ctx.strokeStyle = '#00f0ff';
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 8;
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(radius * 0.7, -radius * 0.25);
+            ctx.lineTo(radius, 0);
+            ctx.lineTo(radius * 0.7, radius * 0.25);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+          }
+          ctx.restore();
+
+        } else if (filterType === 'cyber_glitch_mosh') {
+          ctx.save();
+          ctx.fillStyle = 'rgba(12, 16, 24, 0.22)';
+          ctx.fillRect(x, y, w, h);
+
+          const slices = 6;
+          for (let s = 0; s < slices; s++) {
+            const sy = y + Math.floor(Math.sin(t * 0.02 + s * 1.5) * 0.5 + 0.5) * (h - 30);
+            const sh = 12 + ((s * 7) % 24);
+            const offsetX = (Math.sin(t * 0.05 + s * 3) * 28);
+
+            ctx.fillStyle = s % 2 === 0 ? 'rgba(0, 240, 255, 0.3)' : 'rgba(255, 0, 128, 0.3)';
+            ctx.fillRect(x + offsetX, sy, w, sh);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.font = '9px monospace';
+            ctx.fillText(`0x${(s * 1024).toString(16)} MOSH_ERR`, x + 10, sy + 10);
+          }
+
+          ctx.fillStyle = 'rgba(0, 255, 128, 0.18)';
+          ctx.fillRect(x, y + ((t * 0.06) % h), w, 4);
+          ctx.restore();
+
+        } else if (filterType === 'fire_inferno') {
+          ctx.save();
+          const cx = x + w * 0.5;
+          const cy = y + h * 0.95;
+
+          const fireGrad = ctx.createLinearGradient(cx, cy, cx, y);
+          fireGrad.addColorStop(0, 'rgba(255, 60, 0, 0.45)');
+          fireGrad.addColorStop(0.4, 'rgba(255, 160, 0, 0.35)');
+          fireGrad.addColorStop(0.8, 'rgba(255, 230, 0, 0.25)');
+          fireGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          ctx.fillStyle = fireGrad;
+          ctx.fillRect(x, y, w, h);
+
+          const tongues = 10;
+          ctx.fillStyle = 'rgba(255, 200, 50, 0.35)';
+          ctx.shadowColor = '#ff4500';
+          ctx.shadowBlur = 12;
+          for (let i = 0; i < tongues; i++) {
+            const tx = x + (w / tongues) * (i + 0.5);
+            const th = 80 + Math.sin(t * 0.01 + i * 2) * 50;
+            ctx.beginPath();
+            ctx.moveTo(tx - 18, y + h);
+            ctx.quadraticCurveTo(tx + Math.sin(t * 0.015 + i) * 20, y + h - th, tx, y + h - th - 30);
+            ctx.quadraticCurveTo(tx + 18, y + h - th, tx + 18, y + h);
+            ctx.fill();
+          }
+          ctx.restore();
+
+        } else if (filterType === 'chrono_echo') {
+          ctx.save();
+          const lag1 = Math.sin(t * 0.004) * 14;
+          const lag2 = Math.cos(t * 0.003) * 14;
+
+          ctx.fillStyle = 'rgba(0, 240, 255, 0.16)';
+          ctx.fillRect(x - lag1, y, w, h);
+          ctx.fillStyle = 'rgba(255, 0, 200, 0.16)';
+          ctx.fillRect(x + lag1, y, w, h);
+          ctx.fillStyle = 'rgba(255, 235, 59, 0.14)';
+          ctx.fillRect(x, y + lag2, w, h);
+
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+          ctx.lineWidth = 1;
+          ctx.setLineDash([12, 6]);
+          ctx.strokeRect(x + 12, y + 12, w - 24, h - 24);
+          ctx.restore();
         }
       }
 
@@ -4201,6 +4734,559 @@
         }
       }
 
+      // =====================================================================
+      // ⚡ KINETIC GESTURE CONTROLLER & MAGIC FX STUDIO
+      // =====================================================================
+      const SPELL_METADATA = {
+        fireball: { name: 'Pyrokinesis: Solar Fireball', icon: '🔥', color: '#ff6600', cost: 0.18 },
+        cryo: { name: 'Cryokinesis: Frost Freeze', icon: '❄️', color: '#00f0ff', cost: 0.15 },
+        lightning: { name: 'Tesla Arc: Lightning Storm', icon: '⚡', color: '#a855f7', cost: 0.20 },
+        repulsor: { name: 'Gravitational Repulsor Wave', icon: '🌌', color: '#9333ea', cost: 0.22 },
+        bullet_time: { name: 'Chronos: Matrix Bullet Time', icon: '⏱️', color: '#22c55e', cost: 0.25 },
+        optical_particles: { name: 'Fluid Hydrodynamic Wave', icon: '🌊', color: '#38bdf8', cost: 0.12 }
+      };
+
+      let lastSpellCastTime = 0;
+      let lastMacroTriggerTime = 0;
+
+      function logFxEvent(msg) {
+        if (!els.fxLogBox) return;
+        const ts = new Date().toTimeString().split(' ')[0];
+        const item = `[${ts}] ${msg}`;
+        state.gestureFx.events.push(item);
+        const div = document.createElement('div');
+        div.innerHTML = item;
+        els.fxLogBox.appendChild(div);
+        els.fxLogBox.scrollTop = els.fxLogBox.scrollHeight;
+        if (els.fxEventCount) {
+          els.fxEventCount.textContent = `${state.gestureFx.events.length} events`;
+        }
+      }
+
+      function playSpellSound(type) {
+        if (!state.sfxEnabled) return;
+        ensureAudioContext();
+        if (!audioCtx) return;
+        try {
+          const t = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          if (type === 'fireball') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, t);
+            osc.frequency.exponentialRampToValueAtTime(55, t + 0.35);
+            gain.gain.setValueAtTime(0.25, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + 0.4);
+          } else if (type === 'cryo') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, t);
+            osc.frequency.exponentialRampToValueAtTime(1760, t + 0.25);
+            gain.gain.setValueAtTime(0.2, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + 0.3);
+          } else if (type === 'lightning') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(440, t);
+            osc.frequency.setValueAtTime(880, t + 0.05);
+            osc.frequency.setValueAtTime(220, t + 0.10);
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + 0.24);
+          } else if (type === 'repulsor') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(110, t);
+            osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
+            gain.gain.setValueAtTime(0.3, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(t); osc.stop(t + 0.36);
+          } else {
+            playPinchClick();
+          }
+        } catch(e) {}
+      }
+
+      function castSpell(spellName, originX, originY, targetX, targetY) {
+        const meta = SPELL_METADATA[spellName] || SPELL_METADATA.fireball;
+        const now = performance.now();
+        if (now - lastSpellCastTime < 240) return;
+        lastSpellCastTime = now;
+
+        const w = els.gestureFxCanvas ? els.gestureFxCanvas.width : 800;
+        const h = els.gestureFxCanvas ? els.gestureFxCanvas.height : 520;
+
+        const ox = originX !== undefined ? originX : w * 0.5;
+        const oy = originY !== undefined ? originY : h * 0.75;
+        const tx = targetX !== undefined ? targetX : w * 0.5 + (Math.random() - 0.5) * 120;
+        const ty = targetY !== undefined ? targetY : h * 0.25 + (Math.random() - 0.5) * 80;
+
+        const spell = {
+          type: spellName,
+          x: ox,
+          y: oy,
+          targetX: tx,
+          targetY: ty,
+          progress: 0,
+          color: meta.color,
+          createdAt: now,
+          life: 1.0,
+          exploded: false
+        };
+
+        state.gestureFx.spells.push(spell);
+        state.gestureFx.mana = Math.max(0.05, state.gestureFx.mana - (meta.cost || 0.15));
+        playSpellSound(spellName);
+        logFxEvent(`Cast <strong>${meta.name}</strong> [Mana: ${Math.round(state.gestureFx.mana * 100)}%]`);
+
+        // Spawn initial casting burst
+        for (let i = 0; i < 24; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const spd = 2 + Math.random() * 6;
+          state.gestureFx.particles.push({
+            x: ox,
+            y: oy,
+            vx: Math.cos(angle) * spd,
+            vy: Math.sin(angle) * spd,
+            life: 1.0,
+            decay: 0.02 + Math.random() * 0.03,
+            color: meta.color,
+            size: 3 + Math.random() * 5,
+            type: spellName
+          });
+        }
+      }
+
+      function executeMacroAction(macroKey) {
+        const now = performance.now();
+        if (now - lastMacroTriggerTime < 350) return;
+        lastMacroTriggerTime = now;
+        playPinchClick();
+
+        if (macroKey === 'snapshot') {
+          exportCanvasSnapshot(els.gestureFxCanvas, 'vision_gesturefx_render');
+          logFxEvent(`Macro: 📸 Captured High-Res Canvas Snapshot`);
+          showToast('Snapshot exported from Gesture Studio');
+        } else if (macroKey === 'next_filter') {
+          cycleFilter(1);
+          logFxEvent(`Macro: 🎨 Cycled Shader Filter → ${state.activeFilter.toUpperCase()}`);
+        } else if (macroKey === 'fireball') {
+          selectSpell('fireball');
+          castSpell('fireball');
+        } else if (macroKey === 'ice_freeze') {
+          selectSpell('cryo');
+          castSpell('cryo');
+        } else if (macroKey === 'tesla_storm') {
+          selectSpell('lightning');
+          castSpell('lightning');
+        } else if (macroKey === 'bullet_time') {
+          selectSpell('bullet_time');
+          state.gestureFx.bulletTimeFactor = state.gestureFx.bulletTimeFactor < 0.6 ? 1.0 : 0.25;
+          const status = state.gestureFx.bulletTimeFactor < 0.6 ? 'Engaged (0.25x)' : 'Disengaged (1.0x)';
+          logFxEvent(`Macro: ⏱️ Chrono Bullet Time ${status}`);
+          showToast(`Bullet Time ${status}`);
+        } else if (macroKey === 'toggle_sfx') {
+          if (els.btnToggleSfx) els.btnToggleSfx.click();
+          logFxEvent(`Macro: 🔊 Toggled Synthesizer Audio (${state.sfxEnabled ? 'ON' : 'OFF'})`);
+        } else if (macroKey === 'reset_all') {
+          state.gestureFx.spells = [];
+          state.gestureFx.particles = [];
+          state.gestureFx.mana = 1.0;
+          state.gestureFx.bulletTimeFactor = 1.0;
+          setActiveFilter('normal', 'Macro Reset');
+          logFxEvent(`Macro: 🔄 Reset All Overlays & Recharged Mana`);
+          showToast('Gesture Stage & Mana Reset');
+        }
+      }
+
+      function selectSpell(spellKey) {
+        if (!SPELL_METADATA[spellKey]) return;
+        state.gestureFx.activeSpell = spellKey;
+        const meta = SPELL_METADATA[spellKey];
+
+        if (els.spellSelectorChips) {
+          els.spellSelectorChips.forEach(chip => {
+            chip.classList.toggle('active-chip', chip.dataset.spell === spellKey);
+          });
+        }
+        if (els.fxSpellName) {
+          els.fxSpellName.textContent = meta.name;
+        }
+        if (els.fxSpellBadge) {
+          els.fxSpellBadge.style.borderColor = meta.color;
+        }
+      }
+
+      function initGestureFx() {
+        // Spell selector chips
+        if (els.spellSelectorChips) {
+          els.spellSelectorChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+              const spellKey = chip.dataset.spell;
+              selectSpell(spellKey);
+              playPinchClick();
+              logFxEvent(`Selected spell: <strong>${SPELL_METADATA[spellKey].name}</strong>`);
+            });
+          });
+        }
+
+        // Macro buttons
+        if (els.macroButtons) {
+          els.macroButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+              executeMacroAction(btn.dataset.macro);
+            });
+          });
+        }
+
+        // Cast button trigger
+        if (els.btnCastSpellTrigger) {
+          els.btnCastSpellTrigger.addEventListener('click', () => {
+            castSpell(state.gestureFx.activeSpell);
+          });
+        }
+
+        // Clear button
+        if (els.btnClearFxStage) {
+          els.btnClearFxStage.addEventListener('click', () => {
+            state.gestureFx.spells = [];
+            state.gestureFx.particles = [];
+            logFxEvent(`Cleared all active spells and particle waves.`);
+            showToast("Cleared Gesture FX Stage");
+          });
+        }
+
+        // Mouse / Touch fallback on gestureFxCanvas
+        if (els.gestureFxCanvas) {
+          els.gestureFxCanvas.addEventListener('mousedown', (e) => {
+            const rect = els.gestureFxCanvas.getBoundingClientRect();
+            const px = (e.clientX - rect.left) * (els.gestureFxCanvas.width / rect.width);
+            const py = (e.clientY - rect.top) * (els.gestureFxCanvas.height / rect.height);
+            castSpell(state.gestureFx.activeSpell, els.gestureFxCanvas.width * 0.5, els.gestureFxCanvas.height * 0.9, px, py);
+          });
+        }
+
+        // Pre-populate fluid wave particles
+        for (let i = 0; i < 180; i++) {
+          state.gestureFx.particles.push({
+            x: Math.random() * 800,
+            y: Math.random() * 520,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            life: 1.0,
+            decay: 0.003 + Math.random() * 0.005,
+            color: '#38bdf8',
+            size: 2.5 + Math.random() * 3,
+            type: 'ambient'
+          });
+        }
+      }
+
+      function renderGestureFxScene(ctx, w, h, now) {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, w, h);
+
+        const dt = (16 / 1000) * state.gestureFx.bulletTimeFactor;
+
+        // Mana recharge
+        state.gestureFx.mana = Math.min(1.0, state.gestureFx.mana + 0.0015 * state.gestureFx.bulletTimeFactor);
+        if (els.fxPowerText) {
+          const manaPct = Math.round(state.gestureFx.mana * 100);
+          els.fxPowerText.textContent = `Mana: ${manaPct}% • ${manaPct > 20 ? 'Cast Ready' : 'Recharging...'}`;
+        }
+
+        // 1. Video Frame or Cosmic Cyber Matrix Backdrop
+        if (state.isWebcamActive && els.webcamVideo.readyState >= 2) {
+          ctx.save();
+          ctx.scale(-1, 1);
+          ctx.drawImage(els.webcamVideo, -w, 0, w, h);
+          ctx.restore();
+        } else {
+          const bgGrad = ctx.createRadialGradient(w * 0.5, h * 0.5, 50, w * 0.5, h * 0.5, Math.max(w, h));
+          bgGrad.addColorStop(0, '#101626');
+          bgGrad.addColorStop(0.6, '#090d15');
+          bgGrad.addColorStop(1, '#030508');
+          ctx.fillStyle = bgGrad;
+          ctx.fillRect(0, 0, w, h);
+
+          // Subtle neon perspective grid floor
+          ctx.save();
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+          ctx.lineWidth = 1;
+          for (let x = 0; x <= w; x += 50) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+          }
+          for (let y = 0; y <= h; y += 50) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        // 2. Gesture Hand Positions & Touchless Macro Pad Collision Check
+        const h0 = state.multiHandLandmarks && state.multiHandLandmarks[0] ? state.multiHandLandmarks[0] : (state.landmarks.length ? state.landmarks : null);
+        const h1 = state.multiHandLandmarks && state.multiHandLandmarks[1] ? state.multiHandLandmarks[1] : null;
+
+        // Track DJ Filter from hands
+        if (h0) {
+          const normY = Math.max(0.01, Math.min(0.99, h0[8].y));
+          state.gestureFx.djCutoff = Math.round(12000 - normY * 11800);
+          const normX = h1 ? h1[8].x : h0[8].x;
+          state.gestureFx.djResonance = +(0.5 + (1.0 - normX) * 14.5).toFixed(1);
+
+          if (els.djCutoffVal) els.djCutoffVal.textContent = `${state.gestureFx.djCutoff.toLocaleString()} Hz`;
+          if (els.djResonanceVal) els.djResonanceVal.textContent = `${state.gestureFx.djResonance} Q`;
+          if (els.djMeterBar) {
+            const pct = Math.round(((12000 - state.gestureFx.djCutoff) / 11800) * 100);
+            els.djMeterBar.style.width = `${pct}%`;
+          }
+        }
+
+        // Kinetic gesture automated spells
+        if (h0) {
+          const g0 = state.handGestures[0] || state.activeGesture;
+          const tip0X = h0[8].x * w;
+          const tip0Y = h0[8].y * h;
+          const wrist0X = h0[0].x * w;
+          const wrist0Y = h0[0].y * h;
+
+          // Touchless Macropad check
+          if (els.gestureFxStage && els.macroButtons) {
+            const stageRect = els.gestureFxStage.getBoundingClientRect();
+            els.macroButtons.forEach(btn => {
+              const btnRect = btn.getBoundingClientRect();
+              const bx1 = (btnRect.left - stageRect.left) * (w / stageRect.width);
+              const by1 = (btnRect.top - stageRect.top) * (h / stageRect.height);
+              const bx2 = (btnRect.right - stageRect.left) * (w / stageRect.width);
+              const by2 = (btnRect.bottom - stageRect.top) * (h / stageRect.height);
+
+              const isHovered = (tip0X >= bx1 && tip0X <= bx2 && tip0Y >= by1 && tip0Y <= by2);
+              if (isHovered) {
+                btn.classList.add('active-macro');
+                if (g0 === 'PINCH' || g0 === 'POINTING_INDEX') {
+                  executeMacroAction(btn.dataset.macro);
+                }
+              } else {
+                btn.classList.remove('active-macro');
+              }
+            });
+          }
+
+          // Gesture casting triggers
+          if (g0 === 'OPEN_PALM') {
+            if (Math.random() < 0.08) {
+              castSpell(state.gestureFx.activeSpell, wrist0X, wrist0Y, tip0X + (Math.random() - 0.5) * 80, tip0Y - 140);
+            }
+          } else if (g0 === 'POINTING_INDEX') {
+            if (state.gestureFx.activeSpell === 'lightning' && Math.random() < 0.25) {
+              castSpell('lightning', tip0X, tip0Y, tip0X + (Math.random() - 0.5) * 200, tip0Y - 180);
+            }
+          }
+        }
+
+        // Dual hand repulsor
+        if (h0 && h1) {
+          const g0 = state.handGestures[0] || 'DETECTING';
+          const g1 = state.handGestures[1] || 'DETECTING';
+          if (g0 === 'OPEN_PALM' && g1 === 'OPEN_PALM') {
+            if (Math.random() < 0.06) {
+              const cx = ((h0[0].x + h1[0].x) * 0.5) * w;
+              const cy = ((h0[0].y + h1[0].y) * 0.5) * h;
+              castSpell('repulsor', cx, cy, cx, cy);
+            }
+          }
+        }
+
+        // 3. Render Active Spells
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+
+        state.gestureFx.spells = state.gestureFx.spells.filter(spell => {
+          spell.progress += 0.035 * state.gestureFx.bulletTimeFactor;
+
+          if (spell.type === 'fireball') {
+            const curX = spell.x + (spell.targetX - spell.x) * Math.min(1.0, spell.progress);
+            const curY = spell.y + (spell.targetY - spell.y) * Math.min(1.0, spell.progress) - Math.sin(spell.progress * Math.PI) * 40;
+
+            const rad = ctx.createRadialGradient(curX, curY, 2, curX, curY, 28);
+            rad.addColorStop(0, '#ffffff');
+            rad.addColorStop(0.2, '#ffea00');
+            rad.addColorStop(0.5, '#ff5500');
+            rad.addColorStop(1, 'rgba(255, 30, 0, 0)');
+            ctx.fillStyle = rad;
+            ctx.beginPath();
+            ctx.arc(curX, curY, 28, 0, Math.PI * 2);
+            ctx.fill();
+
+            for (let i = 0; i < 4; i++) {
+              state.gestureFx.particles.push({
+                x: curX + (Math.random() - 0.5) * 14,
+                y: curY + (Math.random() - 0.5) * 14,
+                vx: (Math.random() - 0.5) * 3 - (spell.targetX - spell.x) * 0.015,
+                vy: (Math.random() - 0.5) * 3 + 2,
+                life: 1.0,
+                decay: 0.04 + Math.random() * 0.04,
+                color: Math.random() < 0.5 ? '#ffea00' : '#ff3300',
+                size: 4 + Math.random() * 6,
+                type: 'fireball'
+              });
+            }
+
+            if (spell.progress >= 1.0 && !spell.exploded) {
+              spell.exploded = true;
+              for (let i = 0; i < 48; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 3 + Math.random() * 9;
+                state.gestureFx.particles.push({
+                  x: curX,
+                  y: curY,
+                  vx: Math.cos(ang) * spd,
+                  vy: Math.sin(ang) * spd,
+                  life: 1.0,
+                  decay: 0.02 + Math.random() * 0.03,
+                  color: Math.random() < 0.6 ? '#ff5500' : '#ffe600',
+                  size: 5 + Math.random() * 7,
+                  type: 'explosion'
+                });
+              }
+            }
+          } else if (spell.type === 'cryo') {
+            const curR = spell.progress * 220;
+            ctx.save();
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 3 * (1.0 - spell.progress);
+            ctx.shadowColor = '#00f0ff';
+            ctx.shadowBlur = 16;
+            ctx.beginPath();
+            ctx.arc(spell.x, spell.y, curR, 0, Math.PI * 2);
+            ctx.stroke();
+
+            for (let a = 0; a < 6; a++) {
+              const theta = (a / 6) * Math.PI * 2 + now * 0.001;
+              const ex = spell.x + Math.cos(theta) * curR;
+              const ey = spell.y + Math.sin(theta) * curR;
+              ctx.beginPath();
+              ctx.moveTo(spell.x, spell.y);
+              ctx.lineTo(ex, ey);
+              ctx.stroke();
+            }
+            ctx.restore();
+
+            if (Math.random() < 0.5) {
+              const ang = Math.random() * Math.PI * 2;
+              state.gestureFx.particles.push({
+                x: spell.x + Math.cos(ang) * curR,
+                y: spell.y + Math.sin(ang) * curR,
+                vx: Math.cos(ang) * 1.5,
+                vy: Math.sin(ang) * 1.5,
+                life: 1.0,
+                decay: 0.03,
+                color: '#e0f7fa',
+                size: 3 + Math.random() * 4,
+                type: 'cryo'
+              });
+            }
+          } else if (spell.type === 'lightning') {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.9)';
+            ctx.lineWidth = 4 * (1.0 - spell.progress);
+            ctx.shadowColor = '#a855f7';
+            ctx.shadowBlur = 20;
+
+            let lx = spell.x;
+            let ly = spell.y;
+            ctx.beginPath();
+            ctx.moveTo(lx, ly);
+            const segments = 12;
+            for (let s = 1; s <= segments; s++) {
+              const t = s / segments;
+              const nlx = spell.x + (spell.targetX - spell.x) * t + (Math.random() - 0.5) * 50;
+              const nly = spell.y + (spell.targetY - spell.y) * t + (Math.random() - 0.5) * 50;
+              ctx.lineTo(nlx, nly);
+              lx = nlx;
+              ly = nly;
+            }
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.8 * (1.0 - spell.progress);
+            ctx.stroke();
+            ctx.restore();
+          } else if (spell.type === 'repulsor') {
+            const r1 = spell.progress * 260;
+            ctx.save();
+            ctx.strokeStyle = `rgba(168, 85, 247, ${1.0 - spell.progress})`;
+            ctx.lineWidth = 5 * (1.0 - spell.progress);
+            ctx.shadowColor = '#9333ea';
+            ctx.shadowBlur = 24;
+            ctx.beginPath();
+            ctx.arc(spell.x, spell.y, r1, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.strokeStyle = `rgba(236, 72, 153, ${1.0 - spell.progress})`;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(spell.x, spell.y, r1 * 0.7, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          return spell.progress < 1.0;
+        });
+
+        // 4. Update and Render Particles
+        state.gestureFx.particles = state.gestureFx.particles.filter(p => {
+          p.life -= p.decay * state.gestureFx.bulletTimeFactor;
+          p.x += p.vx * state.gestureFx.bulletTimeFactor;
+          p.y += p.vy * state.gestureFx.bulletTimeFactor;
+
+          if (p.type === 'fireball' || p.type === 'explosion') {
+            p.vy -= 0.05 * state.gestureFx.bulletTimeFactor;
+          } else if (p.type === 'ambient') {
+            p.vx += (Math.random() - 0.5) * 0.2;
+            p.vy += (Math.random() - 0.5) * 0.2;
+            if (p.x < 0) p.x = w;
+            if (p.x > w) p.x = 0;
+            if (p.y < 0) p.y = h;
+            if (p.y > h) p.y = 0;
+            if (p.life <= 0) { p.life = 1.0; }
+          }
+
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+          ctx.fill();
+
+          return p.life > 0;
+        });
+
+        ctx.globalAlpha = 1.0;
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.restore();
+
+        // 5. Render Skeletons & Elemental Hand Auras
+        if (state.showSkeleton) {
+          renderMultiHandSkeletons(ctx, w, h);
+        }
+
+        // 6. Bullet Time HUD Overlay
+        if (state.gestureFx.bulletTimeFactor < 0.6) {
+          ctx.save();
+          ctx.strokeStyle = 'rgba(34, 197, 94, 0.4)';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([8, 6]);
+          ctx.strokeRect(12, 12, w - 24, h - 24);
+          ctx.fillStyle = 'rgba(34, 197, 94, 0.85)';
+          ctx.font = '11px monospace';
+          ctx.fillText(`⏱️ CHRONO DILATION: ${(state.gestureFx.bulletTimeFactor).toFixed(2)}x [MATRIX BULLET TIME]`, 24, 34);
+          ctx.restore();
+        }
+      }
+
       function classifyHandPoints(points) {
         if (!points || points.length < 21) return 'UNKNOWN';
         const wrist = points[0];
@@ -4209,10 +5295,13 @@
         const indexMcp = points[5];
         const indexPip = points[6];
         const indexTip = points[8];
+        const middleMcp = points[9];
         const middlePip = points[10];
         const middleTip = points[12];
+        const ringMcp = points[13];
         const ringPip = points[14];
         const ringTip = points[16];
+        const pinkyMcp = points[17];
         const pinkyPip = points[18];
         const pinkyTip = points[20];
 
@@ -4220,19 +5309,26 @@
           return Math.hypot(p1.x - p2.x, p1.y - p2.y);
         }
 
-        const isIndexOpen = dist(indexTip, wrist) > dist(indexPip, wrist) * 1.15;
-        const isMiddleOpen = dist(middleTip, wrist) > dist(middlePip, wrist) * 1.15;
-        const isRingOpen = dist(ringTip, wrist) > dist(ringPip, wrist) * 1.15;
-        const isPinkyOpen = dist(pinkyTip, wrist) > dist(pinkyPip, wrist) * 1.15;
+        // Dual-criteria extension: robust against 3D tilt & rotation
+        const isIndexOpen = (dist(indexTip, indexMcp) > dist(indexPip, indexMcp) * 1.12) || (dist(indexTip, wrist) > dist(indexPip, wrist) * 1.12);
+        const isMiddleOpen = (dist(middleTip, middleMcp) > dist(middlePip, middleMcp) * 1.12) || (dist(middleTip, wrist) > dist(middlePip, wrist) * 1.12);
+        const isRingOpen = (dist(ringTip, ringMcp) > dist(ringPip, ringMcp) * 1.12) || (dist(ringTip, wrist) > dist(ringPip, wrist) * 1.12);
+        const isPinkyOpen = (dist(pinkyTip, pinkyMcp) > dist(pinkyPip, pinkyMcp) * 1.12) || (dist(pinkyTip, wrist) > dist(pinkyPip, wrist) * 1.12);
 
         const pinchDistance = dist(thumbTip, indexTip);
-        const isPinch = pinchDistance < 0.07;
+        const isPinch = pinchDistance < 0.075;
         const isThumbOpen = dist(thumbTip, indexMcp) > 0.11;
         const isThumbUp = !isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen &&
                           (thumbTip.y < thumbIp.y) && (thumbTip.y < wrist.y);
+        const isThumbDown = !isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen &&
+                            (thumbTip.y > thumbIp.y) && (thumbTip.y > wrist.y);
+        const isShaka = isThumbOpen && isPinkyOpen && !isIndexOpen && !isMiddleOpen && !isRingOpen;
 
+        if (isPinch && isMiddleOpen && isRingOpen && isPinkyOpen) return 'OK_SIGN';
         if (isPinch) return 'PINCH';
         if (isThumbUp) return 'THUMBS_UP';
+        if (isThumbDown) return 'THUMBS_DOWN';
+        if (isShaka) return 'SHAKA';
         if (isIndexOpen && isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'VICTORY_PEACE';
         if (isIndexOpen && isPinkyOpen && !isMiddleOpen && !isRingOpen) return 'ROCK_ON';
         if (isIndexOpen && !isMiddleOpen && !isRingOpen && !isPinkyOpen) return 'POINTING_INDEX';
@@ -4243,29 +5339,66 @@
 
       let lastTriggeredGesture = null;
       let lastGestureTriggerTime = 0;
+      let gestureHoldType = null;
+      let gestureHoldCount = 0;
+      let lastNonGestureTime = 0;
 
       function checkGestureFilterTriggers(g0, g1) {
         const now = performance.now();
-        if (now - lastGestureTriggerTime < 800) return;
+        const activeG = (g0 && g0 !== 'UNKNOWN' && g0 !== 'NONE') ? g0 : (g1 && g1 !== 'UNKNOWN' && g1 !== 'NONE' ? g1 : null);
 
-        const activeG = (g0 !== 'UNKNOWN' && g0 !== 'NONE') ? g0 : g1;
-        if (activeG && activeG !== lastTriggeredGesture) {
+        // When hand is neutral or relaxed, release trigger lock quickly
+        if (!activeG || activeG === 'OPEN_PALM') {
+          if (now - lastNonGestureTime > 160) {
+            lastTriggeredGesture = null;
+            gestureHoldType = null;
+            gestureHoldCount = 0;
+          }
+          return;
+        }
+        lastNonGestureTime = now;
+
+        // Stability filtering (at least 2 consecutive frames)
+        if (gestureHoldType === activeG) {
+          gestureHoldCount++;
+        } else {
+          gestureHoldType = activeG;
+          gestureHoldCount = 1;
+        }
+        if (gestureHoldCount < 2) return;
+
+        // Trigger conditions: Fresh gesture OR sustained hold repeat for cycling
+        const isFresh = (activeG !== lastTriggeredGesture);
+        const isHoldRepeat = (!isFresh && (now - lastGestureTriggerTime > 650) && (activeG === 'VICTORY_PEACE' || activeG === 'POINTING_INDEX'));
+
+        if (isFresh || isHoldRepeat) {
+          lastTriggeredGesture = activeG;
+          lastGestureTriggerTime = now;
+
           if (activeG === 'VICTORY_PEACE') {
-            lastTriggeredGesture = activeG;
-            lastGestureTriggerTime = now;
             cycleFilter(1);
+            showGestureHudBanner("✌️ VICTORY / PEACE", `Next Filter → ${state.activeFilter.toUpperCase()}`, "✌️");
+          } else if (activeG === 'POINTING_INDEX') {
+            cycleFilter(-1);
+            showGestureHudBanner("☝️ POINTING INDEX", `Prev Filter → ${state.activeFilter.toUpperCase()}`, "☝️");
           } else if (activeG === 'ROCK_ON') {
-            lastTriggeredGesture = activeG;
-            lastGestureTriggerTime = now;
-            setActiveFilter('matrix', '🤘 Rock On Gesture');
+            setActiveFilter('matrix', '🤘 Rock On');
+            showGestureHudBanner("🤘 ROCK ON", "Matrix Code Rain", "🤘");
           } else if (activeG === 'THUMBS_UP') {
-            lastTriggeredGesture = activeG;
-            lastGestureTriggerTime = now;
-            setActiveFilter('solar_gold', '👍 Thumbs Up Gesture');
+            setActiveFilter('solar_gold', '👍 Thumbs Up');
+            showGestureHudBanner("👍 THUMBS UP", "Solar Gold Supernova", "👍");
+          } else if (activeG === 'THUMBS_DOWN') {
+            setActiveFilter('thermal', '👎 Thumbs Down');
+            showGestureHudBanner("👎 THUMBS DOWN", "Thermal Infrared FLIR", "👎");
+          } else if (activeG === 'SHAKA') {
+            setActiveFilter('cyber_vhs', '🤙 Shaka');
+            showGestureHudBanner("🤙 SHAKA", "Cyber VHS Glitch", "🤙");
+          } else if (activeG === 'OK_SIGN' || activeG === 'PINCH') {
+            setActiveFilter('vortex_blackhole', '👌 Singularity');
+            showGestureHudBanner("👌 PINCH / OK", "Vortex Singularity Warp", "👌");
           } else if (activeG === 'FIST') {
-            lastTriggeredGesture = activeG;
-            lastGestureTriggerTime = now;
-            setActiveFilter('normal', '✊ Fist Reset');
+            setActiveFilter('normal', '✊ Fist');
+            showGestureHudBanner("✊ FIST", "Reset Clean Feed", "✊");
           }
         }
       }
@@ -5043,6 +6176,11 @@
         // 5. If activeTab is playground, render playground stage
         if (state.activeTab === 'tab-playground' && pgCtx && els.playgroundCanvas) {
           renderPlaygroundScene(pgCtx, els.playgroundCanvas.width, els.playgroundCanvas.height, now);
+        }
+
+        // 5b. If activeTab is gesturefx, render gesture FX studio stage
+        if (state.activeTab === 'tab-gesturefx' && fxCtx && els.gestureFxCanvas) {
+          renderGestureFxScene(fxCtx, els.gestureFxCanvas.width, els.gestureFxCanvas.height, now);
         }
 
         // 6. Update 3D Spatial Portal
