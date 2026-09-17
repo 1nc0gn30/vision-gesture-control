@@ -1440,6 +1440,333 @@
       letter-spacing: 0.3px;
       color: var(--md-sys-color-on-surface-variant);
     }
+
+    /* ── Cyber Cinema Dark Mode Theme Tokens (Default) ── */
+    html[data-theme="dark"],
+    :root:not([data-theme="light"]) {
+      --md-sys-color-primary: #38bdf8;
+      --md-sys-color-on-primary: #082f49;
+      --md-sys-color-primary-container: rgba(56, 189, 248, 0.16);
+      --md-sys-color-on-primary-container: #bae6fd;
+      
+      --google-blue: #38bdf8;
+      --google-green: #4ade80;
+      --google-yellow: #fbbf24;
+      --google-red: #f87171;
+      --google-purple: #c084fc;
+      
+      --md-sys-color-surface: #0f172a;
+      --md-sys-color-surface-dim: #090d16;
+      --md-sys-color-surface-container: #162036;
+      --md-sys-color-surface-container-high: #1e293b;
+      --md-sys-color-surface-container-highest: #283548;
+      
+      --md-sys-color-on-surface: #f8fafc;
+      --md-sys-color-on-surface-variant: #94a3b8;
+      --md-sys-color-outline: rgba(255, 255, 255, 0.14);
+      --md-sys-color-outline-variant: rgba(255, 255, 255, 0.08);
+      
+      --shadow-1: 0 4px 16px rgba(0, 0, 0, 0.45);
+      --shadow-2: 0 8px 28px rgba(0, 0, 0, 0.65);
+      --shadow-3: 0 16px 40px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Smooth theme transitions */
+    body, header.google-header, .card, .nav-tab-btn, .btn, .filter-chip, .viewport-container, .simulator-box {
+      transition: background-color 0.22s ease, border-color 0.22s ease, color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    html[data-theme="dark"] pre, 
+    html[data-theme="dark"] code {
+      background: #090d16;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #38bdf8;
+    }
+    html[data-theme="dark"] .status-badge {
+      background: rgba(74, 222, 128, 0.15);
+      color: #4ade80;
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+    html[data-theme="dark"] .nav-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #f8fafc;
+    }
+    html[data-theme="dark"] .nav-tab-btn.active {
+      background: #1e293b;
+      color: #38bdf8;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    html[data-theme="dark"] .btn-tonal {
+      background: rgba(56, 189, 248, 0.14);
+      color: #38bdf8;
+    }
+    html[data-theme="dark"] .btn-tonal:hover {
+      background: rgba(56, 189, 248, 0.25);
+    }
+    html[data-theme="dark"] .filter-chip {
+      background: #162036;
+      color: #94a3b8;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    html[data-theme="dark"] .filter-chip:hover {
+      background: #1e293b;
+      color: #f8fafc;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    html[data-theme="dark"] .filter-chip.active-chip {
+      background: #38bdf8;
+      color: #0f172a;
+      border-color: #38bdf8;
+      font-weight: 700;
+    }
+    html[data-theme="dark"] .sim-btn {
+      background: #162036;
+      color: #f8fafc;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    html[data-theme="dark"] .sim-btn:hover {
+      background: #1e293b;
+      border-color: #38bdf8;
+    }
+    html[data-theme="dark"] .sim-btn.active-sim {
+      background: #38bdf8;
+      color: #0f172a;
+    }
+    html[data-theme="dark"] .telemetry-table th {
+      background: #162036;
+      color: #94a3b8;
+    }
+    html[data-theme="dark"] .telemetry-table td {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    html[data-theme="dark"] .card {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(15, 23, 42, 0.90);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    html[data-theme="dark"] header.google-header {
+      background: rgba(15, 23, 42, 0.94);
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    html[data-theme="dark"] .spatial-info-card,
+    html[data-theme="dark"] .spatial-controls {
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ── Header Telemetry & Equalizer Spectrum ── */
+    .header-telemetry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      padding: 5px 10px;
+      border-radius: var(--radius-full);
+      color: var(--md-sys-color-on-surface);
+      white-space: nowrap;
+    }
+    .telemetry-sep {
+      opacity: 0.4;
+    }
+    .header-audio-visualizer {
+      display: inline-flex;
+      align-items: flex-end;
+      gap: 2.5px;
+      height: 22px;
+      padding: 2px 6px;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+    .viz-bar {
+      width: 3px;
+      height: 4px;
+      background: var(--google-blue);
+      border-radius: 1px;
+      transition: height 0.08s ease;
+    }
+
+    /* ── Canvas Video Recorder UI ── */
+    .btn-recording-active {
+      background: #dc2626 !important;
+      color: #ffffff !important;
+      border-color: #ef4444 !important;
+      animation: pulseRecordingBtn 1.2s infinite ease-in-out;
+    }
+    @keyframes pulseRecordingBtn {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6); }
+      50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.2); }
+    }
+    .recording-hud-pill {
+      position: absolute;
+      top: 48px;
+      right: 10px;
+      z-index: 25;
+      background: rgba(220, 38, 38, 0.92);
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 12px rgba(220, 38, 38, 0.6);
+      pointer-events: none;
+      font-family: monospace;
+      animation: bannerSlideDown 0.2s ease-out;
+    }
+    .recording-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      animation: pulseRecordingDot 0.8s infinite alternate ease-in-out;
+    }
+    @keyframes pulseRecordingDot {
+      from { transform: scale(0.7); opacity: 0.5; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    /* ── Command Palette & Shortcuts Modal ── */
+    .command-palette-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 10vh;
+      animation: fadeInModal 0.18s ease-out;
+    }
+    @keyframes fadeInModal {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .command-palette-modal {
+      background: var(--md-sys-color-surface);
+      border: 1.5px solid var(--md-sys-color-outline);
+      border-radius: var(--radius-lg);
+      width: 92%;
+      max-width: 680px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+    }
+    .cmd-search-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+      background: var(--md-sys-color-surface-container);
+    }
+    .cmd-search-icon {
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    .cmd-search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--md-sys-color-on-surface);
+      outline: none;
+    }
+    .cmd-badge-esc {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--md-sys-color-surface-container-high);
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: monospace;
+    }
+    .cmd-palette-content {
+      padding: 18px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .cmd-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--google-blue);
+      margin-bottom: 6px;
+    }
+    .cmd-shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 8px;
+    }
+    .cmd-shortcut-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-on-surface);
+      background: var(--md-sys-color-surface-container);
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      transition: all var(--transition-fast);
+    }
+    .cmd-shortcut-item:hover {
+      border-color: var(--google-blue);
+      transform: translateY(-1px);
+    }
+    .cmd-shortcut-item kbd {
+      background: var(--md-sys-color-surface-container-high);
+      border: 1px solid var(--md-sys-color-outline);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .cmd-filter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .cmd-filter-chip {
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--md-sys-color-on-surface);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+      font-family: inherit;
+    }
+    .cmd-filter-chip:hover {
+      background: var(--google-blue);
+      color: #fff;
+      border-color: var(--google-blue);
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -1487,9 +1814,41 @@
     </nav>
 
     <div class="header-right">
-      <button class="btn btn-sm btn-tonal btn-sfx-active" id="btnToggleSfx" style="margin-right: 8px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Toggle 528Hz Solfeggio Audio Chimes">
+      <!-- Live Engine Telemetry Pill -->
+      <div class="header-telemetry-pill" id="headerTelemetryPill" title="Live Engine Performance">
+        <span class="telemetry-item"><strong id="hdrFps">60</strong> FPS</span>
+        <span class="telemetry-sep">•</span>
+        <span class="telemetry-item"><strong id="hdrLatency">16</strong>ms</span>
+      </div>
+
+      <!-- Real-Time Mini Equalizer Spectrum -->
+      <div class="header-audio-visualizer" id="headerAudioViz" title="Real-time Audio Spectrum">
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+        <div class="viz-bar"></div>
+      </div>
+
+      <!-- Audio SFX Toggle -->
+      <button class="btn btn-sm btn-tonal btn-sfx-active" id="btnToggleSfx" style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Toggle 528Hz Solfeggio Audio Chimes (M)">
         <span id="sfxIcon">🔊</span> <span id="sfxLabel">SFX: On</span>
       </button>
+
+      <!-- Keyboard Shortcuts & Command Palette -->
+      <button class="btn btn-sm btn-tonal" id="btnOpenShortcuts" style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Keyboard Shortcuts & Command Palette (Ctrl+K or ?)">
+        <span>⌨️</span> <span>Shortcuts</span>
+      </button>
+
+      <!-- Theme Switcher (Dark / Light) -->
+      <button class="btn btn-sm btn-tonal" id="btnToggleTheme" style="font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Toggle Cyber Dark / Clean Light Mode (T)">
+        <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+      </button>
+
+      <!-- Engine Status Badge -->
       <div class="status-badge" id="engineStatusBadge">
         <span class="status-indicator"></span>
         <span id="engineStatusText">MediaPipe Ready</span>
@@ -1532,6 +1891,12 @@
             </div>
           </div>
 
+          <!-- Floating Recording Badge -->
+          <div class="recording-hud-pill" id="recordingHudPill" style="display: none;">
+            <span class="recording-dot"></span>
+            <span id="recordingTimer">REC 00:00</span>
+          </div>
+
           <!-- Bottom HUD -->
           <div class="hud-overlay-bottom">
             <div class="dwell-progress-container" id="dwellContainer">
@@ -1549,14 +1914,17 @@
           <button class="btn btn-primary btn-sm" id="btnToggleCamera">
             <span id="camBtnIcon">📹</span> <span id="camBtnText">Start Webcam</span>
           </button>
-          <button class="btn btn-tonal btn-sm" id="btnToggleOverlay">
-            <span>🦴</span> Toggle Skeleton
+          <button class="btn btn-tonal btn-sm" id="btnRecordClip" title="Record composite canvas video clip (R)">
+            <span id="recordIcon">🔴</span> <span id="recordLabel">Record Clip</span>
           </button>
-          <button class="btn btn-tonal btn-sm" id="btnResetEngine">
-            <span>🔄</span> Reset Calibration
+          <button class="btn btn-tonal btn-sm" id="btnToggleOverlay">
+            <span>🦴</span> Skeleton
           </button>
           <button class="btn btn-tonal btn-sm" id="btnSnapshotHud">
-            <span>📸</span> Snapshot HD
+            <span>📸</span> Snap HD
+          </button>
+          <button class="btn btn-tonal btn-sm" id="btnResetEngine">
+            <span>🔄</span> Reset
           </button>
         </div>
 
@@ -1612,6 +1980,20 @@
           <button class="btn btn-sm" id="btnResetSens" style="padding: 2px 8px; font-size: 0.75rem;">Default</button>
         </div>
         <div class="settings-group">
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Filter Shader Intensity</span>
+              <span class="slider-val" id="valFilterMix">100%</span>
+            </div>
+            <input type="range" id="rangeFilterMix" min="0.0" max="1.0" step="0.05" value="1.0">
+          </div>
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Skeleton Glow Width</span>
+              <span class="slider-val" id="valSkeletonWidth">3.0 px</span>
+            </div>
+            <input type="range" id="rangeSkeletonWidth" min="1.0" max="6.0" step="0.5" value="3.0">
+          </div>
           <div class="slider-row">
             <div class="slider-header">
               <span>Detection Confidence</span>
@@ -2449,6 +2831,10 @@
 
       // State Management
       const state = {
+        theme: localStorage.getItem('vision_theme') || 'dark',
+        filterIntensity: 1.0,
+        skeletonGlowWidth: 3.0,
+        isRecording: false,
         activeTab: 'tab-playground',
         isWebcamActive: false,
         isSimulated: true,
@@ -2592,6 +2978,11 @@
         btnClearFxStage: document.getElementById('btnClearFxStage'),
         // Header Controls
         btnToggleSfx: document.getElementById('btnToggleSfx'),
+        btnRecordClip: document.getElementById('btnRecordClip'),
+        btnToggleTheme: document.getElementById('btnToggleTheme'),
+        btnOpenShortcuts: document.getElementById('btnOpenShortcuts'),
+        hdrFps: document.getElementById('hdrFps'),
+        hdrLatency: document.getElementById('hdrLatency'),
         sfxIcon: document.getElementById('sfxIcon'),
         sfxLabel: document.getElementById('sfxLabel'),
         engineStatusText: document.getElementById('engineStatusText'),
@@ -2621,6 +3012,10 @@
         landmarkTableBody: document.getElementById('landmarkTableBody'),
         filterButtons: document.querySelectorAll('.filter-btn'),
         // Sensitivity
+        rangeFilterMix: document.getElementById('rangeFilterMix'),
+        valFilterMix: document.getElementById('valFilterMix'),
+        rangeSkeletonWidth: document.getElementById('rangeSkeletonWidth'),
+        valSkeletonWidth: document.getElementById('valSkeletonWidth'),
         rangeDetConf: document.getElementById('rangeDetConf'),
         valDetConf: document.getElementById('valDetConf'),
         rangeDwellTime: document.getElementById('rangeDwellTime'),
@@ -2646,6 +3041,7 @@
 
       // Initialize UI & Listeners
       function init() {
+        initTheme();
         initNavigation();
         initSimulator();
         initSensitivityControls();
@@ -2658,6 +3054,8 @@
         initFilterStrip();
         initPlayground();
         initGestureFx();
+        initCommandPalette();
+        initCanvasRecording();
         initWebcamHandlers();
         checkBackendHealth();
 
@@ -2745,6 +3143,18 @@
 
       // Sensitivity Sliders
       function initSensitivityControls() {
+        if (els.rangeFilterMix) {
+          els.rangeFilterMix.addEventListener('input', (e) => {
+            state.filterIntensity = parseFloat(e.target.value);
+            if (els.valFilterMix) els.valFilterMix.textContent = Math.round(state.filterIntensity * 100) + '%';
+          });
+        }
+        if (els.rangeSkeletonWidth) {
+          els.rangeSkeletonWidth.addEventListener('input', (e) => {
+            state.skeletonGlowWidth = parseFloat(e.target.value);
+            if (els.valSkeletonWidth) els.valSkeletonWidth.textContent = state.skeletonGlowWidth.toFixed(1) + ' px';
+          });
+        }
         els.rangeDetConf.addEventListener('input', (e) => {
           els.valDetConf.textContent = parseFloat(e.target.value).toFixed(2);
         });
@@ -2759,6 +3169,16 @@
           els.valSmoothing.textContent = parseFloat(e.target.value).toFixed(2);
         });
         els.btnResetSens.addEventListener('click', () => {
+          if (els.rangeFilterMix) {
+            els.rangeFilterMix.value = 1.0;
+            state.filterIntensity = 1.0;
+            if (els.valFilterMix) els.valFilterMix.textContent = '100%';
+          }
+          if (els.rangeSkeletonWidth) {
+            els.rangeSkeletonWidth.value = 3.0;
+            state.skeletonGlowWidth = 3.0;
+            if (els.valSkeletonWidth) els.valSkeletonWidth.textContent = '3.0 px';
+          }
           els.rangeDetConf.value = 0.75;
           els.valDetConf.textContent = '0.75';
           els.rangeDwellTime.value = 600;
@@ -3084,12 +3504,18 @@
         }
       }
 
+      let audioAnalyser = null;
+      let audioDataArray = null;
+
       function ensureAudioContext() {
         if (!audioCtx) {
           try {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (AudioContext) {
               audioCtx = new AudioContext();
+              audioAnalyser = audioCtx.createAnalyser();
+              audioAnalyser.fftSize = 32;
+              audioDataArray = new Uint8Array(audioAnalyser.frequencyBinCount);
             }
           } catch (e) {
             console.warn("AudioContext init error:", e);
@@ -3978,6 +4404,10 @@
       // ── Shader Filters and Visualizer Render Engines ──
       function renderShaderFilter(ctx, filterType, x, y, w, h, t) {
         if (filterType === 'normal') return;
+        ctx.save();
+        if (state.filterIntensity !== undefined && state.filterIntensity < 1.0) {
+          ctx.globalAlpha = Math.max(0.04, state.filterIntensity);
+        }
 
         if (filterType === 'matrix') {
           ctx.fillStyle = 'rgba(10, 28, 14, 0.45)';
@@ -4241,6 +4671,7 @@
           ctx.strokeRect(x + 12, y + 12, w - 24, h - 24);
           ctx.restore();
         }
+        ctx.restore();
       }
 
       function renderRoiLensFrame(ctx, x, y, w, h, filterName) {
@@ -4535,7 +4966,7 @@
         const jointColor = handIdx === 0 ? '#1a73e8' : '#f9ab00';
 
         ctx.strokeStyle = baseColor;
-        ctx.lineWidth = 3;
+        ctx.lineWidth = state.skeletonGlowWidth || 3;
         ctx.lineCap = 'round';
 
         BONE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
@@ -5284,6 +5715,358 @@
           ctx.font = '11px monospace';
           ctx.fillText(`⏱️ CHRONO DILATION: ${(state.gestureFx.bulletTimeFactor).toFixed(2)}x [MATRIX BULLET TIME]`, 24, 34);
           ctx.restore();
+        }
+      }
+
+      // =====================================================================
+      // 🌙 THEME SWITCHER (CYBER CINEMA DARK / MATERIAL CLEAN LIGHT)
+      // =====================================================================
+      function initTheme() {
+        const savedTheme = localStorage.getItem('vision_theme') || 'dark';
+        setTheme(savedTheme, false);
+
+        if (els.btnToggleTheme) {
+          els.btnToggleTheme.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next, true);
+            playPinchClick();
+          });
+        }
+      }
+
+      function setTheme(theme, notify = true) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('vision_theme', theme);
+        state.theme = theme;
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
+        if (icon) icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+        if (label) label.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        if (notify) {
+          showToast(`Switched to ${theme === 'dark' ? 'Cyber Cinema Dark' : 'Material Clean Light'} mode`);
+        }
+      }
+
+      // =====================================================================
+      // 🎥 CANVAS VIDEO CLIP RECORDER (WEBM EXPORT)
+      // =====================================================================
+      let mediaRecorder = null;
+      let recordedChunks = [];
+      let recordingTimerInterval = null;
+      let recordingStartTime = 0;
+
+      function initCanvasRecording() {
+        if (els.btnRecordClip) {
+          els.btnRecordClip.addEventListener('click', toggleCanvasRecording);
+        }
+      }
+
+      function toggleCanvasRecording() {
+        if (state.isRecording) {
+          stopCanvasRecording();
+        } else {
+          startCanvasRecording();
+        }
+      }
+
+      function startCanvasRecording() {
+        if (!els.visionCanvas) return;
+        try {
+          recordedChunks = [];
+          const stream = els.visionCanvas.captureStream(30);
+          
+          let options = { mimeType: 'video/webm;codecs=vp9' };
+          if (typeof MediaRecorder === 'undefined') {
+            showToast("MediaRecorder not supported in this browser");
+            return;
+          }
+          if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            options = { mimeType: 'video/webm;codecs=vp8' };
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+              options = { mimeType: 'video/webm' };
+            }
+          }
+
+          mediaRecorder = new MediaRecorder(stream, options);
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data && e.data.size > 0) {
+              recordedChunks.push(e.data);
+            }
+          };
+
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            const filename = `vision_clip_${ts}.webm`;
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }, 1000);
+            showToast(`🎥 Video clip exported: ${filename}`);
+          };
+
+          mediaRecorder.start(250);
+          state.isRecording = true;
+          recordingStartTime = performance.now();
+
+          const recPill = document.getElementById('recordingHudPill');
+          if (recPill) recPill.style.display = 'flex';
+
+          if (els.btnRecordClip) {
+            els.btnRecordClip.classList.add('btn-recording-active');
+            const icon = document.getElementById('recordIcon');
+            const lbl = document.getElementById('recordLabel');
+            if (icon) icon.textContent = '⏹️';
+            if (lbl) lbl.textContent = 'Stop (00:00)';
+          }
+
+          if (recordingTimerInterval) clearInterval(recordingTimerInterval);
+          recordingTimerInterval = setInterval(() => {
+            if (!state.isRecording) return;
+            const elapsedSec = Math.floor((performance.now() - recordingStartTime) / 1000);
+            const mm = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+            const ss = String(elapsedSec % 60).padStart(2, '0');
+            const timerEl = document.getElementById('recordingTimer');
+            if (timerEl) timerEl.textContent = `REC ${mm}:${ss}`;
+            const lbl = document.getElementById('recordLabel');
+            if (lbl) lbl.textContent = `Stop (${mm}:${ss})`;
+          }, 1000);
+
+          playPinchClick();
+          showToast("🔴 Started recording canvas video clip");
+        } catch (err) {
+          console.error("Recording error:", err);
+          showToast("Recording error: " + err.message);
+        }
+      }
+
+      function stopCanvasRecording() {
+        if (!state.isRecording || !mediaRecorder) return;
+        state.isRecording = false;
+        if (recordingTimerInterval) {
+          clearInterval(recordingTimerInterval);
+          recordingTimerInterval = null;
+        }
+        try {
+          if (mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+          }
+        } catch(e) {}
+
+        const recPill = document.getElementById('recordingHudPill');
+        if (recPill) recPill.style.display = 'none';
+
+        if (els.btnRecordClip) {
+          els.btnRecordClip.classList.remove('btn-recording-active');
+          const icon = document.getElementById('recordIcon');
+          const lbl = document.getElementById('recordLabel');
+          if (icon) icon.textContent = '🔴';
+          if (lbl) lbl.textContent = 'Record Clip';
+        }
+        playPinchClick();
+      }
+
+      // =====================================================================
+      // ⌨️ COMMAND PALETTE & KEYBOARD SHORTCUTS
+      // =====================================================================
+      let isFramePaused = false;
+      function togglePauseFrame() {
+        isFramePaused = !isFramePaused;
+        if (state.isWebcamActive && els.webcamVideo) {
+          if (isFramePaused) {
+            try { els.webcamVideo.pause(); } catch(e) {}
+          } else {
+            try { els.webcamVideo.play().catch(() => {}); } catch(e) {}
+          }
+        }
+        showToast(isFramePaused ? "⏸️ Video Frame Paused" : "▶️ Video Frame Resumed");
+      }
+
+      function toggleFullscreenViewport() {
+        const vp = document.getElementById('viewportContainer');
+        if (!vp) return;
+        if (!document.fullscreenElement) {
+          vp.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+
+      function initCommandPalette() {
+        const modal = document.getElementById('commandPaletteModal');
+        const input = document.getElementById('cmdPaletteInput');
+        const openBtn = document.getElementById('btnOpenShortcuts');
+
+        function openPalette() {
+          if (!modal) return;
+          modal.style.display = 'flex';
+          if (input) {
+            input.value = '';
+            input.focus();
+            renderCmdFilterResults('');
+          }
+        }
+
+        function closePalette() {
+          if (!modal) return;
+          modal.style.display = 'none';
+        }
+
+        if (openBtn) {
+          openBtn.addEventListener('click', openPalette);
+        }
+
+        if (modal) {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) closePalette();
+          });
+        }
+
+        if (input) {
+          input.addEventListener('input', (e) => {
+            renderCmdFilterResults(e.target.value.toLowerCase().trim());
+          });
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closePalette();
+            else if (e.key === 'Enter') {
+              const firstChip = document.querySelector('.cmd-filter-chip');
+              if (firstChip) firstChip.click();
+            }
+          });
+        }
+
+        window.addEventListener('keydown', (e) => {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+              closePalette();
+            }
+            return;
+          }
+
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (modal.style.display === 'flex') closePalette();
+            else openPalette();
+            return;
+          }
+
+          if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+            e.preventDefault();
+            openPalette();
+            return;
+          }
+
+          if (e.key === 'Escape') {
+            closePalette();
+            return;
+          }
+
+          const key = e.key.toLowerCase();
+          if (key === 'c') {
+            e.preventDefault();
+            if (els.btnToggleCamera) els.btnToggleCamera.click();
+          } else if (key === 'r') {
+            e.preventDefault();
+            toggleCanvasRecording();
+          } else if (key === 's') {
+            e.preventDefault();
+            if (els.btnSnapshotHud) els.btnSnapshotHud.click();
+          } else if (key === 'n') {
+            e.preventDefault();
+            cycleFilter(1);
+          } else if (key === 'p') {
+            e.preventDefault();
+            cycleFilter(-1);
+          } else if (key === 'm') {
+            e.preventDefault();
+            if (els.btnToggleSfx) els.btnToggleSfx.click();
+          } else if (key === 't') {
+            e.preventDefault();
+            if (els.btnToggleTheme) els.btnToggleTheme.click();
+          } else if (key === 'f') {
+            e.preventDefault();
+            toggleFullscreenViewport();
+          } else if (key === ' ' || e.code === 'Space') {
+            e.preventDefault();
+            togglePauseFrame();
+          } else if (['1','2','3','4','5','6','7','8'].includes(e.key)) {
+            const tabIdx = parseInt(e.key, 10) - 1;
+            const tabs = ['tabBtn-playground', 'tabBtn-gesturefx', 'tabBtn-presentation', 'tabBtn-drawing', 'tabBtn-spatial3d', 'tabBtn-architecture', 'tabBtn-telemetry', 'tabBtn-mcp'];
+            if (tabs[tabIdx]) {
+              const tabBtn = document.getElementById(tabs[tabIdx]);
+              if (tabBtn) tabBtn.click();
+            }
+          }
+        });
+
+        renderCmdFilterResults('');
+      }
+
+      function renderCmdFilterResults(query) {
+        const container = document.getElementById('cmdFilterList');
+        if (!container) return;
+        const allFilters = [
+          { id: 'normal', name: 'Normal / Clean Feed', icon: '✊' },
+          { id: 'matrix', name: 'Matrix Rain', icon: '🟢' },
+          { id: 'thermal', name: 'Thermal Infrared IR', icon: '🔥' },
+          { id: 'sobel', name: 'Sobel Neon Edges', icon: '⚡' },
+          { id: 'cyber_vhs', name: 'Cyber VHS Glitch', icon: '📼' },
+          { id: 'hologram', name: 'Cyan Hologram', icon: '💎' },
+          { id: 'solar_gold', name: 'Solar Amber Gold', icon: '☀️' },
+          { id: 'vortex_blackhole', name: 'Black Hole Singularity', icon: '🌌' },
+          { id: 'lightning_plasma', name: 'Tesla Plasma Storm', icon: '⚡' },
+          { id: 'hyper_kaleidoscope', name: 'Sacred Kaleidoscope', icon: '🔮' },
+          { id: 'cyber_glitch_mosh', name: 'Glitch Datamosh', icon: '👾' },
+          { id: 'fire_inferno', name: 'Solar Inferno Flame', icon: '🌋' },
+          { id: 'chrono_echo', name: 'Chronos Time Echoes', icon: '⏳' }
+        ];
+
+        const matched = query ? allFilters.filter(f => f.name.toLowerCase().includes(query) || f.id.toLowerCase().includes(query)) : allFilters;
+        
+        let html = '';
+        matched.forEach(f => {
+          html += `<button type="button" class="cmd-filter-chip" data-filter="${f.id}"><span>${f.icon}</span> ${f.name}</button>`;
+        });
+        if (matched.length === 0) {
+          html = `<div style="font-size:0.75rem;color:var(--md-sys-color-on-surface-variant);padding:6px 0;">No matching shaders found</div>`;
+        }
+        container.innerHTML = html;
+
+        container.querySelectorAll('.cmd-filter-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            setActiveFilter(chip.dataset.filter, chip.textContent);
+            const modal = document.getElementById('commandPaletteModal');
+            if (modal) modal.style.display = 'none';
+          });
+        });
+      }
+
+      // =====================================================================
+      // 📊 HEADER AUDIO SPECTRUM VISUALIZER
+      // =====================================================================
+      function updateHeaderAudioVisualizer() {
+        const bars = document.querySelectorAll('#headerAudioViz .viz-bar');
+        if (!bars || bars.length === 0) return;
+        if (audioAnalyser && audioDataArray && state.sfxEnabled) {
+          audioAnalyser.getByteFrequencyData(audioDataArray);
+          bars.forEach((bar, i) => {
+            const val = audioDataArray[i * 2] || 0;
+            const h = Math.max(3, Math.min(20, Math.round((val / 255) * 20)));
+            bar.style.height = `${h}px`;
+          });
+        } else {
+          bars.forEach((bar, i) => {
+            const idleH = 3 + Math.round(Math.abs(Math.sin(performance.now() * 0.0025 + i * 0.8)) * 3);
+            bar.style.height = `${idleH}px`;
+          });
         }
       }
 
@@ -6079,9 +6862,14 @@
         if (now - lastFpsUpdate > 1000) {
           state.fps = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
           if (els.fpsValue) els.fpsValue.textContent = state.fps;
+          if (els.hdrFps) els.hdrFps.textContent = state.fps;
+          if (els.hdrLatency) els.hdrLatency.textContent = Math.max(8, Math.round(1000 / Math.max(1, state.fps)));
           frameCount = 0;
           lastFpsUpdate = now;
         }
+
+        // Live Header Audio Spectrum Equalizer
+        updateHeaderAudioVisualizer();
 
         const w = els.visionCanvas.width;
         const h = els.visionCanvas.height;
@@ -6089,7 +6877,7 @@
         // 1. Video Frame or Cyber Synthetic Background
         if (state.isWebcamActive && els.webcamVideo.readyState >= 2) {
           // Non-blocking asynchronous MediaPipe Neural Network dispatch
-          if (handsEngine && state.mediaPipeReady && !isMediaPipeBusy) {
+          if (!isFramePaused && handsEngine && state.mediaPipeReady && !isMediaPipeBusy) {
             isMediaPipeBusy = true;
             handsEngine.send({ image: els.webcamVideo })
               .catch(() => {})
@@ -6102,7 +6890,9 @@
           visionCtx.restore();
         } else {
           // Virtual Simulator Hand Update
-          updateSimulatedLandmarks(now);
+          if (!isFramePaused) {
+            updateSimulatedLandmarks(now);
+          }
 
           // Synthetic Cyber Grid
           const grad = visionCtx.createLinearGradient(0, 0, w, h);
@@ -6201,7 +6991,7 @@
       function renderEnhancedSkeleton(ctx, w, h) {
         // Draw Bones
         ctx.strokeStyle = 'rgba(26, 115, 232, 0.9)';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = state.skeletonGlowWidth || 3;
         ctx.lineCap = 'round';
 
         BONE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
@@ -6317,5 +7107,43 @@
 
     })();
   </script>
+
+  <!-- Floating Command Palette & Shortcuts Modal -->
+  <div class="command-palette-backdrop" id="commandPaletteModal" style="display: none;" role="dialog" aria-modal="true" aria-label="Command Palette">
+    <div class="command-palette-modal">
+      <div class="cmd-search-box">
+        <span class="cmd-search-icon">🔍</span>
+        <input type="text" id="cmdPaletteInput" placeholder="Search commands, shaders, or gestures... (Esc to close)" autocomplete="off">
+        <span class="cmd-badge-esc">ESC</span>
+      </div>
+      <div class="cmd-palette-content">
+        <div class="cmd-section-title">⌨️ Essential Keyboard Shortcuts</div>
+        <div class="cmd-shortcuts-grid">
+          <div class="cmd-shortcut-item"><kbd>Space</kbd> <span>Freeze / Resume Video</span></div>
+          <div class="cmd-shortcut-item"><kbd>C</kbd> <span>Toggle Webcam</span></div>
+          <div class="cmd-shortcut-item"><kbd>R</kbd> <span>Record Canvas Clip (WebM)</span></div>
+          <div class="cmd-shortcut-item"><kbd>S</kbd> <span>Export High-Res Snapshot</span></div>
+          <div class="cmd-shortcut-item"><kbd>N</kbd> / <kbd>P</kbd> <span>Next / Prev Shader Filter</span></div>
+          <div class="cmd-shortcut-item"><kbd>M</kbd> <span>Toggle Audio Chimes</span></div>
+          <div class="cmd-shortcut-item"><kbd>T</kbd> <span>Toggle Dark / Light Theme</span></div>
+          <div class="cmd-shortcut-item"><kbd>F</kbd> <span>Toggle Fullscreen Viewport</span></div>
+          <div class="cmd-shortcut-item"><kbd>1</kbd>-<kbd>8</kbd> <span>Switch Workspace Tabs</span></div>
+        </div>
+
+        <div class="cmd-section-title" style="margin-top: 14px;">🎨 Shader Filters (13 Available)</div>
+        <div class="cmd-filter-grid" id="cmdFilterList"></div>
+
+        <div class="cmd-section-title" style="margin-top: 14px;">⚡ Kinetic Spells & Actions</div>
+        <div class="cmd-shortcuts-grid">
+          <button class="cmd-shortcut-item" onclick="castSpell('fireball'); document.getElementById('commandPaletteModal').style.display='none';" style="cursor:pointer; text-align:left;"><span>🔥</span> <strong>Solar Fireball</strong></button>
+          <button class="cmd-shortcut-item" onclick="castSpell('cryo'); document.getElementById('commandPaletteModal').style.display='none';" style="cursor:pointer; text-align:left;"><span>❄️</span> <strong>Cryo Frost Freeze</strong></button>
+          <button class="cmd-shortcut-item" onclick="castSpell('lightning'); document.getElementById('commandPaletteModal').style.display='none';" style="cursor:pointer; text-align:left;"><span>⚡</span> <strong>Tesla Arc Lightning</strong></button>
+          <button class="cmd-shortcut-item" onclick="castSpell('repulsor'); document.getElementById('commandPaletteModal').style.display='none';" style="cursor:pointer; text-align:left;"><span>🌌</span> <strong>Grav Repulsor</strong></button>
+          <button class="cmd-shortcut-item" onclick="executeMacroAction('bullet_time'); document.getElementById('commandPaletteModal').style.display='none';" style="cursor:pointer; text-align:left;"><span>⏱️</span> <strong>Toggle Bullet Time</strong></button>
+          <button class="cmd-shortcut-item" onclick="executeMacroAction('reset_all'); document.getElementById('commandPaletteModal').style.display='none';" style="cursor:pointer; text-align:left;"><span>🔄</span> <strong>Reset All Overlays</strong></button>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
