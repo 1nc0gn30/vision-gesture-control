@@ -14,12 +14,12 @@
   <style>
     /* Google Material 3 Light Mode Theme & Design Tokens */
     :root {
-      --md-sys-color-primary: #1a73e8;
+      --md-sys-color-primary: #B8860B;
       --md-sys-color-on-primary: #ffffff;
-      --md-sys-color-primary-container: #e8f0fe;
-      --md-sys-color-on-primary-container: #174ea6;
+      --md-sys-color-primary-container: #FEF9E7;
+      --md-sys-color-on-primary-container: #6B5308;
       
-      --google-blue: #1a73e8;
+      --google-blue: #B8860B;
       --google-green: #1e8e3e;
       --google-yellow: #f9ab00;
       --google-red: #d93025;
@@ -389,7 +389,7 @@
     }
 
     .btn-primary:hover {
-      background: #1765cc;
+      background: #8A6A09;
     }
 
     .btn-tonal {
@@ -399,7 +399,7 @@
     }
 
     .btn-tonal:hover {
-      background: #d2e3fc;
+      background: #F5E6AB;
     }
 
     .btn-danger {
@@ -1768,6 +1768,7 @@
       transform: translateY(-1px);
     }
   </style>
+  <link rel="stylesheet" href="atelier.css">
 </head>
 <body>
 
@@ -2286,7 +2287,7 @@
         <div class="drawing-toolbar">
           <div class="color-swatches">
             <span style="font-size: 0.8125rem; font-weight: 500; margin-right: 4px;">Color:</span>
-            <div class="color-swatch active-color" data-color="#1a73e8" style="background: #1a73e8;" title="Google Blue"></div>
+            <div class="color-swatch active-color" data-color="#B8860B" style="background: #B8860B;" title="Google Blue"></div>
             <div class="color-swatch" data-color="#d93025" style="background: #d93025;" title="Google Red"></div>
             <div class="color-swatch" data-color="#f9ab00" style="background: #f9ab00;" title="Google Yellow"></div>
             <div class="color-swatch" data-color="#1e8e3e" style="background: #1e8e3e;" title="Google Green"></div>
@@ -2856,7 +2857,7 @@
         isDwelling: false,
         fps: 60,
         confidence: 0.98,
-        drawColor: '#1a73e8',
+        drawColor: '#B8860B',
         brushSize: 4,
         isDrawing: false,
         lastDrawPos: null,
@@ -4405,7 +4406,7 @@
       // ── Touchless 3D Physics Sandbox ──
       function spawnPhysicsObjects(canvasW, canvasH) {
         const shapes = ['cube', 'sphere', 'octahedron', 'torus'];
-        const colors = ['#1a73e8', '#f9ab00', '#1e8e3e', '#d93025'];
+        const colors = ['#B8860B', '#f9ab00', '#1e8e3e', '#d93025'];
         const w = canvasW || 800;
         const h = canvasH || 520;
 
@@ -4929,7 +4930,7 @@
         ctx.arc(p1.x, p1.y, 22 + Math.sin(now * 0.008) * 4, 0, Math.PI * 2);
         ctx.stroke();
 
-        ctx.strokeStyle = '#1a73e8';
+        ctx.strokeStyle = '#B8860B';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(p0.x, p0.y, 16 + state.theremin.vol * 14, 0, Math.PI * 2);
@@ -4946,7 +4947,7 @@
         const innerR = radius * 0.42;
 
         const WHEEL_ITEMS = [
-          { gesture: 'VICTORY_PEACE', label: 'Peace: Cycle Next', icon: '✌️', filter: 'next', color: '#1a73e8' },
+          { gesture: 'VICTORY_PEACE', label: 'Peace: Cycle Next', icon: '✌️', filter: 'next', color: '#B8860B' },
           { gesture: 'ROCK_ON', label: 'Rock: Matrix Rain', icon: '🤘', filter: 'matrix', color: '#34a853' },
           { gesture: 'THUMBS_UP', label: 'Thumb Up: Solar Gold', icon: '👍', filter: 'solar_gold', color: '#fbbc04' },
           { gesture: 'THUMBS_DOWN', label: 'Thumb Down: Thermal', icon: '👎', filter: 'thermal', color: '#ea4335' },
@@ -5171,7 +5172,7 @@
       function renderHandSkeleton(ctx, points, w, h, handIdx) {
         if (!points || points.length < 21) return;
         const baseColor = handIdx === 0 ? 'rgba(26, 115, 232, 0.9)' : 'rgba(249, 171, 0, 0.9)';
-        const jointColor = handIdx === 0 ? '#1a73e8' : '#f9ab00';
+        const jointColor = handIdx === 0 ? '#B8860B' : '#f9ab00';
 
         ctx.strokeStyle = baseColor;
         ctx.lineWidth = state.skeletonGlowWidth || 3;
@@ -7365,7 +7366,7 @@
           }
 
           ctx.fill();
-          ctx.strokeStyle = '#1a73e8';
+          ctx.strokeStyle = '#B8860B';
           ctx.lineWidth = 2;
           ctx.stroke();
 
