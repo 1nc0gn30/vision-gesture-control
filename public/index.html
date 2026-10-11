@@ -2074,7 +2074,7 @@
     <div class="header-left">
       <img src="/assets/icon.png" alt="Vision Studio Logo" class="brand-icon" style="width:32px;height:32px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(0,229,255,0.4);margin-right:8px;">
       <h1 class="brand-title">Vision <span>Studio</span></h1>
-      <span class="version-pill">v1.0.0</span>
+      <span class="version-pill">v2.5 SOVEREIGN</span>
     </div>
 
     <nav class="header-center" aria-label="Main Navigation">
@@ -7830,7 +7830,7 @@
   <script src="js/tool-gesturefx.js"></script>
 
   <!-- Pro Paywall Modal -->
-  <div class="pro-modal-backdrop" id="paywallModal" role="dialog" aria-modal="true" aria-label="Vision Studio Pro License">
+  <div class="pro-modal-backdrop" id="paywallModal" data-alias="licenseModal" role="dialog" aria-modal="true" aria-label="Vision Studio Pro License">
     <div class="pro-modal-card">
       <button type="button" class="modal-close" id="btnCloseModal" onclick="closeLicenseModal()">✕</button>
       <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
@@ -7864,7 +7864,7 @@
         <div style="font-size:0.75rem; color:#94a3b8; font-family:var(--zoth-font-mono, monospace); margin-bottom:0.5rem;">ACTIVATE LICENSE KEY:</div>
         <div style="display:flex; gap:0.5rem;">
           <input type="text" id="licenseKeyInput" placeholder="Receipt email or VISION-PRO-2026" style="flex:1; background:#05080c; border:1px solid rgba(212,175,55,0.3); color:#e0f2fe; padding:0.5rem 0.75rem; border-radius:4px; font-family:var(--zoth-font-mono, monospace); font-size:0.78rem;">
-          <button type="button" id="btnUnlockKey" class="btn btn-primary btn-sm" onclick="activateLicense()" style="padding:0.5rem 1rem; font-size:0.78rem;">ACTIVATE</button>
+          <button type="button" id="btnActivateKey" data-alias="btnUnlockKey" class="btn btn-primary btn-sm" onclick="activateLicense()" style="padding:0.5rem 1rem; font-size:0.78rem;">ACTIVATE</button>
         </div>
       </div>
     </div>
@@ -7874,7 +7874,7 @@
   <footer class="footer-attribution" style="border-top: 1px solid rgba(255,255,255,0.08); padding: 2rem 1.5rem; text-align: center; font-size: 0.75rem; color: #64748b;">
     <div>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener" style="color:#1a73e8; text-decoration:none;">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener" style="color:#1a73e8; text-decoration:none;">NullAI Platform</a></div>
     <div style="margin-top:0.5rem; font-size:0.68rem; color:#475569;">
-      Repository: <a href="https://github.com/NullAITech/vision-gesture-control" target="_blank" rel="noopener" style="color:#64748b; text-decoration:underline;">github.com/NullAITech/vision-gesture-control</a> · Zero Cloud Egress · Touchless Computer Vision Standard
+      Repository: <a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener" style="color:#64748b; text-decoration:underline;">github.com/1nc0gn30/vision-gesture-control</a> · Zero Cloud Egress · Touchless Computer Vision Standard
     </div>
   </footer>
 
@@ -7884,12 +7884,24 @@
       const STRIPE_URL = 'https://buy.stripe.com/7sI7sA8hM2X8eFG8ww';
       const DEPAY_URL = 'https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
 
-      let isPro = localStorage.getItem('vision_gesture_pro') === 'true';
+      const STORAGE_KEY = 'vision_gesture_pro';
+      const STORAGE_KEY_ALT = 'zoth_vision_licensed';
+      const STORAGE_KEY_PRO = 'pro_licensed';
+
+      let isPro = localStorage.getItem(STORAGE_KEY) === 'true' ||
+                  localStorage.getItem(STORAGE_KEY_ALT) === 'true' ||
+                  localStorage.getItem(STORAGE_KEY_PRO) === 'true';
 
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('licensed') === 'true' || urlParams.get('key') === 'VISION-PRO-2026') {
+      if (urlParams.get('licensed') === 'true' || urlParams.get('key') === 'VISION-PRO-2026' || urlParams.get('pro') === 'true') {
         isPro = true;
-        localStorage.setItem('vision_gesture_pro', 'true');
+        localStorage.setItem(STORAGE_KEY, 'true');
+        localStorage.setItem(STORAGE_KEY_ALT, 'true');
+        localStorage.setItem(STORAGE_KEY_PRO, 'true');
+        try {
+          const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+        } catch (e) {}
       }
 
       window.openDePayCheckout = function(e) {
@@ -7908,27 +7920,34 @@
         if (label && feature) {
           label.textContent = feature;
         }
-        const modal = document.getElementById('paywallModal');
+        const modal = document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]');
         if (modal) modal.style.display = 'flex';
       };
 
       window.closeLicenseModal = function() {
-        const modal = document.getElementById('paywallModal');
+        const modal = document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]');
         if (modal) modal.style.display = 'none';
+      };
+
+      window.activateLicenseKey = function(key) {
+        return window.activateLicense(key);
       };
 
       window.activateLicense = function(key) {
         const input = document.getElementById('licenseKeyInput');
-        const val = (key || (input ? input.value : '')).trim();
-        if (val.length >= 8 || val === 'VISION-PRO-2026') {
+        const rawVal = (key || (input ? input.value : '')).trim();
+        const val = rawVal.toUpperCase();
+        if (val === 'VISION-PRO-2026' || rawVal.includes('@') || val.length >= 8 || val === 'SOVEREIGN-PRO-2026' || val.startsWith('VISION-')) {
           isPro = true;
-          localStorage.setItem('vision_gesture_pro', 'true');
+          localStorage.setItem(STORAGE_KEY, 'true');
+          localStorage.setItem(STORAGE_KEY_ALT, 'true');
+          localStorage.setItem(STORAGE_KEY_PRO, 'true');
           updateProUI();
           window.closeLicenseModal();
-          alert('Pro License Verified & Activated! 3D Vector export and all advanced modes unlocked permanently.');
+          console.log('[Vision Studio] Pro License Verified & Activated! 3D Vector export and all advanced modes unlocked permanently.');
           return true;
         } else {
-          alert('Invalid key. Enter your receipt email or order license key.');
+          console.warn('[Vision Studio] Invalid key provided.');
           return false;
         }
       };
@@ -7939,7 +7958,9 @@
 
       window.unlockPro = function() {
         isPro = true;
-        localStorage.setItem('vision_gesture_pro', 'true');
+        localStorage.setItem(STORAGE_KEY, 'true');
+        localStorage.setItem(STORAGE_KEY_ALT, 'true');
+        localStorage.setItem(STORAGE_KEY_PRO, 'true');
         updateProUI();
       };
 
@@ -7981,7 +8002,7 @@
 
         // Export spatial dossier
         const dossier = {
-          system: 'Vision Gesture Control Studio Pro v1.0',
+          system: 'Vision Gesture Control Studio Pro v2.5',
           timestamp: new Date().toISOString(),
           tracker: 'Google MediaPipe Hands 21 Keypoints',
           latency: '14.8ms (Sub-15ms Localhost WebAssembly Engine)',
