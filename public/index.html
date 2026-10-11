@@ -12,14 +12,18 @@
   <meta property="og:description" content="100% in-browser touchless gesture control, 21-joint 3D hand tracking, spatial air drawing, and Model Context Protocol (MCP) agent connectivity.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://vision-gesture-control.netlify.app/">
-  <meta property="og:image" content="https://vision-gesture-control.netlify.app/favicon.ico">
+  <meta property="og:image" content="https://vision-gesture-control.netlify.app/assets/banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@1nc0gn30">
   <meta name="twitter:creator" content="@1nc0gn30">
   <meta name="twitter:title" content="Vision Studio // Touchless Computer Vision & MCP Agent Interface">
   <meta name="twitter:description" content="In-browser touchless gesture control, 21-joint 3D hand tracking, and MCP AI agent connectivity.">
-  <meta name="twitter:image" content="https://vision-gesture-control.netlify.app/favicon.ico">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <meta name="twitter:image" content="https://vision-gesture-control.netlify.app/assets/banner.png">
+
+  <!-- Favicon & Brand Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icon.png">
+  <link rel="apple-touch-icon" href="/assets/icon.png">
 
   <!-- AEO & SEO Schema.org Graph -->
   <script type="application/ld+json">
@@ -2068,12 +2072,7 @@
 <!-- Google Style Header -->
   <header class="google-header">
     <div class="header-left">
-      <div class="google-dots" aria-hidden="true">
-        <div class="google-dot dot-blue"></div>
-        <div class="google-dot dot-red"></div>
-        <div class="google-dot dot-yellow"></div>
-        <div class="google-dot dot-green"></div>
-      </div>
+      <img src="/assets/icon.png" alt="Vision Studio Logo" class="brand-icon" style="width:32px;height:32px;border-radius:8px;object-fit:cover;box-shadow:0 0 10px rgba(0,229,255,0.4);margin-right:8px;">
       <h1 class="brand-title">Vision <span>Studio</span></h1>
       <span class="version-pill">v1.0.0</span>
     </div>
@@ -2149,7 +2148,7 @@
       </div>
 
       <!-- Pro Status Badge & Unlock Button -->
-      <span class="badge-status pro-locked" id="pro-badge" style="font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.4);">FREE TIER</span>
+      <span class="badge-status pro-locked" id="licenseBadge" style="font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.4);">⚡ FREE TIER</span>
       <button type="button" class="btn btn-sm btn-primary" id="btnHeaderUnlock" onclick="openLicenseModal()" style="font-size:0.75rem; font-weight:700; cursor:pointer;">🔑 UNLOCK PRO</button>
     </div>
   </header>
@@ -7946,7 +7945,7 @@
 
       function updateProUI() {
         const banner = document.getElementById('salesBanner');
-        const badge = document.getElementById('pro-badge');
+        const badge = document.getElementById('licenseBadge') || document.getElementById('pro-badge');
         const btnHeaderUnlock = document.getElementById('btnHeaderUnlock');
         const paywallOverlay = document.getElementById('paywallOverlay');
         const exportPreview = document.getElementById('exportPreview');
@@ -7964,7 +7963,7 @@
           if (banner) banner.style.display = 'flex';
           if (btnHeaderUnlock) btnHeaderUnlock.style.display = 'inline-block';
           if (badge) {
-            badge.textContent = 'FREE TIER';
+            badge.textContent = '⚡ FREE TIER';
             badge.className = 'badge-status pro-locked';
           }
           if (paywallOverlay) paywallOverlay.style.display = 'flex';
