@@ -2054,7 +2054,7 @@
 </head>
 <body>
   <!-- High-Converting Founding Member Sales Banner -->
-  <aside class="sales-funnel-banner" id="salesBanner" aria-label="Founding Member Pro Upgrade">
+  <aside class="sales-funnel-banner" id="salesBanner" data-alias="founding-offer-banner" aria-label="Founding Member Pro Upgrade">
     <div class="pricing">
       <span class="badge-urgency">FOUNDING OPERATOR COHORT</span>
       <span><strong>VISION STUDIO PRO</strong> // Lifetime License:</span>
@@ -2065,7 +2065,7 @@
     <div class="sales-actions">
       <a href="https://buy.stripe.com/7sI7sA8hM2X8eFG8ww" target="_blank" rel="noopener" class="btn-buy-stripe">Credit Card / Apple Pay ($19)</a>
       <a href="https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener" class="btn-buy-solana" onclick="openDePayCheckout(event)">Pay with Solana ($19)</a>
-      <button type="button" class="btn-unlock-link trigger-paywall" onclick="openLicenseModal()">Have License Key?</button>
+      <button type="button" id="btn-paywall-key" data-alias="btnActivateBanner" class="btn-unlock-link trigger-paywall" onclick="openLicenseModal()">Have License Key?</button>
     </div>
   </aside>
 
@@ -7830,7 +7830,7 @@
   <script src="js/tool-gesturefx.js"></script>
 
   <!-- Pro Paywall Modal -->
-  <div class="pro-modal-backdrop" id="paywallModal" data-alias="licenseModal" role="dialog" aria-modal="true" aria-label="Vision Studio Pro License">
+  <div class="pro-modal-backdrop" id="licenseModal" data-alias="paywall-modal paywallModal licenseModal" role="dialog" aria-modal="true" aria-label="Vision Studio Pro License">
     <div class="pro-modal-card">
       <button type="button" class="modal-close" id="btnCloseModal" onclick="closeLicenseModal()">✕</button>
       <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
@@ -7863,7 +7863,7 @@
       <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:1rem;">
         <div style="font-size:0.75rem; color:#94a3b8; font-family:var(--zoth-font-mono, monospace); margin-bottom:0.5rem;">ACTIVATE LICENSE KEY:</div>
         <div style="display:flex; gap:0.5rem;">
-          <input type="text" id="licenseKeyInput" placeholder="Receipt email or VISION-PRO-2026" style="flex:1; background:#05080c; border:1px solid rgba(212,175,55,0.3); color:#e0f2fe; padding:0.5rem 0.75rem; border-radius:4px; font-family:var(--zoth-font-mono, monospace); font-size:0.78rem;">
+          <input type="text" id="license-input" data-alias="licenseKeyInput" placeholder="Receipt email or VISION-PRO-2026" style="flex:1; background:#05080c; border:1px solid rgba(212,175,55,0.3); color:#e0f2fe; padding:0.5rem 0.75rem; border-radius:4px; font-family:var(--zoth-font-mono, monospace); font-size:0.78rem;">
           <button type="button" id="btnActivateKey" data-alias="btnUnlockKey" class="btn btn-primary btn-sm" onclick="activateLicense()" style="padding:0.5rem 1rem; font-size:0.78rem;">ACTIVATE</button>
         </div>
       </div>
@@ -7920,21 +7920,25 @@
         if (label && feature) {
           label.textContent = feature;
         }
-        const modal = document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]');
+        const modal = document.getElementById('licenseModal') || document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]') || document.querySelector('[data-alias="paywall-modal"]');
         if (modal) modal.style.display = 'flex';
       };
 
       window.closeLicenseModal = function() {
-        const modal = document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]');
+        const modal = document.getElementById('licenseModal') || document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]') || document.querySelector('[data-alias="paywall-modal"]');
         if (modal) modal.style.display = 'none';
       };
+      window.openProModal = window.openLicenseModal;
+      window.closeProModal = window.closeLicenseModal;
+      window.openPaywallModal = window.openLicenseModal;
+      window.closePaywallModal = window.closeLicenseModal;
 
       window.activateLicenseKey = function(key) {
         return window.activateLicense(key);
       };
 
       window.activateLicense = function(key) {
-        const input = document.getElementById('licenseKeyInput');
+        const input = document.getElementById('license-input') || document.getElementById('licenseKeyInput') || document.querySelector('[data-alias="licenseKeyInput"]');
         const rawVal = (key || (input ? input.value : '')).trim();
         const val = rawVal.toUpperCase();
         if (val === 'VISION-PRO-2026' || rawVal.includes('@') || val.length >= 8 || val === 'SOVEREIGN-PRO-2026' || val.startsWith('VISION-')) {

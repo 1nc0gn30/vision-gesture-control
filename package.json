@@ -3,17 +3,33 @@
   "version": "2.5.0",
   "description": "Touchless Gesture Control, Computer Vision Telemetry & MCP Agent Interface",
   "main": "electron/main.cjs",
+  "homepage": "https://vision-gesture-control.netlify.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1nc0gn30/vision-gesture-control.git"
+  },
   "bin": {
     "vision-gesture": "./bin/vision-gesture.js"
   },
   "scripts": {
-    "serve": "npx serve public -l 8843",
-    "start": "electron .",
+    "start": "python3 -m http.server 8089 --directory public",
+    "serve:public": "python3 -m http.server 8089 --directory public",
+    "electron": "electron .",
     "desktop": "electron .",
     "web": "node bin/vision-gesture.js web",
     "cli": "node bin/vision-gesture.js",
-    "test": "pytest tests/"
+    "test": "pytest tests/",
+    "test:ui": "python3 scripts/verify_ui.py"
   },
+  "keywords": [
+    "gesture-control",
+    "computer-vision",
+    "mcp",
+    "hand-tracking",
+    "mediapipe",
+    "zero-cloud",
+    "sovereign"
+  ],
   "author": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
   "license": "MIT",
   "devDependencies": {
