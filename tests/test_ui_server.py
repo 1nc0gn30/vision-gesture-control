@@ -66,7 +66,7 @@ class TestUIServer(unittest.TestCase):
         status, headers, body = self._http_get("/api/health")
         self.assertEqual(status, 200)
         self.assertIn("application/json", headers.get("Content-Type", ""))
-        self.assertEqual(headers.get("Access-Control-Allow-Origin"), "*")
+        self.assertEqual(headers.get("Access-Control-Allow-Origin"), "http://127.0.0.1")
         data = json.loads(body.decode("utf-8"))
         self.assertEqual(data["status"], "ok")
         self.assertEqual(data["version"], "1.0.0")
@@ -203,7 +203,7 @@ class TestUIServer(unittest.TestCase):
         req = urllib.request.Request(url, method="OPTIONS")
         with urllib.request.urlopen(req) as resp:
             self.assertEqual(resp.status, 204)
-            self.assertEqual(resp.headers.get("Access-Control-Allow-Origin"), "*")
+            self.assertEqual(resp.headers.get("Access-Control-Allow-Origin"), "http://127.0.0.1")
             self.assertIn("POST", resp.headers.get("Access-Control-Allow-Methods", ""))
 
 
