@@ -31,7 +31,7 @@ from .mcp_server import (
     get_diagnostics,
 )
 
-DEFAULT_PORT = 8088
+DEFAULT_PORT = 8101
 DEFAULT_HOST = "0.0.0.0"
 SERVER_VERSION = "1.0.0"
 SERVER_START_TIME = time.time()

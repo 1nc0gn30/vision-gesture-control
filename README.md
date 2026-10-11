@@ -4,13 +4,15 @@
 
 ### Ultra-Low-Latency Touchless Computer Vision, Gesture Recognition & Model Context Protocol (MCP) Engine
 
-[![CI](https://github.com/google/vision-gesture-control/actions/workflows/ci.yml/badge.svg)](https://github.com/google/vision-gesture-control/actions/workflows/ci.yml)
+[![Live Workstation](https://img.shields.io/badge/Live%20Workstation-Netlify%20App-00ff88?style=for-the-badge&logo=netlify&logoColor=black)](https://vision-gesture-control.netlify.app/)
+[![Dual Rails](https://img.shields.io/badge/Dual%20Rails-Stripe%20%2B%20Solana-635bff?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww)
+[![Pro License](https://img.shields.io/badge/Pro%20License-%2419%20Lifetime-9945ff?style=for-the-badge&logo=solana&logoColor=white)](https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)
 [![Python 3.9 - 3.13](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
-[![OS Matrix](https://img.shields.io/badge/OS-Ubuntu%20%7C%20macOS%20%7C%20Windows-green.svg)](https://github.com/google/vision-gesture-control)
+[![OS Matrix](https://img.shields.io/badge/OS-Ubuntu%20%7C%20macOS%20%7C%20Windows-green.svg)](https://github.com/NullAITech/vision-gesture-control)
 [![MCP Ready](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple.svg)](https://modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-[**Live Web Studio**](public/index.html) • [**Gesture Math Guide**](docs/GESTURE_RECOGNITION_GUIDE.md) • [**MCP Integration Guide**](docs/MCP_GUIDE.md) • [**Privacy & Security**](docs/CAMERA_SECURITY_PRIVACY.md) • [**Examples**](examples/README.md)
+[**Live Web Studio**](https://vision-gesture-control.netlify.app/) • [**Gesture Math Guide**](docs/GESTURE_RECOGNITION_GUIDE.md) • [**MCP Integration Guide**](docs/MCP_GUIDE.md) • [**Privacy & Security**](docs/CAMERA_SECURITY_PRIVACY.md) • [**Examples**](examples/README.md)
 
 </div>
 
@@ -198,5 +200,17 @@ See [docs/CAMERA_SECURITY_PRIVACY.md](docs/CAMERA_SECURITY_PRIVACY.md) for full 
 ---
 
 ## 📄 License
-
+ 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Attribution & Author
+
+<div align="center">
+
+**Engineered by Neal Frazier**  
+*Neal Frazier Tech • NullAI Platform*  
+GitHub: [@1nc0gn30](https://github.com/1nc0gn30) • Web: [nullai.tech](https://nullai.tech) • [nealfrazier.tech](https://nealfrazier.tech)
+
+</div>

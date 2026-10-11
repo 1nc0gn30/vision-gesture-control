@@ -1,0 +1,20 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vision Gesture Studio
+GenericName=Touchless Gesture Control & CV Workstation
+Comment=Pure Python Touchless Computer Vision Telemetry, Face/Hand Classifier & MCP Workstation
+Exec=/usr/local/bin/vision-gesture desktop
+Icon=/media/neo/f2fdda77-178b-4603-ae80-c7aa4cd97908/zoth-micro-repos/vision-gesture-control/assets/icon.png
+Terminal=false
+Categories=Development;Utility;Accessibility;Graphics;
+StartupNotify=true
+Actions=CLI;Web;
+
+[Desktop Action CLI]
+Name=Open Vision Gesture CLI
+Exec=x-terminal-emulator -e "/usr/local/bin/vision-gesture --help"
+
+[Desktop Action Web]
+Name=Open Web UI (Port 8101)
+Exec=/usr/local/bin/vision-gesture web

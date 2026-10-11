@@ -9,3 +9,6 @@ dist/
 build/
 *.egg-info/
 .DS_Store
+
+.env
+node_modules/

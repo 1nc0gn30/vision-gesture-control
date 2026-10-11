@@ -1,0 +1,21 @@
+{
+  "name": "vision-gesture-control",
+  "version": "1.0.0",
+  "description": "Touchless Gesture Control, Computer Vision Telemetry & MCP Agent Interface",
+  "main": "electron/main.cjs",
+  "bin": {
+    "vision-gesture": "./bin/vision-gesture.js"
+  },
+  "scripts": {
+    "start": "electron .",
+    "desktop": "electron .",
+    "web": "node bin/vision-gesture.js web",
+    "cli": "node bin/vision-gesture.js",
+    "test": "pytest tests/"
+  },
+  "author": "Zoth Core Intelligence",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^34.5.8"
+  }
+}
