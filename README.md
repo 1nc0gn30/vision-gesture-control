@@ -1,4 +1,10 @@
 <div align="center">
+  <img src="assets/hero-banner.svg" alt="Vision Gesture Control — Sovereign Architecture Banner" width="100%" />
+</div>
+
+<br />
+
+<div align="center">
 
 # 🖐️ Vision Gesture Control
 
