@@ -1,0 +1,254 @@
+/* ============================================================
+   Vision Studio — Wave 7 Design Enhancements
+   Repository: NullAITech/vision-gesture-control
+   Scope: Type hierarchy, visible focus states, result micro-motion,
+          and prefers-reduced-motion accessibility safeguards.
+   Invariants: Only existing selectors from public/index.html.
+   ============================================================ */
+
+/* ── 1. Clearer Typographic Hierarchy ─────────────────────── */
+
+/* Display & Brand Titles */
+.brand-title {
+  letter-spacing: -0.02em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.brand-title span {
+  font-weight: 700;
+}
+
+/* Section & Card Headings */
+.card-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+
+.slide-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.slide-subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+.slide-feature-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.slide-feature-desc {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.pipeline-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.pipeline-body {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.timeline-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+
+.timeline-desc {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  max-width: 72ch;
+}
+
+.spatial-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.spatial-stats {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.simulator-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.mcp-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Eyebrows, Badges & Metadata Labels */
+.slide-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.version-pill {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge-urgency {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hud-pill,
+.stage-hud-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.slider-header {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.metric-label {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+/* Tabular Numerics for Zero-Jitter Gauges */
+.slider-val,
+.metric-value,
+.pipeline-num,
+.timeline-year,
+#hdrFps,
+#hdrLatency,
+#fpsValue,
+#confValue,
+#recordingTimer {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Code & Preformatted Blocks */
+pre.code-block {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+/* ── 2. Visible Focus States ──────────────────────────────── */
+
+/* Universal Focus-Visible Foundation */
+.btn:focus-visible,
+.nav-tab-btn:focus-visible,
+.filter-chip:focus-visible,
+.sim-btn:focus-visible,
+.pg-mode-btn:focus-visible,
+.brush-btn:focus-visible,
+.filter-btn:focus-visible,
+.macro-btn:focus-visible,
+.cmd-filter-chip:focus-visible,
+.modal-close:focus-visible,
+.btn-buy-stripe:focus-visible,
+.btn-buy-solana:focus-visible,
+.btn-unlock-link:focus-visible,
+.footer-links a:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.25) !important;
+}
+
+/* Interactive Input Controls Focus */
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37);
+  outline-offset: 4px;
+}
+
+select.tool-select:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37);
+  outline-offset: 2px;
+  border-color: var(--zoth-gold, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.cmd-search-box input:focus-visible {
+  outline: none;
+}
+
+/* ── 3. Result Area Transform & Opacity Motion ────────────── */
+
+@keyframes waveResultEntrance {
+  from {
+    opacity: 0.7;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#exportPreview {
+  animation: waveResultEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#mcpOutputBox {
+  animation: waveResultEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── 4. Accessibility Safeguard: prefers-reduced-motion ────── */
+
+@media (prefers-reduced-motion: reduce) {
+  #exportPreview,
+  #mcpOutputBox {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .slide {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .gesture-hud-banner {
+    animation: none !important;
+  }
+
+  .recording-hud-pill {
+    animation: none !important;
+  }
+
+  .command-palette-backdrop {
+    animation: none !important;
+  }
+}

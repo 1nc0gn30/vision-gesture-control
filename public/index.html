@@ -39,7 +39,7 @@
         "description": "100% in-browser touchless gesture control, 21-joint 3D hand tracking, spatial air drawing, and Model Context Protocol (MCP) agent connectivity.",
         "offers": {
           "@type": "Offer",
-          "price": "19.00",
+          "price": "0",
           "priceCurrency": "USD",
           "priceValidUntil": "2027-12-31",
           "availability": "https://schema.org/InStock",
@@ -77,10 +77,10 @@
           },
           {
             "@type": "Question",
-            "name": "What payment rails are accepted for the Pro license?",
+            "name": "Is Vision Gesture Control Studio free and open-access?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "We accept Credit Cards, Apple Pay, and Google Pay via Stripe ($19 founding lifetime) and cryptocurrency via Solana DePay."
+              "text": "Yes! Vision Gesture Control Studio is 100% free and unlocked by default with zero paywalls. If you love the tool, support open development via Stripe Buy Us a Coffee or Solana tip."
             }
           }
         ]
@@ -95,7 +95,6 @@
   <!-- Three.js for 3D Holographic Spatial Portal -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <!-- DePay Web3 Solana Widget -->
-  <script src="https://integrate.depay.com/widgets/v13.js" defer></script>
   <style>
     /* Google Material 3 Light Mode Theme & Design Tokens */
     :root {
@@ -384,7 +383,7 @@
       font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.3px;
-      backdrop-filter: blur(4px);
+      backdrop-filter: none;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -1941,7 +1940,7 @@
       width: 100%;
       height: 100%;
       background: rgba(8, 8, 11, 0.84);
-      backdrop-filter: blur(8px);
+      backdrop-filter: none;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -2051,23 +2050,48 @@
   </style>
   
   <link rel="stylesheet" href="zoth-theme.css">
+  <link rel="stylesheet" href="wave.css">
+  <link rel="stylesheet" href="wave-states.css">
+
+  <!-- Zoth 100% Open-Access & Buy Us a Coffee Invariant -->
+  <script id="zoth-open-access-init">
+    (function() {
+      try {
+        var keys = ['agent_audiocipher_pro', 'agent_cyber_turtle_pro', 'agent_datamosh_pro', 'agent_nexus3d_pro', 'agent_policy_pro', 'audiocipher_license', 'audiocipher_pro_licensed', 'badge3d_pro_licensed', 'certpath_pro_key', 'certpath_pro_licensed', 'cron_rhythm_pro_key', 'cron_rhythm_pro_licensed', 'cwv-speed-engine_pro_licensed', 'cwv_pro_licensed', 'cyber_turtle_pro_licensed', 'datamosh_pro_licensed', 'deepsearch-research-agent_pro_licensed', 'deepsearch_pro_licensed', 'entropy_studio_licensed', 'envguard-secrets-vault_pro_licensed', 'envguard_pro_license', 'etsy_connector_pro', 'jwt_guard_licensed', 'mdg_pro_licensed', 'neuro_pro_licensed', 'nexus3d_pro_licensed', 'omnipost_pro_key', 'omnipost_pro_licensed', 'osint_pro_licensed', 'payload-entropy-studio_pro_licensed', 'polyglot_pro_licensed', 'pro_licensed', 'promptmaster_pro_licensed', 'promptmaster_pro_active', 'robots-txt-auditor_pro_licensed', 'robots_pro_licensed', 'schema_illustrator_pro_licensed', 'sovereign_pro_licensed', 'subsweep-lead-scanner_pro_licensed', 'subsweep_licensed', 'turtle_pro_licensed', 'ufo_sacred_licensed', 'vector-search-engine_pro_licensed', 'vector_studio_pro_licensed', 'web-security-guard_pro_licensed', 'web_security_guard_licensed', 'yourdigitalspace_pro', 'zela_guide_pro_licensed', 'zoth_ascii_magic_pro', 'zoth_audiocipher_licensed', 'zoth_badge3d_licensed', 'zoth_cyber_turtle_licensed', 'zoth_datamosh_licensed', 'zoth_etsy_licensed', 'zoth_nexus3d_licensed', 'zoth_osint_licensed', 'zoth_policy_licensed', 'zoth_sacred_licensed', 'zoth_ufo_licensed'];
+        for (var i = 0; i < keys.length; i++) {
+          localStorage.setItem(keys[i], 'true');
+        }
+        localStorage.setItem('pm_license_v2', JSON.stringify({ method: 'open_access', ref: 'free_forever', at: '2026-01-01T00:00:00Z' }));
+        window.isPro = true;
+        window.isProLicensed = true;
+      } catch (e) {}
+    })();
+  </script>
+  <style id="zoth-open-access-override">
+    .paywall-overlay, .output-paywall-overlay, #outputPaywallOverlay, #schemaPaywallOverlay,
+    #transformerPaywallOverlay, #proPaywallModal, #licenseModal, #salesBanner, #founding-offer-banner,
+    #funnelHeroBanner, [data-alias="paywallOverlay"], [data-alias="founding-offer-banner"] {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .paywall-wrap #outputPreview, .paywall-wrap #reportContentArea, .paywall-content,
+    .paywall-content.locked, .paywall-wrap.is-locked #outputPreview, .paywall-wrap.locked #outputPreview {
+      filter: none !important;
+      -webkit-filter: none !important;
+      user-select: auto !important;
+      pointer-events: auto !important;
+    }
+  </style>
+
 </head>
 <body>
-  <!-- High-Converting Founding Member Sales Banner -->
-  <aside class="sales-funnel-banner" id="salesBanner" data-alias="founding-offer-banner" aria-label="Founding Member Pro Upgrade">
-    <div class="pricing">
-      <span class="badge-urgency">FOUNDING OPERATOR COHORT</span>
-      <span><strong>VISION STUDIO PRO</strong> // Lifetime License:</span>
-      <span class="strike">$79.00</span>
-      <span style="color:#D4AF37; font-weight:800; font-size:0.95rem;">$19.00 USD</span>
-      <span style="color:#94a3b8;">· Instant Key Activation</span>
-    </div>
-    <div class="sales-actions">
-      <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener" class="btn-buy-stripe">Credit Card / Apple Pay ($19)</a>
-      <a href="https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener" class="btn-buy-solana" onclick="openDePayCheckout(event)">Pay with Solana ($19)</a>
-      <button type="button" id="btn-paywall-key" data-alias="btnActivateBanner" class="btn-unlock-link trigger-paywall" onclick="openLicenseModal()">Have License Key?</button>
-    </div>
-  </aside>
+
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: rgba(20,241,149,0.15); color: #14F195; border: 1px solid rgba(20,241,149,0.45); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
+</div>
 
 <!-- Google Style Header -->
   <header class="google-header">
@@ -2147,9 +2171,8 @@
         <span id="engineStatusText">MediaPipe Ready</span>
       </div>
 
-      <!-- Pro Status Badge & Unlock Button -->
-      <span class="badge-status pro-locked" id="licenseBadge" style="font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:9999px; background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.4);">⚡ FREE TIER</span>
-      <button type="button" class="btn btn-sm btn-primary" id="btnHeaderUnlock" onclick="openLicenseModal()" style="font-size:0.75rem; font-weight:700; cursor:pointer;">🔑 UNLOCK PRO</button>
+      <!-- 100% Free Sovereign Badge -->
+      <span class="badge-status pro-active" id="licenseBadge" style="font-size:0.75rem; font-weight:800; padding:4px 10px; border-radius:9999px; background:rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.4);">✦ 100% UNLOCKED</span>
     </div>
   </header>
 
@@ -2333,7 +2356,7 @@
             </div>
             <button class="btn btn-sm btn-primary" id="btnExportSpatialDossier" onclick="handleExportClick(event)">EXPORT DOSSIER</button>
           </div>
-          <div id="exportPreview" style="padding: 1rem; font-family: var(--zoth-font-mono, monospace); font-size: 0.75rem; line-height: 1.6; filter: blur(6px); transition: filter 0.3s; background: rgba(0,0,0,0.25); border-radius: 8px;">
+          <div id="exportPreview" style="padding: 1rem; font-family: var(--zoth-font-mono, monospace); font-size: 0.75rem; line-height: 1.6; filter: none; transition: filter 0.3s; background: rgba(0,0,0,0.25); border-radius: 8px;">
             <div style="color: #D4AF37; font-weight: 700; margin-bottom: 0.5rem;">[VISION-STUDIO-CLASSIFIED-SPATIAL-KINEMATICS-DOSSIER]</div>
             <div>TIMESTAMP: 2026-10-10T22:45:00.000Z</div>
             <div>TRACKER: GOOGLE MEDIAPIPE HANDS (21 3D LANDMARKS)</div>
@@ -2351,8 +2374,8 @@
               Unlock high-res 3D vector export, air drawing PNG downloads, full MCP agent tool execution, and permanent localhost session activation.
             </p>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
-              <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener" class="btn-buy-stripe">Unlock via Stripe ($19)</a>
-              <a href="https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener" class="btn-buy-solana" onclick="openDePayCheckout(event)">Pay with Solana ($19)</a>
+              <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener" class="btn-buy-stripe">☕ Buy Us a Coffee (Stripe)</a>
+              <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener" class="btn-buy-solana" onclick="openDePayCheckout(event)">Pay with Solana (Free (100% Open Access))</a>
               <button type="button" class="btn-unlock-link trigger-paywall" onclick="openLicenseModal('Spatial Kinematics Export')">Enter License Key</button>
             </div>
           </div>
@@ -7829,144 +7852,32 @@
   <script src="js/tool-presentation-spatial.js"></script>
   <script src="js/tool-gesturefx.js"></script>
 
-  <!-- Pro Paywall Modal -->
-  <div class="pro-modal-backdrop" id="licenseModal" data-alias="paywall-modal paywallModal licenseModal" role="dialog" aria-modal="true" aria-label="Vision Studio Pro License">
-    <div class="pro-modal-card">
-      <button type="button" class="modal-close" id="btnCloseModal" onclick="closeLicenseModal()">✕</button>
-      <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem;">
-        <span style="font-size:1.8rem;">🖐️</span>
-        <div>
-          <h2 style="color:#D4AF37; font-size:1.25rem; font-weight:800;">VISION STUDIO PRO</h2>
-          <p style="color:#64748b; font-size:0.75rem; font-family:var(--zoth-font-mono, monospace);">TOUCHLESS COMPUTER VISION & MCP WORKSPACE</p>
-          <p style="color:#1a73e8; font-size:0.78rem; font-family:var(--zoth-font-mono, monospace); margin-top:0.25rem;">UNLOCKED FEATURE: <span id="paywall-feature-label">Spatial Kinematics Export</span></p>
-        </div>
-      </div>
-
-      <div style="margin: 1.25rem 0; font-size: 0.82rem; color: #cbd5e1; line-height: 1.6;">
-        <div style="margin-bottom:0.5rem;">✓ <strong>3D Air Drawing & Vector Export:</strong> Full uncompressed PNG, SVG path data, and stroke geometry.</div>
-        <div style="margin-bottom:0.5rem;">✓ <strong>21-Joint Spatial Kinematics:</strong> Real-time Euler orientation, MAR/EAR metrics, and CSV/JSON recording.</div>
-        <div style="margin-bottom:0.5rem;">✓ <strong>Model Context Protocol (MCP) Bridge:</strong> Direct gesture dispatching to Claude Desktop, Cursor, and Zed.</div>
-        <div style="margin-bottom:0.5rem;">✓ <strong>Composite Video Clip Recording:</strong> Air-gapped WebM/MP4 canvas clip capture with zero watermarks.</div>
-        <div style="margin-bottom:0.5rem;">✓ <strong>13 High-FPS Shaders & Portals:</strong> Thermal IR, Matrix rain, Sobel neon, and Gravitational singularity.</div>
-        <div>✓ <strong>Lifetime Localhost Enclave:</strong> 1-time activation, no monthly subscriptions.</div>
-      </div>
-
-      <div style="background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.25); padding:1rem; border-radius:8px; margin-bottom:1.5rem; text-align:center;">
-        <div style="font-size:0.75rem; color:#94a3b8; font-family:var(--zoth-font-mono, monospace);">FOUNDING OPERATOR LIFETIME LICENSE</div>
-        <div style="font-size:1.4rem; font-weight:800; color:#D4AF37; margin:0.25rem 0;"><span style="text-decoration:line-through; color:#64748b; font-size:0.95rem; font-weight:400; margin-right:0.5rem;">$79.00</span>$19.00 USD</div>
-        <div style="display:flex; gap:0.5rem; justify-content:center; margin-top:0.75rem; flex-wrap:wrap;">
-          <a href="https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L" target="_blank" rel="noopener" class="btn-buy-stripe">Credit Card / Apple Pay ($19)</a>
-          <a href="https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" target="_blank" rel="noopener" class="btn-buy-solana" onclick="openDePayCheckout(event)">Pay with Solana ($19)</a>
-        </div>
-      </div>
-
-      <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:1rem;">
-        <div style="font-size:0.75rem; color:#94a3b8; font-family:var(--zoth-font-mono, monospace); margin-bottom:0.5rem;">ACTIVATE LICENSE KEY:</div>
-        <div style="display:flex; gap:0.5rem;">
-          <input type="text" id="license-input" data-alias="licenseKeyInput" placeholder="Receipt email or VISION-PRO-2026" style="flex:1; background:#05080c; border:1px solid rgba(212,175,55,0.3); color:#e0f2fe; padding:0.5rem 0.75rem; border-radius:4px; font-family:var(--zoth-font-mono, monospace); font-size:0.78rem;">
-          <button type="button" id="btnActivateKey" data-alias="btnUnlockKey" class="btn btn-primary btn-sm" onclick="activateLicense()" style="padding:0.5rem 1rem; font-size:0.78rem;">ACTIVATE</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Professional Footer Attribution -->
   <footer class="footer-attribution" style="border-top: 1px solid rgba(255,255,255,0.08); padding: 2rem 1.5rem; text-align: center; font-size: 0.75rem; color: #64748b;">
     <div>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener" style="color:#1a73e8; text-decoration:none;">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener" style="color:#1a73e8; text-decoration:none;">NullAI Platform</a></div>
     <div style="margin-top:0.5rem; font-size:0.68rem; color:#475569;">
-      Repository: <a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener" style="color:#64748b; text-decoration:underline;">github.com/1nc0gn30/vision-gesture-control</a> · Zero Cloud Egress · Touchless Computer Vision Standard
+      Repository: <a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener" style="color:#64748b; text-decoration:underline;">github.com/1nc0gn30/vision-gesture-control</a> · Zero Cloud Egress · Touchless Computer Vision Standard · 100% Free &amp; Open Access
     </div>
   </footer>
 
-  <!-- Sovereign Pro Licensing & Action Interceptors -->
+  <!-- Sovereign 100% Free Open-Access Licensing & Utilities -->
   <script>
     (function() {
-      const STRIPE_URL = 'https://buy.stripe.com/4gMfZg9AheOsdhKbcAfw40L';
-      const DEPAY_URL = 'https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
+      const STRIPE_URL = 'https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X';
+      const SOLANA_TIP = 'solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK';
 
-      const STORAGE_KEY = 'vision_gesture_pro';
-      const STORAGE_KEY_ALT = 'zoth_vision_licensed';
-      const STORAGE_KEY_PRO = 'pro_licensed';
-
-      let isPro = localStorage.getItem(STORAGE_KEY) === 'true' ||
-                  localStorage.getItem(STORAGE_KEY_ALT) === 'true' ||
-                  localStorage.getItem(STORAGE_KEY_PRO) === 'true';
-
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('licensed') === 'true' || urlParams.get('key') === 'VISION-PRO-2026' || urlParams.get('pro') === 'true') {
-        isPro = true;
-        localStorage.setItem(STORAGE_KEY, 'true');
-        localStorage.setItem(STORAGE_KEY_ALT, 'true');
-        localStorage.setItem(STORAGE_KEY_PRO, 'true');
-        try {
-          const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-          window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
-        } catch (e) {}
-      }
-
-      window.openDePayCheckout = function(e) {
-        if (e && e.preventDefault) e.preventDefault();
-        if (window.DePayButtons) {
-          window.DePayButtons.init({
-            document: document,
-            integration: '428790dd-7ad1-407c-8ecf-c048c77a4cb8'
-          });
-        }
-        window.open(DEPAY_URL, '_blank');
-      };
-
-      window.openLicenseModal = function(feature) {
-        const label = document.getElementById('paywall-feature-label');
-        if (label && feature) {
-          label.textContent = feature;
-        }
-        const modal = document.getElementById('licenseModal') || document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]') || document.querySelector('[data-alias="paywall-modal"]');
-        if (modal) modal.style.display = 'flex';
-      };
-
-      window.closeLicenseModal = function() {
-        const modal = document.getElementById('licenseModal') || document.getElementById('paywallModal') || document.querySelector('[data-alias="licenseModal"]') || document.querySelector('[data-alias="paywall-modal"]');
-        if (modal) modal.style.display = 'none';
-      };
-      window.openProModal = window.openLicenseModal;
-      window.closeProModal = window.closeLicenseModal;
-      window.openPaywallModal = window.openLicenseModal;
-      window.closePaywallModal = window.closeLicenseModal;
-
-      window.activateLicenseKey = function(key) {
-        return window.activateLicense(key);
-      };
-
-      window.activateLicense = function(key) {
-        const input = document.getElementById('license-input') || document.getElementById('licenseKeyInput') || document.querySelector('[data-alias="licenseKeyInput"]');
-        const rawVal = (key || (input ? input.value : '')).trim();
-        const val = rawVal.toUpperCase();
-        if (val === 'VISION-PRO-2026' || rawVal.includes('@') || val.length >= 8 || val === 'SOVEREIGN-PRO-2026' || val.startsWith('VISION-')) {
-          isPro = true;
-          localStorage.setItem(STORAGE_KEY, 'true');
-          localStorage.setItem(STORAGE_KEY_ALT, 'true');
-          localStorage.setItem(STORAGE_KEY_PRO, 'true');
-          updateProUI();
-          window.closeLicenseModal();
-          console.log('[Vision Studio] Pro License Verified & Activated! 3D Vector export and all advanced modes unlocked permanently.');
-          return true;
-        } else {
-          console.warn('[Vision Studio] Invalid key provided.');
-          return false;
-        }
-      };
-
-      window.isProLicensed = function() {
-        return isPro;
-      };
-
-      window.unlockPro = function() {
-        isPro = true;
-        localStorage.setItem(STORAGE_KEY, 'true');
-        localStorage.setItem(STORAGE_KEY_ALT, 'true');
-        localStorage.setItem(STORAGE_KEY_PRO, 'true');
-        updateProUI();
-      };
+      const isPro = true;
+      window.isProLicensed = function() { return true; };
+      window.openLicenseModal = function() {};
+      window.closeLicenseModal = function() {};
+      window.openProModal = function() {};
+      window.closeProModal = function() {};
+      window.openPaywallModal = function() {};
+      window.closePaywallModal = function() {};
+      window.activateLicenseKey = function() { return true; };
+      window.activateLicense = function() { return true; };
+      window.unlockPro = function() {};
+      window.openDePayCheckout = function() { window.open(STRIPE_URL, '_blank'); };
 
       function updateProUI() {
         const banner = document.getElementById('salesBanner');
@@ -7975,38 +7886,23 @@
         const paywallOverlay = document.getElementById('paywallOverlay');
         const exportPreview = document.getElementById('exportPreview');
 
-        if (isPro) {
-          if (banner) banner.style.display = 'none';
-          if (btnHeaderUnlock) btnHeaderUnlock.style.display = 'none';
-          if (badge) {
-            badge.textContent = '⭐ PRO ACTIVE';
-            badge.className = 'badge-status pro-active';
-          }
-          if (paywallOverlay) paywallOverlay.style.display = 'none';
-          if (exportPreview) exportPreview.style.filter = 'none';
-        } else {
-          if (banner) banner.style.display = 'flex';
-          if (btnHeaderUnlock) btnHeaderUnlock.style.display = 'inline-block';
-          if (badge) {
-            badge.textContent = '⚡ FREE TIER';
-            badge.className = 'badge-status pro-locked';
-          }
-          if (paywallOverlay) paywallOverlay.style.display = 'flex';
-          if (exportPreview) exportPreview.style.filter = 'blur(6px)';
+        if (banner) banner.style.display = 'none';
+        if (btnHeaderUnlock) btnHeaderUnlock.style.display = 'none';
+        if (badge) {
+          badge.textContent = '✦ 100% UNLOCKED';
+          badge.className = 'badge-status pro-active';
         }
+        if (paywallOverlay) paywallOverlay.style.display = 'none';
+        if (exportPreview) exportPreview.style.filter = 'none';
       }
       window.updateProUI = updateProUI;
 
       window.handleExportClick = function(e) {
         if (e && e.preventDefault) e.preventDefault();
-        if (!isPro) {
-          window.openLicenseModal('3D Spatial Kinematics & MCP Dossier');
-          return;
-        }
 
         // Export spatial dossier
         const dossier = {
-          system: 'Vision Gesture Control Studio Pro v2.5',
+          system: 'Vision Gesture Control Studio v2.5 (100% Free & Open Access)',
           timestamp: new Date().toISOString(),
           tracker: 'Google MediaPipe Hands 21 Keypoints',
           latency: '14.8ms (Sub-15ms Localhost WebAssembly Engine)',
@@ -8015,7 +7911,7 @@
           activeShader: document.getElementById('activeFilterLabel') ? document.getElementById('activeFilterLabel').textContent : 'Normal',
           mcpServers: {
             "vision-gesture-control": {
-              "command": "python",
+              "command": "python3",
               "args": ["-m", "vision_gesture_control.mcp"],
               "autoApprove": ["get_active_gesture", "get_hand_landmarks"]
             }
@@ -8039,50 +7935,6 @@
 
       document.addEventListener('DOMContentLoaded', () => {
         updateProUI();
-
-        // Wire Action Interceptors
-        const btnExportDraw = document.getElementById('btnExportDraw');
-        if (btnExportDraw) {
-          btnExportDraw.addEventListener('click', (e) => {
-            if (!isPro) {
-              e.stopImmediatePropagation();
-              window.openLicenseModal('Air Drawing Vector & PNG Export');
-            }
-          }, true);
-        }
-
-        const btnRecordClip = document.getElementById('btnRecordClip');
-        if (btnRecordClip) {
-          btnRecordClip.addEventListener('click', (e) => {
-            if (!isPro) {
-              e.stopImmediatePropagation();
-              window.openLicenseModal('Canvas Video Clip Recording');
-            }
-          }, true);
-        }
-
-        const btnCopyList = document.querySelectorAll('.btn-copy');
-        btnCopyList.forEach(b => {
-          b.addEventListener('click', (e) => {
-            if (!isPro) {
-              e.stopImmediatePropagation();
-              window.openLicenseModal('Model Context Protocol (MCP) Server Setup');
-            }
-          }, true);
-        });
-
-        const btnExecuteMcp = document.getElementById('btnExecuteMcp');
-        if (btnExecuteMcp) {
-          btnExecuteMcp.addEventListener('click', (e) => {
-            if (!isPro) {
-              e.stopImmediatePropagation();
-              window.openLicenseModal('Interactive MCP Tool Execution');
-            }
-          }, true);
-        }
-
-        const triggers = document.querySelectorAll('.trigger-paywall');
-        triggers.forEach(t => t.addEventListener('click', () => window.openLicenseModal('Vision Studio Pro License')));
       });
     })();
   </script>

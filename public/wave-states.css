@@ -1,0 +1,337 @@
+/* ============================================================
+   Vision Studio — Wave 7 States & Interaction Safeguards
+   Repository: NullAITech/vision-gesture-control
+   Scope: :focus-visible, hover, empty, error presentation,
+          and prefers-reduced-motion accessibility safeguard.
+   Invariants: Only selectors that already exist in public/index.html.
+   ============================================================ */
+
+/* ── 1. Focus-Visible Presentation ────────────────────────── */
+
+.btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-tonal:focus-visible,
+.btn-danger:focus-visible,
+.btn-buy-stripe:focus-visible,
+.btn-buy-solana:focus-visible,
+.btn-unlock-link:focus-visible,
+.nav-tab-btn:focus-visible,
+.filter-chip:focus-visible,
+.sim-btn:focus-visible,
+.pg-mode-btn:focus-visible,
+.brush-btn:focus-visible,
+.filter-btn:focus-visible,
+.macro-btn:focus-visible,
+.cmd-shortcut-item:focus-visible,
+.modal-close:focus-visible,
+.slide-dot:focus-visible,
+.footer-links a:focus-visible,
+.footer-attribution a:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3) !important;
+}
+
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37) !important;
+  outline-offset: 4px !important;
+}
+
+select.tool-select:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37) !important;
+  outline-offset: 2px !important;
+  border-color: var(--zoth-gold, #D4AF37) !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25) !important;
+}
+
+#cmdPaletteInput:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37) !important;
+  outline-offset: 2px !important;
+  border-color: var(--zoth-gold, #D4AF37) !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25) !important;
+}
+
+#license-input:focus-visible {
+  outline: 2px solid var(--zoth-gold, #D4AF37) !important;
+  outline-offset: 2px !important;
+  border-color: var(--zoth-gold, #D4AF37) !important;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.35) !important;
+}
+
+/* ── 2. Hover Presentation ────────────────────────────────── */
+
+@media (hover: hover) {
+  .btn:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+
+  .btn-primary:hover {
+    background: #e6be3f;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.4);
+  }
+
+  .btn-tonal:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+    background: rgba(212, 175, 55, 0.12);
+  }
+
+  .btn-buy-stripe:hover {
+    box-shadow: 0 0 16px rgba(99, 102, 241, 0.45);
+  }
+
+  .btn-buy-solana:hover {
+    box-shadow: 0 0 16px rgba(20, 241, 149, 0.45);
+  }
+
+  .btn-unlock-link:hover {
+    color: var(--zoth-gold, #D4AF37);
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
+  }
+
+  .nav-tab-btn:hover {
+    color: var(--zoth-gold, #D4AF37);
+    background: rgba(212, 175, 55, 0.08);
+  }
+
+  .filter-chip:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    color: var(--zoth-gold, #D4AF37);
+  }
+
+  .sim-btn:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    background: rgba(212, 175, 55, 0.12);
+  }
+
+  .pg-mode-btn:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    background: rgba(212, 175, 55, 0.1);
+  }
+
+  .brush-btn:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.25);
+  }
+
+  .filter-btn:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    background: rgba(212, 175, 55, 0.1);
+  }
+
+  .macro-btn:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .cmd-shortcut-item:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    background: rgba(212, 175, 55, 0.08);
+  }
+
+  .modal-close:hover {
+    color: var(--zoth-gold, #D4AF37);
+    border-color: var(--zoth-gold, #D4AF37);
+    transform: rotate(90deg);
+  }
+
+  .slide-dot:hover {
+    border-color: var(--zoth-gold, #D4AF37);
+    transform: scale(1.2);
+  }
+
+  .footer-links a:hover,
+  .footer-attribution a:hover {
+    color: var(--zoth-gold, #D4AF37) !important;
+    text-decoration: underline;
+  }
+
+  .card:hover {
+    border-color: rgba(212, 175, 55, 0.25);
+  }
+
+  .slide-feature-card:hover,
+  .pipeline-card:hover,
+  .timeline-card:hover,
+  .spatial-info-card:hover,
+  .mcp-card:hover {
+    border-color: rgba(212, 175, 55, 0.35);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .version-pill:hover,
+  .hud-pill:hover,
+  .status-badge:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+  }
+
+  .brand-icon:hover {
+    filter: brightness(1.15);
+  }
+}
+
+/* ── 3. Empty Presentation ────────────────────────────────── */
+
+#landmarkTableBody:empty::after {
+  content: "Telemetry standby: waiting for webcam hand landmarks...";
+  display: block;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant, #9AA0A6);
+  font-family: var(--zoth-font-mono, monospace);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+#cmdFilterList:empty::after {
+  content: "No matching commands or gestures found";
+  display: block;
+  padding: 16px;
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant, #9AA0A6);
+  font-size: 0.8125rem;
+  font-style: italic;
+}
+
+#exportPreview:empty::before {
+  content: "Kinematics dossier standby. Click \"Export Spatial Dossier\" to generate coordinates.";
+  display: block;
+  color: var(--md-sys-color-on-surface-variant, #9AA0A6);
+  font-style: italic;
+  font-size: 0.8125rem;
+  padding: 12px;
+}
+
+#mcpOutputBox:empty::before {
+  content: "// MCP response stream idle. Select tool and click Execute MCP.";
+  display: block;
+  color: var(--md-sys-color-on-surface-variant, #9AA0A6);
+  font-style: italic;
+  font-size: 0.8125rem;
+}
+
+#fxLogBox:empty::before {
+  content: "No gesture spell events logged. Trigger gestures or cast spell to stream logs.";
+  display: block;
+  color: var(--md-sys-color-on-surface-variant, #9AA0A6);
+  font-style: italic;
+  font-size: 0.8125rem;
+}
+
+.code-block:empty::before {
+  content: "// Standby: output awaiting invocation";
+  display: block;
+  color: var(--md-sys-color-on-surface-variant, #9AA0A6);
+  font-style: italic;
+}
+
+#toastNotification:empty {
+  display: none !important;
+}
+
+#engineStatusText:empty::before,
+#pgPortalsCount:empty::before,
+#fxEventCount:empty::before {
+  content: "--";
+}
+
+/* ── 4. Error Presentation ────────────────────────────────── */
+
+#license-input:invalid,
+#license-input:user-invalid,
+#license-input[aria-invalid="true"] {
+  border-color: var(--md-sys-color-error, #F97066) !important;
+  background: rgba(249, 112, 102, 0.08) !important;
+  color: #FFDAD6 !important;
+  box-shadow: 0 0 0 3px rgba(249, 112, 102, 0.25) !important;
+}
+
+#cmdPaletteInput:invalid,
+#cmdPaletteInput:user-invalid,
+#cmdPaletteInput[aria-invalid="true"] {
+  border-color: var(--md-sys-color-error, #F97066) !important;
+  color: #FFDAD6 !important;
+}
+
+select.tool-select:invalid {
+  border-color: var(--md-sys-color-error, #F97066) !important;
+  color: #FFDAD6 !important;
+}
+
+.btn-danger {
+  border-color: var(--md-sys-color-error, #F97066);
+  background: rgba(249, 112, 102, 0.12);
+  color: var(--md-sys-color-error, #F97066);
+}
+
+.btn-danger:hover {
+  background: rgba(249, 112, 102, 0.22);
+  border-color: var(--md-sys-color-error, #F97066);
+  color: #FFDAD6;
+}
+
+.btn-danger:focus-visible {
+  outline: 2px solid var(--md-sys-color-error, #F97066) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(249, 112, 102, 0.35) !important;
+}
+
+#engineStatusBadge[data-status="error"],
+#engineStatusBadge.error {
+  background: rgba(249, 112, 102, 0.15);
+  border-color: var(--md-sys-color-error, #F97066);
+  color: #FFDAD6;
+}
+
+#engineStatusBadge[data-status="error"] .status-indicator,
+#engineStatusBadge.error .status-indicator {
+  background-color: var(--md-sys-color-error, #F97066);
+  box-shadow: 0 0 0 2px rgba(249, 112, 102, 0.3);
+}
+
+#toastNotification[role="alert"].error,
+#toastNotification.error {
+  border: 1px solid var(--md-sys-color-error, #F97066);
+  background: #2A1012;
+  color: #FFDAD6;
+}
+
+/* ── 5. Accessibility Safeguard: prefers-reduced-motion ────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .btn,
+  .nav-tab-btn,
+  .filter-chip,
+  .sim-btn,
+  .pg-mode-btn,
+  .brush-btn,
+  .filter-btn,
+  .macro-btn,
+  .cmd-shortcut-item,
+  .card,
+  .slide,
+  .slide-dot,
+  .dwell-ring,
+  #toastNotification,
+  #exportPreview,
+  #mcpOutputBox,
+  .command-palette-backdrop,
+  .command-palette-modal,
+  .pro-modal-backdrop,
+  .pro-modal-card,
+  .paywall-lock-overlay,
+  #laserPointer {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

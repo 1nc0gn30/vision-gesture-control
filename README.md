@@ -11,8 +11,9 @@
 ### Ultra-Low-Latency Touchless Computer Vision, Gesture Recognition & Model Context Protocol (MCP) Engine
 
 [![Live Workstation](https://img.shields.io/badge/Live%20Workstation-Netlify%20App-00ff88?style=for-the-badge&logo=netlify&logoColor=black)](https://vision-gesture-control.netlify.app/)
-[![Dual Rails](https://img.shields.io/badge/Dual%20Rails-Stripe%20%2B%20Solana-635bff?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/7sI7sA8hM2X8eFG8ww)
-[![Pro License](https://img.shields.io/badge/Pro%20License-%2419%20Lifetime-9945ff?style=for-the-badge&logo=solana&logoColor=white)](https://depay.com/pay?integration=428790dd-7ad1-407c-8ecf-c048c77a4cb8&receiver=GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)
+[![Access: 100% Free](https://img.shields.io/badge/Access-100%25%20Free%20%26%20Open-00ff88?style=for-the-badge)](https://vision-gesture-control.netlify.app/)
+[![Buy Us a Coffee](https://img.shields.io/badge/%E2%98%95%20Buy%20Us%20a%20Coffee-Stripe-D4AF37?style=for-the-badge)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+[![Solana Tip](https://img.shields.io/badge/%E2%97%8E%20Solana%20Tip-GG2e...dXoK-14F195?style=for-the-badge)](solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)
 [![Python 3.9 - 3.13](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
 [![OS Matrix](https://img.shields.io/badge/OS-Ubuntu%20%7C%20macOS%20%7C%20Windows-green.svg)](https://github.com/NullAITech/vision-gesture-control)
 [![MCP Ready](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-purple.svg)](https://modelcontextprotocol.io/)
@@ -85,25 +86,47 @@ Operating with **sub-15ms pipeline latency** and zero external tracking dependen
 
 ## ⚡ Quick Start
 
-### 1. Installation
+### 1. Installation & Standalone Workstation
 
 ```bash
 # Clone the repository
-git clone https://github.com/google/vision-gesture-control.git
+git clone https://github.com/1nc0gn30/vision-gesture-control.git
 cd vision-gesture-control
 
-# Install with pip
-pip install -e .
+# Start Standalone Production Server on Port 8089
+python3 server.py --port 8089
 ```
+Navigate to `http://127.0.0.1:8089` to access the full Vision Studio workstation.
 
-### 2. Launch Vision Studio (Web UI)
+### 2. ZothOS CLI Commands
 
-Open `public/index.html` in any modern web browser or serve it locally:
+On ZothOS or any Linux system with the binary installed:
 
 ```bash
-python3 -m http.server 8000 --directory public
+# Check daemon & environment status
+vision-gesture-control --status
+
+# Get structured JSON telemetry & system metadata
+vision-gesture-control --json
+
+# Run hardware camera diagnostics & Wayland/X11 detection
+vision-gesture-control platform
+
+# Execute internal self-tests
+vision-gesture-control test
+
+# Launch local UI server
+vision-gesture-control serve --port 8089
 ```
-Navigate to `http://localhost:8000` to access the interactive 4-tab Vision Studio (design influenced by Material 3)!
+
+---
+
+## ☕ Support & Tip Rails (100% Free & Open-Access)
+
+Every feature in Vision Gesture Control is **100% free, open-source, and unlocked by default**. If you find this sovereign tool valuable, you can support continuous development:
+
+- **☕ Buy Us a Coffee (Stripe)**: [buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- **◎ Solana Tip Address**: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`
 
 ---
 
