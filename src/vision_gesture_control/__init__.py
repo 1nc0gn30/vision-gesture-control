@@ -17,7 +17,11 @@ from .mcp_server import (
     MCP_TOOLS_DEFINITIONS,
 )
 from .ui_server import UIServer, create_ui_server, run_ui_server
-from .cli import main as cli_main
+
+
+def cli_main(*args, **kwargs):
+    from .cli import main as _main
+    return _main(*args, **kwargs)
 
 # Optional re-exports from sibling core modules
 try:

@@ -6,7 +6,6 @@ Zero external runtime dependencies.
 
 from __future__ import annotations
 
-import cgi
 import io
 import json
 import mimetypes

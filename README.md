@@ -238,8 +238,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Engineered by Neal Frazier**  
-*Neal Frazier Tech • NullAI Platform*  
-GitHub: [@1nc0gn30](https://github.com/1nc0gn30) • Web: [nullai.tech](https://nullai.tech) • [nealfrazier.tech](https://nealfrazier.tech)
+**Engineered by 1nc0gn30**  
+*1nc0gn30 • NullAI • NullAI Platform*  
+GitHub: [@1nc0gn30](https://github.com/1nc0gn30) • Web: [nullai.tech](https://nullai.tech) • [nullai.tech](https://nullai.tech)
 
 </div>

@@ -155,10 +155,49 @@
 }
 
 /* ---- Base body ---- */
-body {
+html:not([data-theme="light"]) body {
   background: var(--zoth-void) !important;
   color: var(--zoth-text-2) !important;
   font-family: var(--zoth-font-sans) !important;
+}
+html[data-theme="light"] body {
+  background: #F8F6F0 !important;
+  color: #181612 !important;
+  font-family: var(--zoth-font-sans) !important;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] header.google-header,
+html[data-theme="light"] .simulator-box {
+  background: #FFFFFF !important;
+  border-color: #DCD6C8 !important;
+  color: #181612 !important;
+}
+html[data-theme="light"] .card-title,
+html[data-theme="light"] .brand-title,
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] .simulator-title {
+  color: #181612 !important;
+}
+html[data-theme="light"] .nav-tabs {
+  background: #F1EFEA !important;
+  border-color: #DCD6C8 !important;
+}
+html[data-theme="light"] .nav-tab-btn {
+  color: #4A443A !important;
+}
+html[data-theme="light"] .nav-tab-btn.active {
+  background: #FFFFFF !important;
+  color: #181612 !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+}
+html[data-theme="light"] pre,
+html[data-theme="light"] .code-block {
+  background: #F4F2EC !important;
+  color: #181612 !important;
+  border: 1px solid #DCD6C8 !important;
 }
 
 /* ---- Zoth brand header strip (injected) ---- */
