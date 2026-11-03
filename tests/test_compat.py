@@ -232,11 +232,12 @@ class TestBrowserOpening:
         assert open_url(None) is False  # type: ignore
 
     def test_open_url_with_mocked_webbrowser(self):
-        with mock.patch("webbrowser.open", return_value=True) as mock_open:
-            with mock.patch("shutil.which", return_value=None):
-                result = open_url("http://127.0.0.1:8088", new_tab=True)
-                assert result is True
-                assert mock_open.called
+        with mock.patch("vision_gesture_control.compat.is_windows", return_value=False):
+            with mock.patch("webbrowser.open", return_value=True) as mock_open:
+                with mock.patch("shutil.which", return_value=None):
+                    result = open_url("http://127.0.0.1:8088", new_tab=True)
+                    assert result is True
+                    assert mock_open.called
 
     def test_open_url_linux_xdg_open(self):
         with mock.patch("vision_gesture_control.compat.is_linux", return_value=True):

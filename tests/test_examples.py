@@ -122,7 +122,7 @@ class TestToolAirDrawingJs:
 
     def test_file_exists_and_syntax_valid(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-air-drawing.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-air-drawing.js").as_posix()
         cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
         res = subprocess.run(cmd, capture_output=True, text=True)
         assert res.returncode == 0, f"JS syntax check failed: {res.stderr}"
@@ -167,7 +167,7 @@ class TestToolAirDrawingJs:
 
     def test_node_execution_interface(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-air-drawing.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-air-drawing.js").as_posix()
         node_code = f"""
         const tool = require('{script_path}');
         const cfg = tool.getConfig();
@@ -342,7 +342,7 @@ class TestGestureFxToolExtension:
 
     def test_script_syntax_with_node(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-gesturefx.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-gesturefx.js").as_posix()
         cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
         res = subprocess.run(cmd, capture_output=True, text=True)
         assert res.returncode == 0, f"Node syntax error in tool-gesturefx.js: {res.stderr}"
@@ -401,7 +401,7 @@ class TestPresentationSpatialToolExtension:
 
     def test_script_syntax_with_node(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-presentation-spatial.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-presentation-spatial.js").as_posix()
         cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
         res = subprocess.run(cmd, capture_output=True, text=True)
         assert res.returncode == 0, f"Node syntax error in tool-presentation-spatial.js: {res.stderr}"
@@ -463,7 +463,7 @@ class TestPlaygroundLensToolExtension:
 
     def test_script_syntax_with_node(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-playground-lens.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-playground-lens.js").as_posix()
         cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
         res = subprocess.run(cmd, capture_output=True, text=True)
         assert res.returncode == 0, f"Node syntax error in tool-playground-lens.js: {res.stderr}"
@@ -493,7 +493,7 @@ class TestPlaygroundLensToolExtension:
 
     def test_node_execution_interface(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-playground-lens.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-playground-lens.js").as_posix()
         node_code = f"""
         const tool = require('{script_path}');
         if (tool.name !== 'playgroundLens') process.exit(1);
@@ -526,7 +526,7 @@ class TestSpatialAudioToolExtension:
 
     def test_script_syntax_with_node(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-spatial-audio.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-spatial-audio.js").as_posix()
         cmd = ["node", "-e", f'new Function(require("fs").readFileSync("{script_path}", "utf-8"))']
         res = subprocess.run(cmd, capture_output=True, text=True)
         assert res.returncode == 0, f"Node syntax error in tool-spatial-audio.js: {res.stderr}"
@@ -566,7 +566,7 @@ class TestSpatialAudioToolExtension:
 
     def test_node_execution_interface(self):
         import subprocess
-        script_path = REPO_ROOT / "public" / "js" / "tool-spatial-audio.js"
+        script_path = (REPO_ROOT / "public" / "js" / "tool-spatial-audio.js").as_posix()
         node_code = f"""
         const tool = require('{script_path}');
         if (tool.name !== 'spatialAudio') process.exit(1);
