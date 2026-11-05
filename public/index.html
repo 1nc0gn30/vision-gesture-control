@@ -7855,6 +7855,22 @@
       };
     })();
   </script>
-  <script src="/assets/sovereign-upgrade.js" defer></script>
+  
+
+  <script src="/sovereign_tutorial.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      if (window.createSovereignTutorial) {
+        window.createSovereignTutorial({
+          toolId: "vision-gesture-control",
+          toolName: "Vision Gesture Control",
+          tagline: "Control your browser and tools with in-air hand gestures via webcam!",
+          accentColor: "#A855F7",
+          steps: [{"icon": "\u270b", "title": "Touchless Computer Vision", "desc": "Use your webcam to track 21 skeletal hand landmarks in real time with MediaPipe on-device AI."}, {"icon": "\ud83e\udd0f", "title": "Pinch, Swipe & Point", "desc": "Pinch your fingers to click buttons, swipe to flip pages, and point to control sliders hands-free."}, {"icon": "\ud83d\udee1\ufe0f", "title": "Camera Privacy Guaranteed", "desc": "Video frames are processed strictly in local browser memory and are never saved or sent to the cloud."}]
+        });
+      }
+    });
+  </script>
+
 </body>
 </html>
