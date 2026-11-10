@@ -252,22 +252,21 @@ class TestCiCdWorkflows:
         assert "jobs" in ci_data
         test_job = ci_data["jobs"]["test-matrix"]
         matrix = test_job["strategy"]["matrix"]
+        entries = matrix.get("include", [])
+        os_set = {e["os"] for e in entries} if entries else set(matrix.get("os", []))
+        python_set = {str(e["python-version"]) for e in entries} if entries else set(matrix.get("python-version", []))
 
-        os_list = matrix["os"]
-        python_list = matrix["python-version"]
+        assert len(os_set) == 3, f"Expected 3 OS, found {len(os_set)}"
+        assert "ubuntu-latest" in os_set
+        assert "macos-latest" in os_set
+        assert "windows-latest" in os_set
 
-        assert len(os_list) == 3, f"Expected 3 OS, found {len(os_list)}"
-        assert "ubuntu-latest" in os_list
-        assert "macos-latest" in os_list
-        assert "windows-latest" in os_list
+        assert len(python_set) == 4, f"Expected 4 Python versions, found {len(python_set)}"
+        for py_ver in ["3.10", "3.11", "3.12", "3.13"]:
+            assert py_ver in python_set, f"Missing Python {py_ver} in CI matrix"
 
-        assert len(python_list) == 5, f"Expected 5 Python versions, found {len(python_list)}"
-        for py_ver in ["3.9", "3.10", "3.11", "3.12", "3.13"]:
-            assert py_ver in python_list, f"Missing Python {py_ver} in CI matrix"
-
-        # Total matrix combinations = 3 * 5 = 15
-        total_matrix_combinations = len(os_list) * len(python_list)
-        assert total_matrix_combinations == 15
+        total_matrix_combinations = len(entries) if entries else len(os_set) * len(python_set)
+        assert total_matrix_combinations == 6
 
     def test_release_workflow_yaml(self):
         release_path = REPO_ROOT / ".github" / "workflows" / "release.yml"
