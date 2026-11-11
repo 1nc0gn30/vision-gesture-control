@@ -35,7 +35,7 @@
       glowColor: '#a5f3fc',
       cost: 0.18,
       icon: '❄️',
-      hint: 'Spread palm wide to unleash cryogenic sub-zero frost blast.'
+      hint: 'Spread palm wide to release cryogenic sub-zero frost blast.'
     },
     lightning: {
       key: 'lightning',
@@ -699,7 +699,7 @@
         fxState.charging.progress = 0.3; // Reset partial
       }
     } else {
-      // If was charging and transitioned away with charge > 0.6, unleash burst!
+      // If was charging and transitioned away with charge > 0.6, trigger burst
       if (fxState.charging.active && fxState.charging.progress > 0.6) {
         castSpell(fxState.activeSpell, fxState.charging.x, fxState.charging.y, fxState.charging.x, fxState.charging.y - 200);
       }

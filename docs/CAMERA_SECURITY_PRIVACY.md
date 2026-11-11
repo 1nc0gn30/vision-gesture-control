@@ -1,10 +1,10 @@
-# 🔒 Camera Security, Privacy & Compliance Architecture
+# Camera Security, Privacy & Compliance Architecture
 
 **Vision Gesture Control** is engineered from the ground up on the foundational principle of **Zero-Knowledge Local-First Privacy**. This document provides an exhaustive security audit of camera access patterns, memory safety guarantees, network isolation, and compliance standards.
 
 ---
 
-## 📑 Core Privacy Principles
+## Core Privacy Principles
 
 1. **🛡️ 100% In-Memory Ephemeral Execution**: Video frames captured by the webcam are processed entirely in RAM and immediately overwritten in the circular frame buffer. No frames are ever written to disk, scratch disks, or temporary folders.
 2. **🚫 Zero Cloud Exfiltration**: The computer vision pipeline contains no telemetry reporting, cloud analytics, or external API endpoints. The software functions flawlessly in completely air-gapped, offline environments.
@@ -13,7 +13,7 @@
 
 ---
 
-## 🏗️ Data Flow & Isolation Architecture
+## Data Flow & Isolation Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -49,7 +49,7 @@
 
 ---
 
-## 🛡️ Enterprise Compliance
+## Enterprise Compliance
 
 ### 1. GDPR (General Data Protection Regulation - EU)
 - **Article 9 Compliance (Biometric Data)**: Because raw facial images and fingerprints are discarded instantly in volatile memory and never stored, biometric data is not persisted or processed for identity identification purposes.
@@ -63,7 +63,7 @@
 
 ---
 
-## 🔍 Security Audit Checklist
+## Security Audit Checklist
 
 | Security Control | Implementation Mechanism | Status |
 | :--- | :--- | :--- |
@@ -75,7 +75,7 @@
 
 ---
 
-## 🧪 Local Security Verification
+## Local Security Verification
 
 You can verify that no network traffic or disk files are created by running the following audit commands:
 

@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 # Protocol constants
 PROTOCOL_VERSION = "2024-11-05"
 SERVER_NAME = "vision-gesture-control-mcp"
-SERVER_VERSION = "1.0.0"
+SERVER_VERSION = "2.5.0"
 
 # ---------------------------------------------------------------------------
 # Core Algorithms (Pure Python stdlib, Zero External Dependencies)

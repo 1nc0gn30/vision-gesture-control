@@ -312,10 +312,10 @@ class TestDocumentationCompleteness:
         mcp_guide_path = REPO_ROOT / "docs" / "MCP_GUIDE.md"
         assert mcp_guide_path.exists()
         content = mcp_guide_path.read_text(encoding="utf-8")
-        assert "get_active_gesture" in content
-        assert "get_hand_landmarks" in content
-        assert "trigger_key_event" in content
-        assert "capture_frame_telemetry" in content
+        assert "vision_classify_gesture" in content
+        assert "vision_analyze_dual_hands" in content
+        assert "vision_calculate_dwell" in content
+        assert "vision_classify_face" in content
         assert "Claude Desktop" in content
 
     def test_camera_security_privacy_guide(self):

@@ -284,6 +284,21 @@ def cmd_test(args: argparse.Namespace) -> int:
     return 0 if result.wasSuccessful() else 1
 
 
+def cmd_status(args: argparse.Namespace) -> int:
+    """Prints tool status and MCP manifest as JSON."""
+    payload = {
+        "tool": "vision-gesture-control",
+        "version": __version__,
+        "status": "ready",
+        "port": DEFAULT_PORT,
+        "local_url": f"http://{DEFAULT_HOST}:{DEFAULT_PORT}",
+        "studio_url": "https://zoth.nullai.tech/tools/vision-gesture-control",
+        "mcp_tools": [t["name"] for t in MCP_TOOLS_DEFINITIONS],
+    }
+    print(json.dumps(payload, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Builds top-level CLI argument parser."""
     parser = argparse.ArgumentParser(
@@ -292,6 +307,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--test", action="store_true", help="Run internal self-tests")
+    parser.add_argument("--status", action="store_true", help="Print status and MCP tool manifest")
+    parser.add_argument("--json", action="store_true", help="Emit structured JSON output")
 
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands")
 
@@ -356,6 +373,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_test = subparsers.add_parser("test", help="Run internal self-test suite")
     p_test.set_defaults(func=cmd_test)
 
+    # 8. status
+    p_status = subparsers.add_parser("status", help="Print structured status and MCP tool manifest")
+    p_status.add_argument("--json", action="store_true", help="Emit JSON output")
+    p_status.set_defaults(func=cmd_status)
+
     return parser
 
 
@@ -366,6 +388,9 @@ def main(args: Optional[Sequence[str]] = None) -> int:
 
     if parsed.test:
         return cmd_test(parsed)
+
+    if parsed.status or (parsed.json and not parsed.command):
+        return cmd_status(parsed)
 
     if not parsed.command:
         parser.print_help()

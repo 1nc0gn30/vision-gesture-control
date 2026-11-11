@@ -30,9 +30,9 @@ from .mcp_server import (
     get_diagnostics,
 )
 
-DEFAULT_PORT = 8101
+DEFAULT_PORT = 8089
 DEFAULT_HOST = "127.0.0.1"
-SERVER_VERSION = "1.0.0"
+SERVER_VERSION = "2.5.0"
 SERVER_START_TIME = time.time()
 
 # ---------------------------------------------------------------------------
@@ -350,7 +350,7 @@ FALLBACK_INDEX_HTML = """<!DOCTYPE html>
     <div class="brand">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--md-sys-color-primary)"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
       <span>Vision Studio</span>
-      <span class="brand-badge">MCP v1.0.0</span>
+      <span class="brand-badge">MCP v2.5.0</span>
     </div>
     <div class="nav-actions">
       <button id="btn-export-bundle" onclick="downloadBundle()">

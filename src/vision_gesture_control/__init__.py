@@ -2,8 +2,8 @@
 vision-gesture-control: Zero-dependency MCP Server, CLI & UI Server for Vision Gesture Control.
 """
 
-__version__ = "1.0.0"
-__author__ = "Google DeepMind Advanced Agentic Coding"
+__version__ = "2.5.0"
+__author__ = "1nc0gn30"
 __license__ = "MIT"
 
 from .mcp_server import (

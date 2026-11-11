@@ -1,8 +1,8 @@
 .PHONY: all install dev test serve mcp clean lint build
 
 PYTHON ?= python3
-PORT ?= 8088
-HOST ?= 0.0.0.0
+PORT ?= 8089
+HOST ?= 127.0.0.1
 
 all: test
 

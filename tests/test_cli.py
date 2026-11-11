@@ -23,7 +23,18 @@ class TestCLI(unittest.TestCase):
             with self.assertRaises(SystemExit) as cm:
                 main(["--version"])
             self.assertEqual(cm.exception.code, 0)
-        self.assertIn("vision-control 1.0.0", buf.getvalue())
+        self.assertIn("vision-control 2.5.0", buf.getvalue())
+
+    def test_status_json_flag(self):
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            ret = main(["--status", "--json"])
+            self.assertEqual(ret, 0)
+        data = json.loads(buf.getvalue())
+        self.assertEqual(data["tool"], "vision-gesture-control")
+        self.assertEqual(data["version"], "2.5.0")
+        self.assertEqual(data["port"], 8089)
+        self.assertIn("vision_classify_gesture", data["mcp_tools"])
 
     def test_help_flag(self):
         buf = io.StringIO()

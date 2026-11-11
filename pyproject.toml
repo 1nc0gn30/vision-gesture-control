@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vision-gesture-control"
-version = "1.0.0"
-description = "Pure Python Zero-Dependency MCP Server, CLI, and Material 3 Web Studio for Vision Gesture Control"
+version = "2.5.0"
+description = "Pure Python Zero-Dependency MCP Server, CLI, and Web Studio for Vision Gesture Control"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Google DeepMind Advanced Agentic Coding"}
+    {name = "1nc0gn30", email = "ops@nullai.tech"}
 ]
 keywords = [
     "mcp",
@@ -39,6 +39,10 @@ classifiers = [
     "Topic :: Multimedia :: Video",
 ]
 dependencies = []
+
+[project.urls]
+Homepage = "https://zoth.nullai.tech/tools/vision-gesture-control"
+Repository = "https://github.com/1nc0gn30/vision-gesture-control"
 
 [project.optional-dependencies]
 dev = [

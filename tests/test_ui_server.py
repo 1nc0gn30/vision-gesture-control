@@ -69,7 +69,7 @@ class TestUIServer(unittest.TestCase):
         self.assertEqual(headers.get("Access-Control-Allow-Origin"), "http://127.0.0.1")
         data = json.loads(body.decode("utf-8"))
         self.assertEqual(data["status"], "ok")
-        self.assertEqual(data["version"], "1.0.0")
+        self.assertEqual(data["version"], "2.5.0")
         self.assertEqual(data["service"], "vision-gesture-control")
         self.assertGreaterEqual(data["uptime_seconds"], 0.0)
 

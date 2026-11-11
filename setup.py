@@ -11,12 +11,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="vision-gesture-control",
-    version="1.0.0",
-    author="Google DeepMind Advanced Agentic Coding",
-    description="Pure Python Zero-Dependency MCP Server, CLI & Material 3 Web Studio for Vision Gesture Control",
+    version="2.5.0",
+    author="1nc0gn30",
+    author_email="ops@nullai.tech",
+    description="Pure Python Zero-Dependency MCP Server, CLI & Web Studio for Vision Gesture Control",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/google/vision-gesture-control",
+    url="https://github.com/1nc0gn30/vision-gesture-control",
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.8",

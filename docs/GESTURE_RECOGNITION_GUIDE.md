@@ -1,10 +1,10 @@
-# 🖐️ Gesture Recognition & Mathematical Architecture Guide
+# Gesture Recognition & Mathematical Architecture Guide
 
 This guide provides an in-depth technical specification of the mathematical models, geometric heuristics, temporal filtering pipelines, and state machines powering **Vision Gesture Control**.
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 1. [Landmark Coordinate Topology](#1-landmark-coordinate-topology)
 2. [Vector Geometry & Joint Angles](#2-vector-geometry--joint-angles)
 3. [Palm Plane Orientation](#3-palm-plane-orientation)

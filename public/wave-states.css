@@ -326,9 +326,6 @@ select.tool-select:invalid {
   #mcpOutputBox,
   .command-palette-backdrop,
   .command-palette-modal,
-  .pro-modal-backdrop,
-  .pro-modal-card,
-  .paywall-lock-overlay,
   #laserPointer {
     animation: none !important;
     transform: none !important;
