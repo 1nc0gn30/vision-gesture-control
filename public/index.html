@@ -45,15 +45,25 @@
           "availability": "https://schema.org/InStock",
           "seller": {
             "@type": "Organization",
-            "name": "1nc0gn30 • NullAI",
+            "name": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
             "url": "https://nullai.tech"
           }
         },
         "author": {
           "@type": "Person",
-          "name": "1nc0gn30",
+          "name": "Neal Frazier",
           "alternateName": "1nc0gn30",
-          "url": "https://github.com/1nc0gn30"
+          "url": "https://nealfrazier.tech"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech",
+          "url": "https://nullai.tech"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Neal Frazier Tech (@1nc0gn30) • NullAI Platform",
+          "url": "https://nullai.tech"
         }
       },
       {
@@ -80,7 +90,7 @@
             "name": "Is Vision Gesture Control Studio free and open-access?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. Vision Gesture Control Studio is 100% free and open-source under the MIT license, with optional support via Buy Us a Coffee."
+              "text": "Yes. Vision Gesture Control Studio is 100% free and open-source with zero paywalls under the MIT license, with optional support via Buy Us a Coffee on Stripe (https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X) or Solana tip (GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK)."
             }
           }
         ]
@@ -154,6 +164,10 @@
       background: var(--md-sys-color-surface);
       border-bottom: 1px solid var(--md-sys-color-outline);
       padding: 10px 24px;
+      min-height: 60px;
+      height: auto;
+      flex-wrap: wrap;
+      gap: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1894,9 +1908,10 @@
 </head>
 <body>
 
-<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, rgba(16,185,129,0.12), rgba(212,175,55,0.14)); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999;">
-  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN SOURCE</span>
-  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee</a>
+<div id="zoth-coffee-support-bar" style="background: linear-gradient(90deg, #091310, #12100B); border-bottom: 1px solid rgba(212,175,55,0.35); padding: 8px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; z-index: 9999; max-width: 100%; box-sizing: border-box;">
+  <span style="color: #10B981; font-weight: 800;">✦ 100% FREE &amp; OPEN ACCESS · ZERO PAYWALLS</span>
+  <a href="https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X" target="_blank" rel="noopener noreferrer" style="background: #D4AF37; color: #08080B; padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">☕ Buy Us a Coffee (Stripe)</a>
+  <a href="solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" title="Solana Tip Address: GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK" onclick="if(navigator.clipboard){navigator.clipboard.writeText('GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK');this.textContent='✓ Copied GG2eQb...dXoK!';}" style="background: #047857; color: #FFFFFF; border: 1px solid rgba(255,255,255,0.28); padding: 4px 12px; border-radius: 6px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">◎ Solana Tip (GG2e...dXoK)</a>
 </div>
 
 <!-- Google Style Header -->
@@ -2963,7 +2978,7 @@
   <!-- Google Footer -->
   <footer class="google-footer">
     <div>
-      <strong>Vision Studio</strong> • Engineered by 1nc0gn30 (@1nc0gn30) • NullAI Platform
+      <strong>Vision Studio</strong> • Engineered by <a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener noreferrer" style="color:inherit;">Neal Frazier Tech (@1nc0gn30)</a> • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color:inherit;">NullAI Platform</a>
     </div>
     <div class="footer-links">
       <a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener">GitHub Repository</a>
@@ -7647,7 +7662,7 @@
 
   <!-- Professional Footer Attribution -->
   <footer class="footer-attribution" style="border-top: 1px solid rgba(255,255,255,0.08); padding: 2rem 1.5rem; text-align: center; font-size: 0.75rem; color: #64748b;">
-    <div>Engineered by <strong>1nc0gn30 • NullAI</strong> (<a href="https://github.com/1nc0gn30" target="_blank" rel="noopener" style="color:#1a73e8; text-decoration:none;">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener" style="color:#1a73e8; text-decoration:none;">NullAI Platform</a></div>
+    <div>Engineered by <strong>Neal Frazier Tech</strong> (<a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:none;">@1nc0gn30</a>) • <a href="https://nullai.tech" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:none;">NullAI Platform</a></div>
     <div style="margin-top:0.5rem; font-size:0.68rem; color:#475569;">
       Repository: <a href="https://github.com/1nc0gn30/vision-gesture-control" target="_blank" rel="noopener" style="color:#64748b; text-decoration:underline;">github.com/1nc0gn30/vision-gesture-control</a> · Zero Cloud Egress · Touchless Computer Vision Standard · 100% Free &amp; Open Access
     </div>

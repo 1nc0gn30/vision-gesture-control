@@ -128,8 +128,11 @@ python3 server.py --status --json
 
 ## Support
 
-Vision Gesture Control is 100% free and open-source with zero paywalls or feature gates. Optional support: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X).
+Vision Gesture Control is 100% free and open-source with zero paywalls or feature gates.
 
-## License
+- Optional support: [Buy Us a Coffee (Stripe)](https://buy.stripe.com/3cIfZg27PdKo2D64Ocfw40X)
+- Solana Tip Address: `GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK` (`solana:GG2eQbVh8ut1BK6j1A2tz7pSySdLpD38BgyEhGcxdXoK`)
 
-Released under the [MIT License](LICENSE). Copyright (c) 2026 [1nc0gn30](https://1nc0gn30.si) & [NullAI](https://nullai.tech).
+## License & Attribution
+
+Released under the [MIT License](LICENSE). Engineered by **Neal Frazier Tech** (`@1nc0gn30`, [github.com/1nc0gn30/vision-gesture-control](https://github.com/1nc0gn30/vision-gesture-control)) • [NullAI Platform](https://nullai.tech) • Cataloged in [Zoth Studio](https://zoth.nullai.tech).
